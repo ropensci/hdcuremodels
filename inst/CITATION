@@ -1,0 +1,22 @@
+bibentry(
+  bibtype  = "Article",
+  title    = "Identifying long-term survivors and those at higher or lower risk of relapse among patients with cytogenetically normal acute myeloid leukemia using a high-dimensional mixture cure model",
+  author   = "Kellie J. Archer, Han Fu, Krzysztof Mrozek, Deedra Nicolet, Alice S. Mims, Geoffrey L. Uy, Wendy Stock, John C. Byrd, Wolfgang Hiddemann, Jan Braess, Karsten Spiekermann, Klaus H. Metzeler, Tobias Herold, Ann-Kathrin Eisfeld",
+  journal  = "Journal of Hematology & Oncology",
+  year     = 2024,
+  volume   = 17,
+  pages    = 28,
+  url      = "https://jhoonline.biomedcentral.com/articles/10.1186/s13045-024-01553-6"
+)
+
+bibentry(
+  bibtype  = "Article",
+  title    = "Controlled variable selection in Weibull mixture cure models for high-dimensional data",
+  author   = "Han Fu, Deedra Nicolet, Kryzsztof Mrozek, Richard M. Stone, Ann-Kathrin Eisfeld, John C. Byrd, Kellie J. Archer",
+  journal  = "Statistics in Medicine",
+  year     = 2022,
+  volume   = 41,
+  number   = 22,
+  pages    = 4340--4366,
+  url      = "https://onlinelibrary.wiley.com/doi/10.1002/sim.9513"
+)
