@@ -18,12 +18,13 @@ Estimates the cured fraction using a Kaplan-Meier fitted object.
 \examples{
 library(survival)
 set.seed(1234)
-temp <- generate_cure_data(N = 100, J = 10, nTrue = 10, A = 1.8)
-training <- temp$Training
-km.fit <- survfit(Surv(Time, Censor) ~ 1, data = training)
-cure_estimate(km.fit)
+temp <- generate_cure_data(n = 100, j = 10, n_true = 10, a = 1.8)
+training <- temp$training
+km_fit <- survfit(Surv(Time, Censor) ~ 1, data = training)
+cure_estimate(km_fit)
 }
 \seealso{
-\code{\link{survfit}}, \code{\link{sufficient_fu_test}}, \code{\link{nonzerocure_test}}
+\code{\link{survfit}}, \code{\link{sufficient_fu_test}},
+\code{\link{nonzerocure_test}}
 }
 \keyword{univar}

@@ -10,9 +10,13 @@ sufficient_fu_test(object)
 \item{object}{a \code{survfit} object.}
 }
 \value{
-\item{p.value}{p-value from testing the null hypothesis that there was not sufficient follow-up against the alternative that there was sufficient follow-up}
+\item{p_value}{p-value from testing the null hypothesis that there
+was not sufficient follow-up against the alternative that there was
+sufficient follow-up}
 
-\item{Nn}{total number of events that occurred at time > pmax(0, 2*(last observed event time)-(last observed time)) and < the last observed event time}
+\item{n_n}{total number of events that occurred at time >
+pmax(0, 2*(last observed event time)-(last observed time)) and < the last
+observed event time}
 
 \item{N}{number of observations in the dataset}
 }
@@ -22,15 +26,17 @@ Tests for sufficient follow-up using a Kaplan-Meier fitted object.
 \examples{
 library(survival)
 set.seed(1234)
-temp <- generate_cure_data(N = 100, J = 10, nTrue = 10, A = 1.8)
-training <- temp$Training
-km.fit <- survfit(Surv(Time, Censor) ~ 1, data = training)
-sufficient_fu_test(km.fit)
+temp <- generate_cure_data(n = 100, j = 10, n_true = 10, a = 1.8)
+training <- temp$training
+km_fit <- survfit(Surv(Time, Censor) ~ 1, data = training)
+sufficient_fu_test(km_fit)
 }
 \references{
-Maller, R. A. and Zhou, X. (1996) \emph{Survival Analysis with Long-Term Survivors}. John Wiley & Sons.
+Maller, R. A. and Zhou, X. (1996) \emph{Survival Analysis with
+Long-Term Survivors}. John Wiley & Sons.
 }
 \seealso{
-\code{\link{survfit}}, \code{\link{cure_estimate}}, \code{\link{nonzerocure_test}}
+\code{\link{survfit}}, \code{\link{cure_estimate}},
+\code{\link{nonzerocure_test}}
 }
 \keyword{htest}

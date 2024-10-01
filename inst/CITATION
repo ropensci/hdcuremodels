@@ -18,5 +18,5 @@ bibentry(
   volume   = 41,
   number   = 22,
   pages    = 4340--4366,
-  url      = "https://onlinelibrary.wiley.com/doi/10.1002/sim.9513"
+  url      = "doi:10.1002/sim.9513"
 )

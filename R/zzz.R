@@ -305,7 +305,6 @@ cox_mcp_scad <-
       b_p_path = rbind(b_p_path, b_p)
       if(!is.null(W_u)) beta_u_path = rbind(beta_u_path, beta_u)
       beta_p_path = rbind(beta_p_path, beta_p)
-      # cat("step=", step, "\n")
       if (!conv1 & abs(llp1_1- llp1_0)< tol) conv1 <- TRUE
       if (!conv2 & abs(llp2_1- llp2_0)< tol) conv2 <- TRUE
       if (step > 1 & (conv1 & conv2) | step >= nIter) { #
@@ -371,8 +370,8 @@ cure.em <-
       output$rate = fit$lambda_path[model_select]
     if(model == "weibull")
       output$alpha = fit$alpha_path[model_select]
-    output$logLik.inc = fit$lik_inc[model_select]
-    output$logLik.lat = fit$lik_lat[model_select]
+    output$logLik_inc = fit$lik_inc[model_select]
+    output$logLik_lat = fit$lik_lat[model_select]
     return(output)
   }
 
@@ -505,7 +504,7 @@ cv.em.nofdr <-
            gamma.inc=3, gamma.lat=3,
            inits=NULL,
            n_folds=5, measure.inc=c("c","auc"), one.se=FALSE, cure_cutoff=5,
-           parallel=FALSE, seed=NULL, verbose=TRUE){
+           parallel=FALSE, seed=NULL, verbose){
     if(!is.null(seed)) set.seed(seed)
     if(!grid.tuning){
       if((!is.null(lambda.inc.list) & !is.null(lambda.lat.list) &
@@ -570,7 +569,9 @@ cv.em.nofdr <-
     if(measure.inc=="auc") AUC = matrix(NA, nrow(tuning_sequence), n_folds)
     if(parallel){ # parallel computing
       ncores = n_folds
-      registerDoMC(ncores)
+      #registerDoMC(ncores)
+      cl <- parallel::makeCluster(detectCores())
+      doParallel::registerDoParallel(cl)
       res_list = foreach(k = 1:n_folds) %dopar% {
         res = cv.em.inner(X_u, X_p, W_u, W_p, time, delta, folds_i, k,
                           model,penalty,thresh, nIter, grid.tuning, tuning_sequence,
@@ -578,6 +579,7 @@ cv.em.nofdr <-
                           measure.inc, cure_cutoff)
         return(res)
       }
+      parallel::stopCluster(cl)
       if(measure.inc=="auc"){
         for (k in 1:n_folds){
           AUC[,k] = res_list[[k]][1,]
@@ -588,7 +590,7 @@ cv.em.nofdr <-
       }
     }else{ # no parallel computing
       for (k in 1:n_folds) {
-        if(verbose) cat("Fold", k, "out of", n_folds, "training...\n")
+        if(verbose) message("Fold ", k, " out of ", n_folds, " training...\n")
         res = cv.em.inner(X_u, X_p, W_u, W_p, time, delta, folds_i, k,
                           model,penalty,thresh, nIter, grid.tuning, tuning_sequence,
                           gamma.inc, gamma.lat, inits,
@@ -628,12 +630,12 @@ cv.em.nofdr <-
     if(grid.tuning) optimal_lambda_beta = tuning_sequence[model_select_beta,2]
     else optimal_lambda_beta = tuning_sequence[model_select_beta,1]
     if(verbose){
-      cat("Selected lambda for incidence:",round(optimal_lambda_b,3),"\n")
-      cat("Selected lambda for latency:", round(optimal_lambda_beta,3),"\n")
-      cat("Maximum C-statistic:",max(c_stat),"\n")
+      message("Selected lambda for incidence: ",round(optimal_lambda_b,3),"\n")
+      message("Selected lambda for latency: ", round(optimal_lambda_beta,3),"\n")
+      message("Maximum C-statistic: ",max(c_stat),"\n")
+      if(measure.inc=="auc") message("Maximum AUC: ",max(auc),"\n")
+      if(verbose) message("Fitting a final model...\n")
     }
-    if(measure.inc=="auc") cat("Maximum AUC:",max(auc),"\n")
-    if(verbose) cat("Fitting a final model...\n")
     if(is.null(X_u)) penalty.factor.inc = rep(1,ncol(X_p))
     else penalty.factor.inc = rep(0:1,c(ncol(X_u), ncol(X_p)))
     if(is.null(W_u)) penalty.factor.lat = rep(1,ncol(W_p))
@@ -751,30 +753,33 @@ cv.gmifs.nofdr <-
   function(X_u, X_p, W_u, W_p, time, delta, model=c("weibull","exponential"),
            thresh=1e-5, nIter=1e4, epsilon=0.001, inits=NULL,
            n_folds=5, measure.inc=c("c","auc"), one.se=FALSE, cure_cutoff=5,
-           parallel=FALSE, seed=NULL, verbose=TRUE){
+           parallel=FALSE, seed=NULL, verbose){
     if(!is.null(seed)) set.seed(seed)
     folds_i = sample(rep(1:n_folds, length.out = length(time)))
     Cstat = matrix(NA, nIter, n_folds)
     if(measure.inc=="auc") AUC = matrix(NA, nIter, n_folds)
     if(parallel){ # parallel computing
       ncores = n_folds
-      registerDoMC(ncores)
+      #registerDoMC(ncores) # for doMC
+      cl <- parallel::makeCluster(detectCores())
+      doParallel::registerDoParallel(cl)
       res_list = foreach(k = 1:n_folds) %dopar% {
         res = cv.gmifs.inner(X_u, X_p, W_u, W_p, time, delta, folds_i, k,
                              model,thresh, nIter, epsilon, inits, measure.inc, cure_cutoff, verbose)
         return(res)
       }
+      parallel::stopCluster(cl)
       if(measure.inc=="auc"){
         for (k in 1:n_folds){
           AUC[,k] = res_list[[k]][1,]
           Cstat[,k] = res_list[[k]][2,]
         }
-      }else{
+      } else{
         for (k in 1:n_folds)  Cstat[,k] = res_list[[k]]
       }
-    }else{ # no parallel computing
+    } else { # no parallel computing
       for (k in 1:n_folds) {
-        if(verbose) cat("Fold", k, "out of", n_folds, "training...\n")
+        if(verbose) message("Fold ", k, " out of ", n_folds, " training...\n")
         res = cv.gmifs.inner(X_u, X_p, W_u, W_p, time, delta, folds_i, k,
                              model,thresh, nIter, epsilon, inits, measure.inc, cure_cutoff, verbose)
         if(measure.inc=="auc"){
@@ -798,12 +803,12 @@ cv.gmifs.nofdr <-
         model_select_beta = which.max(c_stat)
       }
       if(verbose){
-        cat("Selected step for incidence:",model_select_b,"\n")
-        cat("Selected step for latency:",model_select_beta,"\n")
-        cat("Maximum AUC:",max(auc, na.rm = T),"\n")
-        cat("Maximum C-statistic:",max(c_stat, na.rm = T),"\n")
+        message("Selected step for incidence: ",model_select_b,"\n")
+        message("Selected step for latency: ",model_select_beta,"\n")
+        message("Maximum AUC: ",max(auc, na.rm = T),"\n")
+        message("Maximum C-statistic: ",max(c_stat, na.rm = T),"\n")
+        message("Fitting a final model...\n")
       }
-      if(verbose) cat("Fitting a final model...\n")
       if(model=="exponential")
         fit = exp_cure(X_u, X_p, W_u, W_p, time, delta, epsilon, thresh,
                        nIter=max(model_select_b, model_select_beta), inits, verbose)
@@ -818,13 +823,13 @@ cv.gmifs.nofdr <-
         opt_step = which.max(c_stat)
         model_select <- model_select_b <- model_select_beta <-
           which(c_stat >= (c_stat[opt_step] - c_stat_sd[opt_step]))[1]
-      }else model_select <- model_select_b <- model_select_beta <- which.max(c_stat)
+      } else model_select <- model_select_b <- model_select_beta <- which.max(c_stat)
       if(verbose){
-        cat("Selected step:",model_select,"\n")
-        cat("Maximum C-statistic:",max(c_stat, na.rm = T),"\n")
-        cat("Fitting a final model...\n")
+        message("Selected step: ",model_select,"\n")
+        message("Maximum C-statistic: ",max(c_stat, na.rm = T),"\n")
+        message("Fitting a final model...\n")
       }
-      if(model=="exponential")
+      if (model=="exponential")
         fit = exp_cure(X_u, X_p, W_u, W_p, time, delta, epsilon, thresh, nIter=model_select, inits,
                        verbose)
       else if(model=="weibull")
@@ -832,11 +837,11 @@ cv.gmifs.nofdr <-
                            inits, verbose)
     }
     nstep = length(fit$logLikelihood)
-    b_p = fit$b_p_path[nstep,]
-    b_u = fit$b_u_path[nstep,]
+    b_p = fit$b_p_path[nstep, ]
+    b_u = fit$b_u_path[nstep, ]
     b0 = fit$itct_path[nstep]
-    beta_p = fit$beta_p_path[nstep,]
-    beta_u = fit$beta_u_path[nstep,]
+    beta_p = fit$beta_p_path[nstep, ]
+    beta_u = fit$beta_u_path[nstep, ]
     rate = fit$lambda_path[nstep]
     if(model=="weibull") alpha = fit$alpha_path[nstep]
     else alpha = 1
@@ -849,7 +854,7 @@ cv.gmifs.nofdr <-
 
 exp_cure <-
   function(X_u=NULL, X_p, W_u=NULL, W_p, time, delta, epsilon = 0.001, tol = 1e-05,
-           nIter=1e4, inits=NULL, verbose=TRUE)
+           nIter=1e4, inits=NULL, verbose)
   {
 
     # X_u: N by nonp, non-penalized covariate matrix associated with incidence
@@ -913,7 +918,7 @@ exp_cure <-
       LL1 = -out$value
       logLikelihood = c(logLikelihood, LL1)
 
-      if(verbose & step%%1000==0) cat("step=", step, "\n")
+      if(verbose & step%%1000==0) message("step = ", step, "\n")
       if (step > 1 && (abs(LL1 - LL0) < tol | step >= nIter)) { #
         break
       }
@@ -1676,7 +1681,7 @@ weib.cure.update <-
 
 weibull.cure <-
   function(X_u=NULL, X_p, W_u=NULL, W_p, time, delta, epsilon = 0.001, tol = 1e-05,
-           nIter=1e4, inits=NULL, verbose=TRUE)
+           nIter=1e4, inits=NULL, verbose)
   {
 
     # X_u: N by nonp, non-penalized covariate matrix associated with incidence
@@ -1745,7 +1750,7 @@ weibull.cure <-
       LL1 = -out$value
       logLikelihood = c(logLikelihood, LL1)
 
-      if(verbose & step%%1000==0) cat("step=", step, "\n")
+      if(verbose & step%%1000==0) message("step = ", step, "\n")
       if (step > 1 && (abs(LL1 - LL0) < tol | step >= nIter)) { #
         break
       }
@@ -1857,26 +1862,26 @@ weib_negloglik_lat <-
     return(-sum(ll1+ll2)+N*mu*sum(abs(beta_p)))
   }
 
-# If B = NULL use exponential; otherwise use uniform with B=upper limit
+# If b = NULL use exponential; otherwise use uniform with b = upper limit
 sim_cure <-
-  function(n, mu=1, censor.mu=3, B=NULL, Reps=10000, seed=NULL) {
-    susceptible.prop<-numeric(length=Reps)
+  function(n, mu = 1, censor_mu = 3, b = NULL, reps = 10000, seed = NULL) {
+    susceptible_prop <- numeric(length = reps)
     if (!is.null(seed)) {
       set.seed(seed)
     }
-    for (i in 1:Reps) {
-      surv<-rexp(n, 1/mu)
-      if (is.null(B)) {
-        u<-rexp(n, 1/censor.mu) ## rate is 1/mu
+    for (i in 1:reps) {
+      surv <- rexp(n, 1 / mu)
+      if (is.null(b)) {
+        u <- rexp(n, 1 / censor_mu) ## rate is 1/mu
       } else {
-        u<-runif(n,0,B)
+        u <- runif(n, 0, b)
       }
-      time<-ifelse(surv<=u,surv,u)
-      censor<-ifelse(surv<=u,1,0)
-      fit<-survival::survfit(survival::Surv(time,censor)~1)
-      susceptible.prop[i]<-1-min(fit$surv)
+      time <- ifelse(surv <= u, surv, u)
+      censor <- ifelse(surv <= u, 1, 0)
+      fit <- survival::survfit(survival::Surv(time, censor) ~ 1)
+      susceptible_prop[i] <- 1 - min(fit$surv)
     }
-    susceptible.prop
+    susceptible_prop
   }
 
 AUC_msi <- function(cure_cutoff = 5, b_u_hat=NULL, itct_hat, b_p_hat, testing_delta, testing_time,

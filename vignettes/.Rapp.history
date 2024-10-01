@@ -1,0 +1,278 @@
+plot(out, type="trace")
+plot(out, type="AIC")
+plot(out, type="cAIC")
+plot(out, type="mAIC")
+plot(out, type="BIC")
+plot(out, type="EBIC")
+plot(out, type="mBIC")
+plot(out, type="logLik")
+?predict.mixturecure
+predict.train <- predict(weibull.gmifs)
+predict.train <- predict(out)
+predict.train
+predict.train <- predict(out, newdata=testing)
+predict.train
+predict(out, newdata=testing, model.select="logLik")
+predict(out, newdata=testing, model.select="BIC")
+predict(out, newdata=testing, model.select="EBIC")
+predict(out, newdata=testing, model.select="cBIC")
+predict(out, newdata=testing, model.select="mBIC")
+predict(out, newdata=testing, model.select="AIC")
+predict(out, newdata=testing, model.select="cAIC")
+predict(out, newdata=testing, model.select="mAIC")
+AUC(out, newdata=testing, model.select="mAIC")
+AUC(out, model.select="mAIC")
+AUC(out, model.select="BIC")
+AUC(out, newdata=testing, model.select="BIC")
+AUC(out, newdata=testing, model.select="EBIC")
+AUC(out, newdata=testing, model.select="AIC")
+AUC(out, newdata=testing, model.select="logLik")
+concordance_mcm(out, newdata=testing, model.select="logLik")
+concordance_mcm(out, newdata=testing, model.select="mAIC")
+concordance_mcm(out, newdata=testing, model.select="cAIC")
+concordance_mcm(out, newdata=testing, model.select="AIC")
+concordance_mcm(out, newdata=testing, model.select="BIC")
+concordance_mcm(out, newdata=testing, model.select="EBIC")
+concordance_mcm(out, model.select="EBIC")
+concordance_mcm(out, model.select="BIC")
+concordance_mcm(out, model.select="AIC")
+coef(out, model.select="AIC")
+coef(out, model.select="BIC")
+coef(out, model.select="EBIC")
+coef(out, model.select="mBIC")
+coef(out, model.select="mAIC")
+coef(out, model.select="cAIC")
+coef(out, model.select="logLik")
+?cureem
+dim(training)
+head(training)
+head(training)cox.lasso.mcm <- cureem(Surv(Time, Censor)~., data=training, x.latency=training[,-c(1:2)],#
+                       model="cox", penalty="lasso", penalty.factor.inc=c(1,1,rep(0,48)), penalty.factor.lat=c(1,1,rep(0,48)),#
+                       lambda.inc=0.1, lambda.lat=0.1, gamma.inc=6, gamma.lat=10)
+out <- cureem(Surv(Time, Censor)~., data=training, x.latency=training[,-c(1:2)],#
+                       model="cox", penalty="lasso", penalty.factor.inc=c(1,1,rep(0,48)), penalty.factor.lat=c(1,1,rep(0,48)),#
+                       lambda.inc=0.1, lambda.lat=0.1, gamma.inc=6, gamma.lat=10)
+warnings()
+out <- cureem(Surv(Time, Censor)~., data=training, x.latency=training[,-c(1:2)],#
+                       model="cox", penalty="lasso", penalty.factor.inc=c(1,rep(0,49)), penalty.factor.lat=c(0,1,rep(0,48)),#
+                       lambda.inc=0.1, lambda.lat=0.1, gamma.inc=6, gamma.lat=10)
+warnings()
+out <- cureem(Surv(Time, Censor)~., data=training, x.latency=training[,-c(1:2)],#
+                       model="cox", penalty="lasso", penalty.factor.inc=c(0,rep(1,49)), penalty.factor.lat=c(0,1,rep(1,48)),#
+                       lambda.inc=0.1, lambda.lat=0.1, gamma.inc=6, gamma.lat=10)
+out
+plot(out)
+plot(out, type="AIC")
+plot(out, type="mAIC")
+plot(out, type="BIC")
+plot(out, type="EBIC")
+coef(out)
+print(out)
+summary(out)
+AUC(out)
+AUC(out, newdata=testing)
+AUC(out, newdata=testing, type="EBIC")
+AUC(out, newdata=testing, model.select="EBIC")
+concordance_mcm(out, newdata=testing, model.select="EBIC")
+concordance_mcm(out, newdata=testing, model.select="AIC")
+predict(out)
+predict(out, newdata=testing)
+out <- cureem(Surv(Time, Censor)~., data=training, x.latency=training[,-c(1:2)],#
+                       model="cox", penalty="lasso", penalty.factor.lat=c(0,0,rep(1,48)),#
+                       lambda.inc=0.1, lambda.lat=0.1, gamma.inc=6, gamma.lat=10)
+print(out)
+summary(out)
+coef(out)
+coef(out, model.select="logLik")
+plot(out, model.select="logLik")
+plot(out, type="logLik")
+plot(out, type="EBIC")
+coef(out)
+AUC(out)
+concordance_mcm(out)
+out <- cureem(Surv(Time, Censor)~., data=training, x.latency=training[,-c(1:2)],#
+                       model="cox", penalty="lasso", penalty.factor.inc=c(0,0,rep(1,48)),#
+                       lambda.inc=0.1, lambda.lat=0.1, gamma.inc=6, gamma.lat=10)
+out
+summary(out)
+plot(out, type="EBIC")
+plot(out, type="BIC")
+coef(out)
+coef(out, model.select=200)
+plot(out, type="EBIC")
+coef(out, model.select=90)
+plot(out)
+predict(out)
+predict(out, newdata=testing)
+AUC(out)
+concordance_mcm(out)
+out <- cureem(Surv(Time, Censor)~., data=training, x.latency=training[,4:5],#
+                       model="cox", penalty="lasso", penalty.factor.lat=c(0,0),#
+                       lambda.inc=0.1, lambda.lat=0.1, gamma.inc=6, gamma.lat=10)
+out <- cureem(Surv(Time, Censor)~., data=training, x.latency=training[,-c(1:2)],#
+                       model="cox", penalty="lasso", penalty.factor.lat=rep(0,50),#
+                       lambda.inc=0.1, lambda.lat=0.1, gamma.inc=6, gamma.lat=10)
+dim(training)
+names(training)
+dim(training[,-c(1:2)])
+out <- cureem(Surv(Time, Censor)~., data=training, x.latency=training[,-c(1:2)],#
+                       model="cox", penalty="lasso", penalty.factor.lat=rep(0,52),#
+                       lambda.inc=0.1, lambda.lat=0.1, gamma.inc=6, gamma.lat=10)
+out <- cureem(Surv(Time, Censor)~., data=training, x.latency=training[,-c(1:2)],#
+                       model="cox", penalty="lasso", penalty.factor.inc=rep(0,52),#
+                       lambda.inc=0.1, lambda.lat=0.1, gamma.inc=6, gamma.lat=10)
+out <- cureem(Surv(Time, Censor)~., data=training[,4:5], x.latency=training[,6:8],#
+                       model="cox", penalty="lasso", penalty.factor.inc=rep(0,0),#
+                       lambda.inc=0.1, lambda.lat=0.1, gamma.inc=6, gamma.lat=10)
+out <- cureem(Surv(Time, Censor)~., data=training[,c(1,2,4:5)], x.latency=training[,6:8],#
+                       model="cox", penalty="lasso", penalty.factor.inc=rep(0,0),#
+                       lambda.inc=0.1, lambda.lat=0.1, gamma.inc=6, gamma.lat=10)
+out <- cureem(Surv(Time, Censor)~., data=training[,c(1,2,4:5)], x.latency=training[,6:8],#
+                       model="cox", penalty="lasso", penalty.factor.inc=rep(0,2),#
+                       lambda.inc=0.1, lambda.lat=0.1, gamma.inc=6, gamma.lat=10)
+?boot.ci
+ls()
+BiocManager::install(c("DeconRNASeq")
+)
+library(DeconRNASeq)
+??DeconRNASeq
+BiocManager::install(c("cibersort")
+)
+library(cibersort)
+round(31/32*100)
+round(4/32*100)
+round(9/11*100)
+round(2/11*100)
+round(66/71*100)
+round(42/71*100)
+1/0.09
+179-39-19
+179-39-19-8
+179-39-19-8-10-2
+39+32
+19+11
+library(caret)
+?varImp
+library(glmnet)
+?glmnet
+if (!require("BiocManager", quietly = TRUE))#
+    install.packages("BiocManager")
+BiocManager::install("plyranges")
+BiocManager::install("qqman")
+BiocManager::install("Cairo")
+BiocManager::install("sva")
+library(hdcuremodels)
+vignettes("hdcuremodels")
+browseVignettes("hdcuremodels")
+browseVignettes()
+library(hdcuremodels)
+?generate_cure_data
+fit <- cureem(Surv(cryr, relapse.death)~., data = amltrain, x.latency = amltrain, lambda.inc = 0.0999, lambda.lat = 0.03)
+library(cuRe)
+??cuRe
+library(CureDepCens)
+??CureDepCens
+library(curephEM)
+??curephEM
+cureph
+library(cuRe)
+??cuRe
+citation("cuRe")
+library(CureDepCens)
+citation("CureDepCens")
+??CureDepCens
+?CureDepCens
+library(curephEM)
+??curephEM
+citation("curephEM")
+library(cureplots)
+??cureplots
+library(flexsurvcure)
+citation("flexsurvcure")
+library(geecure)
+citation("geecure")
+library(smcure)
+citation("smcure")
+library(GORcur)
+library(GORcure)
+install.packages("GORcure", force=TRUE)
+library(GORCure)
+citation("GORCure")
+??GORCure
+library(mixcure)
+citation("mixcure")
+library(npcure)
+citation("npcure")
+citation("npcurePK")
+citation("penPHcure")
+??penPHcure
+?mixcure
+mixcure
+rm(list=ls())
+library(hdcuremodels)
+??hdcuremodels
+library(hdcuremodels)
+??hdcuremodels
+library(hdcuremodels)
+??hdcuremodels
+library(hdcuremodels)
+??hdcuremodels
+citation("hdcuremodels")
+?cureem
+library(hdcuremodels)
+browseVignettes()
+x<-rnorm(100000)
+x<-rnorm(1000000)
+IQR<-IQR(x)
+quantile(x, probs=c(.25, .75))
+-0.6746726-1.5*IQR
+0.6747761+1.5*IQR
+sum(x<-2.698846)
+x
+x<-rnorm(1000000)
+IQR<-IQR(x)
+quantile(x, probs=c(.25, .75))
+sum(x < quantile(x, probs=c(.25)) - 1.5*IQR)
+sum(x > quantile(x, probs=c(.75)) + 1.5*IQR)
+3440+3525
+(3440+3525)/length(x)*100
+x<-rnorm(10000000)
+sum(x < quantile(x, probs=c(.25)) - 1.5*IQR(x))
+sum(x > quantile(x, probs=c(.75)) + 1.5*IQR(x))
+(34745+35399)/length(x)*100
+library(ordinalbayes)
+??ordinalbayes
+library(glmnet)
+?cv.glmnet
+?glmnet
+library(hdcuremodels)
+??hdcuremodels
+?curegmif
+?curegmifs
+?doParallel::makeCluster
+?doParallel:::makeCluster
+library(devtools)
+install_github("kelliejarcher/hdcuremodels")
+library(hdcuremodels)
+?cureem
+install_github("kelliejarcher/hdcuremodels", build_vignette=TRUE)
+install_github("kelliejarcher/hdcuremodels", build_vignette=TRUE, force=TRUE)
+causalworkshop::install_workshop("Documents")
+install.packages("remotes")#
+remotes::install_github("malcolmbarrett/causalworkshop")
+causalworkshop::install_workshop("Desktop")
+install_github("kelliejarcher/hdcuremodels", build_vignette=TRUE, force=TRUE)
+setwd("Documents")
+dir()
+setwd("hdcuremodels")
+dir()
+setwd(vignettes)
+setwd("vignettes")
+dir()
+library(utils)
+Sweave("hdcuremodels-vignette.Rmd")
+library(Rmarkdown)
+library(rmarkdown)
+library(knitr)
+knitr("hdcuremodels-vignette.Rmd")
+knit("hdcuremodels-vignette.Rmd")

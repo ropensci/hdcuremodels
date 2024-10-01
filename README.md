@@ -83,7 +83,7 @@ cure_estimate(km_train)
 ```
 
 We now fit a penalized MCM using the E-M algorithm where the penalty
-parameters for incidence and latency, `lambda_inc` and `lambda_lat` were
+parameters for incidence and latency, `lambda.inc` and `lambda.lat` were
 previously determined using cross-validation.
 
 ``` r
@@ -98,7 +98,7 @@ Coefficient estimates can be extracted from the fitted model using the
 desired by specifying the `model_select` parameter. For example,
 
 ``` r
-coef.cAIC <- coef(fitem, model_select = "cAIC")
+coef_cAIC <- coef(fitem, model_select = "cAIC")
 ```
 
 Predictions can be extracted at a given step or information criterion
@@ -125,7 +125,7 @@ cured from those likely to be susceptible visually by examining the
 Kaplan-Meier curves.
 
 ``` r
-km_cured <- survfit(Surv(cryr, relapse.death) ~ p_group, data = amltrain) 
+km_cured <- survfit(Surv(cryr, relapse.death) ~ p_group, data = amltrain)
 ```
 
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />

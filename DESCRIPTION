@@ -1,15 +1,15 @@
 Package: hdcuremodels
 Title: Penalized Mixture Cure Models for High-Dimensional Data
-Version: 0.0.1
-Date: 2024-06-10
+Version: 0.0.2
+Date: 2024-10-01
 Authors@R: 
     c(person("Han", "Fu", role = "aut"), person(c("Kellie J."), "Archer", email=
     "archer.43@osu.edu", role = c("aut","cre"), comment = c(ORCID="0000-0003-1555-5781")))
-Description: Provides functions for fitting various penalized parametric and semi-parametric mixture cure modelswith different penalty functions, testin for a significant cure fraction, and testing for sufficient follow-up. FDR-controlled variable selection is provided using model-X knock-offs. 
+Description: Provides functions for fitting various penalized parametric and semi-parametric mixture cure models with different penalty functions, testing for a significant cure fraction, and testing for sufficient follow-up as described in Fu et al (2022)<doi:10.1002/sim.9513> and Archer et al (2024)<doi:10.1186/s13045-024-01553-6>. False discovery rate controlled variable selection is provided using model-X knock-offs. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 Depends: R (>= 4.2.0)
-Imports: doMC,
+Imports: doParallel,
          flexsurv,
          flexsurvcure,
          foreach,
@@ -18,13 +18,15 @@ Imports: doMC,
          glmnet,
          knockoff,
          mvnfast,
+         parallel,
          plyr,
          methods,
          survival
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    roxygen2
 VignetteBuilder: knitr
 LazyData: true

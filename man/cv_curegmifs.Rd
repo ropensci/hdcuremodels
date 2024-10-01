@@ -2,17 +2,18 @@
 % Please edit documentation in R/cv_curegmifs.R
 \name{cv_curegmifs}
 \alias{cv_curegmifs}
-\title{Fit a penalized parametric mixture cure model using the GMIFS algorithm with cross-validation for model selection}
+\title{Fit a penalized parametric mixture cure model using the GMIFS algorithm with
+cross-validation for model selection}
 \usage{
 cv_curegmifs(
   formula,
   data,
   subset,
-  x.latency = NULL,
-  model = "weibull",
-  penalty.factor.inc = NULL,
-  penalty.factor.lat = NULL,
-  fdr.control = FALSE,
+  x_latency = NULL,
+  model = c("weibull", "exponential"),
+  penalty_factor_inc = NULL,
+  penalty_factor_lat = NULL,
+  fdr_control = FALSE,
   fdr = 0.2,
   epsilon = 0.001,
   thresh = 1e-05,
@@ -20,8 +21,8 @@ cv_curegmifs(
   maxit = 10000,
   inits = NULL,
   n_folds = 5,
-  measure.inc = "c",
-  one.se = FALSE,
+  measure_inc = c("c", "auc"),
+  one_se = FALSE,
   cure_cutoff = 5,
   parallel = FALSE,
   seed = NULL,
@@ -30,93 +31,163 @@ cv_curegmifs(
 )
 }
 \arguments{
-\item{formula}{an object of class "\code{formula}" (or one that can be coerced to that class): a symbolic description of the model to be fitted. The response must be a survival object as returned by the \code{Surv} function while the variables on the right side of the formula are the covariates that are included in the incidence portion of the model.}
+\item{formula}{an object of class "\code{formula}" (or one that can be
+coerced to that class): a symbolic description of the model to be fitted.
+The response must be a survival object as returned by the \code{Surv}
+function while the variables on the right side of the formula are the
+covariates that are included in the incidence portion of the model.}
 
-\item{data}{a data.frame in which to interpret the variables named in the \code{formula} or in the \code{subset} argument.}
+\item{data}{a data.frame in which to interpret the variables named in the
+\code{formula} or in the \code{subset} argument.}
 
-\item{subset}{an optional expression indicating which subset of observations to be used in the fitting process, either a numeric or factor variable should be used in subset, not a character variable. All observations are included by default.}
+\item{subset}{an optional expression indicating which subset of observations
+to be used in the fitting process, either a numeric or factor variable should
+be used in subset, not a character variable. All observations are included by
+default.}
 
-\item{x.latency}{specifies the variables to be included in the latency portion of the model and can be either a matrix of predictors, a model formula with the right hand side specifying the latency variables, or the same data.frame passed to the \code{data} parameter. Note that when using the model formula syntax for \code{x.latency} it cannot handle \code{x.latency = ~ .}.}
+\item{x_latency}{specifies the variables to be included in the latency
+portion of the model and can be either a matrix of predictors, a model
+formula with the right hand side specifying the latency variables, or the
+same data.frame passed to the \code{data} parameter. Note that when using the
+model formula syntax for \code{x_latency} it cannot handle
+\code{x_latency = ~ .}.}
 
-\item{model}{type of regression model to use for the latency portion of mixture cure model. Can be "weibull" or "exponential"; default is "weibull".}
+\item{model}{type of regression model to use for the latency portion of
+mixture cure model. Can be "weibull" or "exponential"; default is "weibull".}
 
-\item{penalty.factor.inc}{vector of binary indicators representing the penalty to apply to each incidence coefficient: 0 implies no shrinkage and 1 implies shrinkage. If not supplied, 1 is applied to all incidence variables.}
+\item{penalty_factor_inc}{vector of binary indicators representing the
+penalty to apply to each incidence coefficient: 0 implies no shrinkage and 1
+implies shrinkage. If not supplied, 1 is applied to all incidence variables.}
 
-\item{penalty.factor.lat}{vector of binary indicators representing the penalty to apply to each latency coefficient: 0 implies no shrinkage and 1 implies shrinkage. If not supplied, 1 is applied to all latency variables.}
+\item{penalty_factor_lat}{vector of binary indicators representing the
+penalty to apply to each latency coefficient: 0 implies no shrinkage and 1
+implies shrinkage. If not supplied, 1 is applied to all latency variables.}
 
-\item{fdr.control}{logical, if TRUE, model-X knockoffs are used for FDR-controlled variable selection and indices of selected variables are returned (default is FALSE).}
+\item{fdr_control}{logical, if TRUE, model-X knockoffs are used for
+FDR-controlled variable selection and indices of selected variables are
+returned (default is FALSE).}
 
-\item{fdr}{numeric value in (0, 1) range specifying the target FDR level to use for variable selection when \code{fdr.control=TRUE} (default is 0.2).}
+\item{fdr}{numeric value in (0, 1) range specifying the target FDR level to
+use for variable selection when \code{fdr_control=TRUE} (default is 0.2).}
 
-\item{epsilon}{small numeric value reflecting incremental value used to update a coefficient at a given step (default is 0.001).}
+\item{epsilon}{small numeric value reflecting incremental value used to
+update a coefficient at a given step (default is 0.001).}
 
-\item{thresh}{small numeric value. The iterative process stops when the differences between successive expected penalized complete-data log-likelihoods for both incidence and latency components are less than this specified level of tolerance (default is 10^-5).}
+\item{thresh}{small numeric value. The iterative process stops when the
+differences between successive expected penalized complete-data
+log-likelihoods for both incidence and latency components are less than this
+specified level of tolerance (default is 10^-5).}
 
 \item{scale}{logical, if TRUE the predictors are centered and scaled.}
 
-\item{maxit}{integer specifying the maximum number of steps to run in the iterative algorithm (default is 10^4).}
+\item{maxit}{integer specifying the maximum number of steps to run in the
+iterative algorithm (default is 10^4).}
 
-\item{inits}{an optional list specifiying the initial value for the incidence intercept (\code{itct}), a numeric vector for the unpenalized incidence coefficients (\code{b_u}), and a numeric vector for unpenalized latency coefficients (\code{beta_u}), a numeric value for the rate parameter (\code{lambda}), and a numeric value for the shape parameter (\code{alpha}) when \code{model = "weibull"}. If not supplied or improperly supplied, initialization is automatically provided by the function.}
+\item{inits}{an optional list specifiying the initial value for the incidence
+intercept (\code{itct}), a numeric vector for the unpenalized incidence
+coefficients (\code{b_u}), and a numeric vector for unpenalized latency
+coefficients (\code{beta_u}), a numeric value for the rate parameter
+(\code{lambda}), and a numeric value for the shape parameter (\code{alpha})
+when \code{model = "weibull"}. If not supplied or improperly supplied,
+initialization is automatically provided by the function.}
 
-\item{n_folds}{an integer specifying the number of folds for the k-fold cross-valiation procedure (default is 5).}
+\item{n_folds}{an integer specifying the number of folds for the k-fold
+cross-valiation procedure (default is 5).}
 
-\item{measure.inc}{character string specifying the evaluation criterion used in selecting the optimal \eqn{\lambda_b}. Can be "c" or "auc"; default is "c". If \code{measure.inc="c"}, the C-statistic using the cure status weighting (CSW) method proposed by Asano and Hirakawa (2017) is used to select both \eqn{\lambda_b} and \eqn{\lambda_{\beta}}. If \code{measure.inc="auc"}, the AUC for cure prediction using the mean score imputation (MSI) method proposed by Asano et al. (2014) is used to select \eqn{\lambda_b} while the C-statistic with CSW is used for \eqn{\lambda_{\beta}}.}
+\item{measure_inc}{character string specifying the evaluation criterion used
+in selecting the optimal \eqn{\lambda_b}. Can be "c" or "auc"; default is
+"c". If \code{measure_inc="c"}, the C-statistic using the cure status
+weighting (CSW) method proposed by Asano and Hirakawa (2017) is used to
+select both \eqn{\lambda_b} and \eqn{\lambda_{\beta}}. If
+\code{measure_inc="auc"}, the AUC for cure prediction using the mean score
+imputation (MSI) method proposed by Asano et al. (2014) is used to select
+\eqn{\lambda_b} while the C-statistic with CSW is used for
+\eqn{\lambda_{\beta}}.}
 
-\item{one.se}{logical, if TRUE then the one standard error rule is applied for selecting the optimal parameters. The one standard error rule selects the most parsimonious model having evaluation criterion no more than one standard error worse than that of the best evaluation criterion (default is FALSE).}
+\item{one_se}{logical, if TRUE then the one standard error rule is applied
+for selecting the optimal parameters. The one standard error rule selects the
+most parsimonious model having evaluation criterion no more than one standard
+error worse than that of the best evaluation criterion (default is FALSE).}
 
-\item{cure_cutoff}{numeric value representing the cutoff time value that represents subjects not experiencing the event by this time are cured. This value is used to produce a proxy for the unobserved cure status when calculating C-statistic and AUC (default is 5 representing 5 years). Users should be careful to note the time scale of their data and adjust this according to the time scale and clinical application.}
+\item{cure_cutoff}{numeric value representing the cutoff time value that
+represents subjects not experiencing the event by this time are cured. This
+value is used to produce a proxy for the unobserved cure status when
+calculating C-statistic and AUC (default is 5 representing 5 years). Users
+should be careful to note the time scale of their data and adjust this
+according to the time scale and clinical application.}
 
-\item{parallel}{logical. If TRUE, parallel processing is performed for K-fold CV using \code{foreach} and the \pkg{doMC} package is required.}
+\item{parallel}{logical. If TRUE, parallel processing is performed for K-fold
+CV using \code{foreach} and the \pkg{doParallel} package is required.}
 
-\item{seed}{optional integer representing the random seed. Setting the random seed fosters reproducibility of the results.}
+\item{seed}{optional integer representing the random seed. Setting the random
+seed fosters reproducibility of the results.}
 
-\item{verbose}{logical, if TRUE running information is printed to the console (default is FALSE).}
+\item{verbose}{logical, if TRUE running information is printed to the console
+(default is FALSE).}
 
 \item{...}{additional arguments.}
 }
 \value{
-\item{b0 }{Estimated intercept for the incidence portion of the model.}
+\item{b0 }{Estimated intercept for the incidence portion of the
+model.}
 
-\item{b }{Estimated coefficients for the incidence portion of the model.}
+\item{b }{Estimated coefficients for the incidence portion of the
+model.}
 
-\item{beta }{Estimated coefficients for the latency portion of the model.}
+\item{beta }{Estimated coefficients for the latency portion of the
+model.}
 
 \item{alpha }{Estimated shape parameter if the Weibull model is fit.}
 
-\item{rate }{Estimated rate parameter if the Weibull or exponential model is fit.}
+\item{rate }{Estimated rate parameter if the Weibull or exponential
+model is fit.}
 
 \item{logLik }{Log-likelihood value.}
 
-\item{selected.step.inc }{Iteration step selected for the incidence portion of the model using cross-validation. NULL when fdr.control is TRUE.}
+\item{selected.step.inc }{Iteration step selected for the incidence
+portion of the model using cross-validation. NULL when fdr_control is TRUE.}
 
-\item{selected.step.lat }{Iteration step selected for the latency portion of the model using cross-validation. NULL when fdr.control is TRUE.}
+\item{selected.step.lat }{Iteration step selected for the latency
+portion of the model using cross-validation. NULL when fdr_control is TRUE.}
 
 \item{max.c }{Maximum C-statistic achieved}
 
-\item{max.auc }{Maximum AUC for cure prediction achieved; only output when \code{measure.inc="auc"}.}
+\item{max.auc }{Maximum AUC for cure prediction achieved; only output
+when \code{measure_inc="auc"}.}
 
-\item{selected.index.inc }{Indices of selected variables for the incidence portion of the model when \code{fdr.control=TRUE}. If none selected, \code{int(0)} will be returned.}
+\item{selected_index_inc }{Indices of selected variables for the
+incidence portion of the model when \code{fdr_control=TRUE}. If none
+selected, \code{int(0)} will be returned.}
 
-\item{selected.index.lat }{Indices of selected variables for the latency portion of the model when \code{fdr.control=TRUE}. If none selected, \code{int(0)} will be returned.}
+\item{selected_index_lat }{Indices of selected variables for the
+latency portion of the model when \code{fdr_control=TRUE}. If none selected,
+\code{int(0)} will be returned.}
 
 \item{call}{the matched call.}
 }
 \description{
-Fits a penalized Weibull or exponential mixture cure model using the generalized monotone incremental forward stagewise (GMIFS) algorithm with k-fold cross-validation to select the optimal iteration step along the solution path. When FDR controlled variable selection is used, the model-X knockoffs method is applied and indices of selected variables are returned.
+Fits a penalized Weibull or exponential mixture cure model using the
+generalized monotone incremental forward stagewise (GMIFS) algorithm with
+k-fold cross-validation to select the optimal iteration step along the
+solution path. When FDR controlled variable selection is used, the model-X
+knockoffs method is applied and indices of selected variables are returned.
 }
 \examples{
 library(survival)
 set.seed(123)
-temp <- generate_cure_data(N = 100, J = 15, nTrue = 3, A = 1.8, rho = 0.2)
-training <- temp$Training
+temp <- generate_cure_data(n = 100, j = 15, n_true = 3, a = 1.8, rho = 0.2)
+training <- temp$training
 
 fit.cv <- cv_curegmifs(Surv(Time, Censor) ~ ., data = training,
-                      x.latency = training, fdr.control = FALSE,
-                      maxit = 500, epsilon = 0.01,
-                      n_folds = 2, seed = 23, verbose = TRUE)
+                      x_latency = training, fdr_control = FALSE,
+                      maxit = 450, epsilon = 0.01 ,n_folds = 2,
+                     seed = 23, verbose = TRUE)
 }
 \references{
-Fu, H., Nicolet, D., Mrozek, K., Stone, R. M., Eisfeld, A. K., Byrd, J. C., Archer, K. J. (2022) Controlled variable selection in Weibull mixture cure models for high-dimensional data. \emph{Statistics in Medicine}, \bold{41}(22), 4340--4366.
+Fu, H., Nicolet, D., Mrozek, K., Stone, R. M., Eisfeld, A. K.,
+Byrd, J. C., Archer, K. J. (2022) Controlled variable selection in Weibull
+mixture cure models for high-dimensional data. \emph{Statistics in Medicine},
+\bold{41}(22), 4340--4366.
 }
 \seealso{
 \code{\link{curegmifs}}

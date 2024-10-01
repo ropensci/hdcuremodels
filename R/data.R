@@ -1,13 +1,15 @@
 #' AML training data
 #'
-#' Duration of complete response for 306 cytogenetically normal AML patients and a subset of 320 transcript expression from RNA-sequencing.
+#' Duration of complete response for 306 cytogenetically normal AML patients and
+#' a subset of 320 transcript expression from RNA-sequencing.
 #'
 #'
 #' @format
 #' A data frame with 306 rows (subjects) and 322 columns:
 #' \describe{
 #'   \item{cryr}{duration of complete response in years}
-#'   \item{relapse.death}{censoring indicator: 1 = relapsed or died; 0 = alive at last follow=up}
+#'   \item{relapse.death}{censoring indicator: 1 = relapsed or died; 0 = alive
+#'   at last follow=up}
 #'   \item{ENSG00000001561}{normalized expression for indicated transcript}
 #'   \item{ENSG00000005249}{normalized expression for indicated transcript}
 #'   \item{ENSG00000006757}{normalized expression for indicated transcript}
@@ -329,18 +331,20 @@
 #'   \item{ENSG00000273018}{normalized expression for indicated transcript}
 #'   \item{ENSG00000273033}{normalized expression for indicated transcript}
 #' }
-#' @source <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11068580/>
+#' @source <doi:10.1186/s13045-024-01553-6>
 "amltrain"
 #' AML test data
 #'
-#' Duration of complete response for 40 cytogenetically normal AML patients and a subset of 320 transcript expression from RNA-sequencing.
+#' Duration of complete response for 40 cytogenetically normal AML patients
+#' and a subset of 320 transcript expression from RNA-sequencing.
 #'
 #'
 #' @format
 #' A data frame with 40 rows (subjects) and 322 columns:
 #' \describe{
 #'   \item{cryr}{duration of complete response in years}
-#'   \item{relapse.death}{censoring indicator: 1 = relapsed or died; 0 = alive at last follow=up}
+#'   \item{relapse.death}{censoring indicator: 1 = relapsed or died;
+#'   0 = alive at last follow=up}
 #'   \item{ENSG00000001561}{normalized expression for indicated transcript}
 #'   \item{ENSG00000005249}{normalized expression for indicated transcript}
 #'   \item{ENSG00000006757}{normalized expression for indicated transcript}
@@ -662,5 +666,5 @@
 #'   \item{ENSG00000273018}{normalized expression for indicated transcript}
 #'   \item{ENSG00000273033}{normalized expression for indicated transcript}
 #' }
-#' @source <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11068580/>
+#' @source <doi:10.1186/s13045-024-01553-6>
 "amltest"
