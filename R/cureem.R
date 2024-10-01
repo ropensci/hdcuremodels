@@ -118,6 +118,9 @@
 #' high-dimensional mixture cure model. \emph{Journal of Hematology & Oncology},
 #' \bold{17}:28.
 #'
+#' @srrstats {G1.0} *Statistical Software should list at least one primary reference from published academic literature.*
+#' @srrstats {G1.1} *Statistical Software should document whether the algorithm(s) it implements are: An improvement on other implementations of similar algorithms in **R**.
+#'
 #' @seealso \code{\link{cv_cureem}}
 #'
 #' @keywords models
@@ -150,8 +153,8 @@ cureem <- function(formula, data, subset, x_latency = NULL,
     data <- environment(formula)
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
-  model <- match.arg(model)
-  penalty <- match.arg(penalty)
+  model <- match.arg(tolower(model))
+  penalty <- match.arg(tolower(penalty))
   y <- model.response(mf)
   event <- y[, 2]
   time <- y[, 1]

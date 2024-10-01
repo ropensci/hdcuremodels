@@ -11,7 +11,7 @@
 #' training data are used.
 #' @param cure_cutoff cutoff value for cure, used to produce a proxy for the
 #' unobserved cure status; default is 5.
-#' @param model_select for models fit using \code{curegmifs} or \code{cureem}
+#' @param model_select a case-sensitive parameter for models fit using \code{curegmifs} or \code{cureem}
 #' any step along the solution path can be selected. The default is
 #' \code{model_select = "AIC"} which calculates the predicted values using
 #' the coefficients from the model having the lowest AIC. Other options are
@@ -32,6 +32,8 @@
 #' prediction accuracy of cure in the Cox proportional hazards cure model:
 #' an application to breast cancer data. \emph{Pharmaceutical Statistics},
 #' \bold{13}:357--363.
+#'
+#' @srrstats {G1.0} *Statistical Software should list at least one primary reference from published academic literature.*
 #'
 #' @seealso \code{\link{concordance_mcm}}
 #'

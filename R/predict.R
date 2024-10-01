@@ -12,7 +12,7 @@
 #' @param newdata an optional data.frame that minimally includes the incidence
 #' and/or latency variables to use for predicting the response. If omitted, the
 #' training data are used.
-#' @param model_select for models fit using \code{curegmifs} or \code{cureem}
+#' @param model_select a case-sensitive parameter for models fit using \code{curegmifs} or \code{cureem}
 #' any step along the solution path can be selected. The default is
 #' \code{model_select = "AIC"} which calculates the predicted values using the
 #' coefficients from the model having the lowest AIC. Other options are

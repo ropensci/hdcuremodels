@@ -8,7 +8,7 @@
 #'
 #' @param x a \code{mixturecure} object resulting from \code{curegmifs} or
 #' \code{cureem}, \code{cv_curegmifs} or \code{cv_cureem}.
-#' @param type default is \code{"trace"} which plots the coefficient path for
+#' @param type a case-sensitive parameter with default \code{"trace"} which plots the coefficient path for
 #' the fitted object. Also available are \code{"AIC"}, \code{"cAIC"},
 #' \code{"mAIC"}, \code{"BIC"}, \code{"mBIC"}, \code{"EBIC"}, and
 #' \code{"logLik"}. This option has no effect for objects fit using

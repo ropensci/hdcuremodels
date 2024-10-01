@@ -28,6 +28,8 @@
 #' @references Maller, R. A. and Zhou, X. (1996) \emph{Survival Analysis with
 #' Long-Term Survivors}. John Wiley & Sons.
 #'
+#' @srrstats {G1.0} *Statistical Software should list at least one primary reference from published academic literature.*
+#'
 #' @seealso \code{\link{survfit}}, \code{\link{cure_estimate}},
 #' \code{\link{sufficient_fu_test}}
 #'

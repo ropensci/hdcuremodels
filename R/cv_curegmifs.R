@@ -129,6 +129,9 @@
 #' mixture cure models for high-dimensional data. \emph{Statistics in Medicine},
 #' \bold{41}(22), 4340--4366.
 #'
+#' @srrstats {G1.0} *Statistical Software should list at least one primary reference from published academic literature.*
+#' @srrstats {G1.1} *Statistical Software should document whether the algorithm(s) it implements are: The first implementation of a novel algorithm *
+#'
 #' @seealso \code{\link{curegmifs}}
 #'
 #' @examples
@@ -162,8 +165,8 @@ cv_curegmifs <- function(formula, data, subset, x_latency = NULL,
     data <- environment(formula)
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
-  model <- match.arg(model)
-  measure_inc <- match.arg(measure_inc)
+  model <- match.arg(tolower(model))
+  measure_inc <- match.arg(tolower(measure_inc))
   y <- model.response(mf)
   event <- y[, 2]
   time <- y[, 1]
