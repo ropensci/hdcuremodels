@@ -224,9 +224,9 @@ cv_cureem <- function(formula, data, subset, x_latency = NULL,
     data <- environment(formula)
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
-  model <- match.arg(tolower(model))
-  penalty <- match.arg(tolower(penalty))
-  measure_inc <- match.arg(tolower(measure_inc))
+  model <- match.arg(model)
+  penalty <- match.arg(penalty)
+  measure_inc <- match.arg(measure_inc)
   y <- model.response(mf)
   event <- y[, 2]
   time <- y[, 1]

@@ -153,8 +153,8 @@ cureem <- function(formula, data, subset, x_latency = NULL,
     data <- environment(formula)
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
-  model <- match.arg(tolower(model))
-  penalty <- match.arg(tolower(penalty))
+  model <- match.arg(model)
+  penalty <- match.arg(penalty)
   y <- model.response(mf)
   event <- y[, 2]
   time <- y[, 1]

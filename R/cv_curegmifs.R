@@ -165,8 +165,8 @@ cv_curegmifs <- function(formula, data, subset, x_latency = NULL,
     data <- environment(formula)
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
-  model <- match.arg(tolower(model))
-  measure_inc <- match.arg(tolower(measure_inc))
+  model <- match.arg(model)
+  measure_inc <- match.arg(measure_inc)
   y <- model.response(mf)
   event <- y[, 2]
   time <- y[, 1]

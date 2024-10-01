@@ -123,7 +123,7 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
     data <- environment(formula)
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
-  model <- match.arg(tolower(model))
+  model <- match.arg(model)
   y <- model.response(mf)
   event <- y[, 2]
   time <- y[, 1]
