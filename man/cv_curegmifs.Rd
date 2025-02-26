@@ -178,10 +178,12 @@ set.seed(123)
 temp <- generate_cure_data(n = 100, j = 15, n_true = 3, a = 1.8, rho = 0.2)
 training <- temp$training
 
-fit.cv <- cv_curegmifs(Surv(Time, Censor) ~ ., data = training,
-                      x_latency = training, fdr_control = FALSE,
-                      maxit = 450, epsilon = 0.01 ,n_folds = 2,
-                     seed = 23, verbose = TRUE)
+fit.cv <- cv_curegmifs(Surv(Time, Censor) ~ .,
+  data = training,
+  x_latency = training, fdr_control = FALSE,
+  maxit = 450, epsilon = 0.01, n_folds = 2,
+  seed = 23, verbose = TRUE
+)
 }
 \references{
 Fu, H., Nicolet, D., Mrozek, K., Stone, R. M., Eisfeld, A. K.,

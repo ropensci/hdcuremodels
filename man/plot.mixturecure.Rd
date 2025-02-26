@@ -17,7 +17,7 @@
 \item{x}{a \code{mixturecure} object resulting from \code{curegmifs} or
 \code{cureem}, \code{cv_curegmifs} or \code{cv_cureem}.}
 
-\item{type}{default is \code{"trace"} which plots the coefficient path for
+\item{type}{a case-sensitive parameter with default \code{"trace"} which plots the coefficient path for
 the fitted object. Also available are \code{"AIC"}, \code{"cAIC"},
 \code{"mAIC"}, \code{"BIC"}, \code{"mBIC"}, \code{"EBIC"}, and
 \code{"logLik"}. This option has no effect for objects fit using
@@ -51,9 +51,10 @@ set.seed(1234)
 temp <- generate_cure_data(n = 100, j = 10, n_true = 10, a = 1.8)
 training <- temp$training
 fit <- curegmifs(Surv(Time, Censor) ~ .,
-                   data = training, x_latency = training,
-                   model = "weibull", thresh = 1e-4, maxit = 2000,
-                   epsilon = 0.01, verbose = FALSE)
+  data = training, x_latency = training,
+  model = "weibull", thresh = 1e-4, maxit = 2000,
+  epsilon = 0.01, verbose = FALSE
+)
 plot(fit)
 }
 \seealso{

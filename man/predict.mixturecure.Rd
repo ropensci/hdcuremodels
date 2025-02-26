@@ -15,7 +15,7 @@ risk class for latency for mixture cure fit}
 and/or latency variables to use for predicting the response. If omitted, the
 training data are used.}
 
-\item{model_select}{for models fit using \code{curegmifs} or \code{cureem}
+\item{model_select}{a case-sensitive parameter for models fit using \code{curegmifs} or \code{cureem}
 any step along the solution path can be selected. The default is
 \code{model_select = "AIC"} which calculates the predicted values using the
 coefficients from the model having the lowest AIC. Other options are
@@ -51,9 +51,10 @@ set.seed(1234)
 temp <- generate_cure_data(n = 100, j = 10, n_true = 10, a = 1.8)
 training <- temp$training
 fit <- curegmifs(Surv(Time, Censor) ~ .,
-                  data = training, x_latency = training,
-                  model = "weibull", thresh = 1e-4, maxit = 2000,
-                  epsilon = 0.01, verbose = FALSE)
+  data = training, x_latency = training,
+  model = "weibull", thresh = 1e-4, maxit = 2000,
+  epsilon = 0.01, verbose = FALSE
+)
 predict_train <- predict(fit)
 names(predict_train)
 testing <- temp$testing

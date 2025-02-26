@@ -13,14 +13,14 @@
 \item{...}{other arguments.}
 }
 \value{
-prints the following items extracted from the object fit using
-\code{curegmifs} or \code{cureem}: the step and value that maximizes the
-log-likelihood; the step and value that minimizes the AIC, modified AIC
+prints the number of non-zero coefficients from the incidence and
+latency portions of the fitted mixture cure model when using the minimum AIC
+to select the final model. When fitting a model using \code{curegmifs} or
+\code{cureem} the summary function additionally prints results associated
+with the following model selection methods: the step and value that maximizes
+the log-likelihood; the step and value that minimizes the AIC, modified AIC
 (mAIC), corrected AIC (cAIC), BIC, modified BIC (mBIC), and extended BIC
-(EBIC). Returns log-likelihood, AIC, and BIC if the object was fit using
-\code{cv_curegmifs} or \code{cv_cureem} at the optimal cross-validated values
-if no FDR control; the number of non-zero incidence and latency variables is
-returned when cross-validation is used together with FDR control.
+(EBIC).
 }
 \description{
 \code{summary} method for a mixturecure object fit using \code{curegmifs},
@@ -32,9 +32,10 @@ set.seed(1234)
 temp <- generate_cure_data(n = 100, j = 10, n_true = 10, a = 1.8)
 training <- temp$training
 fit <- curegmifs(Surv(Time, Censor) ~ .,
-                       data = training, x_latency = training,
-                       model = "weibull", thresh = 1e-4, maxit = 2000,
-                       epsilon = 0.01, verbose = FALSE)
+  data = training, x_latency = training,
+  model = "weibull", thresh = 1e-4, maxit = 2000,
+  epsilon = 0.01, verbose = FALSE
+)
 summary(fit)
 }
 \seealso{

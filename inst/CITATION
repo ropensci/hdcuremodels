@@ -1,3 +1,5 @@
+citHeader("To cite hdcuremodels in publications use: ")
+
 bibentry(
   bibtype  = "Article",
   title    = "Identifying long-term survivors and those at higher or lower risk of relapse among patients with cytogenetically normal acute myeloid leukemia using a high-dimensional mixture cure model",

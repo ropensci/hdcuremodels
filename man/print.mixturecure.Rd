@@ -4,30 +4,37 @@
 \alias{print.mixturecure}
 \title{Print the contents of a mixture cure fitted object}
 \usage{
-\method{print}{mixturecure}(x, ...)
+\method{print}{mixturecure}(x, max = 6, ...)
 }
 \arguments{
 \item{x}{a \code{mixturecure} object resulting from \code{curegmifs},
 \code{cureem}, \code{cv_cureem}, or \code{cv_curegmifs}.}
 
+\item{max}{maximum number of rows in a matrix or elements in a vector to
+display}
+
 \item{...}{other arguments.}
 }
 \value{
-names of the objects in a mixturecure object fit using \code{cureem},
+prints coefficient estimates for the incidence portion of the model
+and if included, prints the coefficient estimates for the latency portion of
+the model. Also prints rate for exponential and Weibull models and alpha for
+the Weibull mixture cure model. Returns all objects fit using \code{cureem},
 \code{curegmifs}, \code{cv_cureem}, or \code{cv_curegmifs}.
 }
 \description{
-This function prints the names of the list objects from a \code{curegmifs},
-\code{cureem}, \code{cv_cureem}, or \code{cv_curegmifs} fitted model.
+This function prints the first several incidence and latency coefficients and
+the rate (exponential and Weibull) and alpha (Weibull) when fitting a
+parametric MCM and returns the fitted object invisible to the user.
 }
 \note{
-The contents of an \code{mixturecure} fitted object differ depending
+The contents of a \code{mixturecure} fitted object differ depending
 upon whether the EM (\code{cureem}) or GMIFS (\code{curegmifs}) algorithm is
-used for model fitting. Also, the output differs depending upon whether
-\code{x_latency} is specified in the model (i.e., variables are included in
-the latency portion of the model fit) or only \code{terms} on the right hand
-side of the equation are included (i.e., variables are included in the
-incidence portion of the model).
+used for model fitting or if cross-validation is used. Also, the output
+differs depending upon whether \code{x_latency} is specified in the model
+(i.e., variables are included in the latency portion of the model fit) or
+only \code{terms} on the right hand side of the equation are included (i.e.,
+variables are included in the incidence portion of the model).
 }
 \examples{
 library(survival)
@@ -35,9 +42,10 @@ set.seed(1234)
 temp <- generate_cure_data(n = 100, j = 10, n_true = 10, a = 1.8)
 training <- temp$training
 fit <- curegmifs(Surv(Time, Censor) ~ .,
-                       data = training, x_latency = training,
-                       model = "weibull", thresh = 1e-4, maxit = 2000,
-                       epsilon = 0.01, verbose = FALSE)
+  data = training, x_latency = training,
+  model = "weibull", thresh = 1e-4, maxit = 2000,
+  epsilon = 0.01, verbose = FALSE
+)
 print(fit)
 }
 \seealso{

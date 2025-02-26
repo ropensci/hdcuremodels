@@ -47,21 +47,24 @@
 #' nonzerocure_test(km_fit)
 nonzerocure_test <- function(object, reps = 1000, seed = NULL, plot = FALSE,
                              b = NULL) {
-  if (!(c("survfit") %in% class(object)))
+  if (!(c("survfit") %in% class(object))) {
     stop("object must be a survfit object")
+  }
   if (is.null(object$strata)) {
     exp_model <- survival::survreg(as.formula(object$call$formula),
-                                   data = eval(parse(text = object$call$data)),
-                                   dist = "exponential")
+      data = eval(parse(text = object$call$data)),
+      dist = "exponential"
+    )
     mcm <- flexsurvcure::flexsurvcure(as.formula(object$call$formula),
-                                   data = eval(parse(text = object$call$data)),
-                                   dist = "exp", mixture = TRUE)
+      data = eval(parse(text = object$call$data)),
+      dist = "exp", mixture = TRUE
+    )
     susceptible <- 1 - cure_estimate(object)
     mean <- unname(exp(exp_model$coefficients["(Intercept)"]))
     rate <- unname(mcm$coefficients["rate"])
     cured <- cure_estimate(object)
     if (class(eval(parse(text = object$call$data))) %in%
-          c("ExpressionSet", "SummarizedExperiment")) {
+      c("ExpressionSet", "SummarizedExperiment")) {
       n <- dim(eval(parse(text = object$call$data)))[2]
     } else {
       n <- dim(eval(parse(text = object$call$data)))[1]
@@ -71,38 +74,48 @@ nonzerocure_test <- function(object, reps = 1000, seed = NULL, plot = FALSE,
     } else {
       time_95 <- 1 / exp(rate)
     }
-    p <- sim_cure(n, mu = mean, censor_mu = time_95, reps = reps, seed = seed,
-                  b = b)
+    p <- sim_cure(n,
+      mu = mean, censor_mu = time_95, reps = reps, seed = seed,
+      b = b
+    )
     p_value <- ifelse(sum(p < susceptible) / reps == 0, paste("<", 1 / reps),
-                      sum(p < susceptible) / reps)
+      sum(p < susceptible) / reps
+    )
     if (plot) {
-      hist(p, xlab = "Proportion Susceptible",
-           main = "Non-parametric Reference Distribution")
+      hist(p,
+        xlab = "Proportion Susceptible",
+        main = "Non-parametric Reference Distribution"
+      )
     }
   } else {
     strata <- gsub(".*=", "", names(object$strata))
-    mean <- numeric()
-    rate <- numeric()
+    mean <- rep(NA, length(strata))
+    rate <- rep(NA, length(strata))
     for (i in seq_along(strata)) {
       ff <- as.formula(object$call$formula)
       tt <- terms(ff)
       tt[-1]
       rhs_variable <- all.vars(as.formula(object$call$formula))[-(1:2)]
-      #if (class(eval(parse(text = object$call$data))) %in%
-      #c("ExpressionSet", "SummarizedExperiment")) {
+
       exp_model <- survival::survreg(tt[-1],
-                        data = (eval(parse(text = object$call$data))),
-                        dist = "exponential",
-                        subset = ((eval(parse(text =
-                          object$call$data)))[, rhs_variable] == strata[i]))
-      mean <- c(mean, exp(exp_model$coefficients["(Intercept)"]))
+        data = (eval(parse(text = object$call$data))),
+        dist = "exponential",
+        subset = ((eval(parse(
+          text =
+            object$call$data
+        )))[, rhs_variable] == strata[i])
+      )
+      mean[i] <- exp(exp_model$coefficients["(Intercept)"])
       mcm <- flexsurvcure::flexsurvcure(formula(tt[-1]),
-                        data = (eval(parse(text = object$call$data))),
-                        subset = ((eval(parse(text =
-                          object$call$data)))[, rhs_variable] == strata[i]),
-                        dist = "exp", mixture = TRUE)
-      rate <- c(rate, mcm$coefficients["rate"])
-      #}
+        data = (eval(parse(text = object$call$data))),
+        subset = ((eval(parse(
+          text =
+            object$call$data
+        )))[, rhs_variable] == strata[i]),
+        dist = "exp", mixture = TRUE
+      )
+      rate[i] <- mcm$coefficients["rate"]
+      # }
     }
     mean <- unname(mean)
     rate <- unname(rate)
@@ -113,34 +126,43 @@ nonzerocure_test <- function(object, reps = 1000, seed = NULL, plot = FALSE,
     for (i in seq_along(strata)) {
       if (cured[i] > 0 && cured[i] < 1) {
         time_95[i] <- 1 / exp(rate[i]) - log((0.05 * cured[i]) /
-                                               (0.95 * (1 - cured[i])))
+          (0.95 * (1 - cured[i])))
       } else {
         time_95[i] <- 1 / exp(rate[i])
       }
     }
     p <- list()
     for (i in seq_along(object$strata)) {
-      p[[i]] <- sim_cure(n[i], mu = mean[i], censor_mu = time_95[i],
-                         reps = reps, seed = seed, b = b)
+      p[[i]] <- sim_cure(n[i],
+        mu = mean[i], censor_mu = time_95[i],
+        reps = reps, seed = seed, b = b
+      )
     }
     p_value <- numeric()
     for (i in seq_along(object$strata)) {
       p_value[i] <- ifelse(sum(p[[i]] <
-                                 susceptible[i, "Susceptible"]) / reps == 0,
-                           paste("<", 1  / reps),
-                           sum(p[[i]] < susceptible[i, "Susceptible"]) / reps)
+        susceptible[i, "Susceptible"]) / reps == 0,
+      paste("<", 1 / reps),
+      sum(p[[i]] < susceptible[i, "Susceptible"]) / reps
+      )
     }
     names(p_value) <- names(object$strata)
     if (plot) {
       for (i in seq_along(p)) {
-        hist(p[[i]], xlab = "Proportion Susceptible",
-             main = paste(names(object$strata[i]),
-                          "Non-parametric Reference Distribution", sep = " "))
+        hist(p[[i]],
+          xlab = "Proportion Susceptible",
+          main = paste(names(object$strata[i]),
+            "Non-parametric Reference Distribution",
+            sep = " "
+          )
+        )
       }
     }
     susceptible <- susceptible[, "Susceptible"]
     names(time_95) <- names(susceptible) <- names(cured) <- names(object$strata)
   }
-  list(proportion_susceptible = susceptible, proportion_cured = cured,
-       p_value = p_value, time_95_percent_of_events = time_95)
+  list(
+    proportion_susceptible = susceptible, proportion_cured = cured,
+    p_value = p_value, time_95_percent_of_events = time_95
+  )
 }

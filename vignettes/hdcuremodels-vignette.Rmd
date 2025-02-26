@@ -40,6 +40,7 @@ The package includes two datasets: `amltrain` (Archer et al, 2024) and `amltest`
 We also included a function, `generate_cure_data`, that allows the user to generate time-to-event data that includes a cured fraction. Various parameters in this function will allow the user to explore the impact of sample size (`n`), number of variables (`j`), number of variables truly associated with the outcome (`n_true`), effect size or signal amplitude (`a`), and correlation among variables (`rho`) on variable selection and model fit.
 
 ```{r}
+set.seed(16)
 data <- generate_cure_data(n = 200, j = 50, n_true = 10, a = 1.8, rho = 0.2)
 training <- data$training
 testing <- data$testing
@@ -90,8 +91,10 @@ args(curegmifs)
 The `curegmifs` function accepts a model formula that specifies the time-to-event outcome on the left-hand side of the equation as a `Surv` object and any incidence predictor variable(s) on the right-hand side of the equation. Note that at least some incidence predictor variables must be included in order to fit a penalized mixture cure model, otherwise, the `survival` package functions should be used to fit time-to-event models that lack an incidence component. The `data` parameter specifies the name of the data.frame and the optional `subset` parameter can be used to limit model fitting to a subset of observations in the data. The `x_latency` parameter specifies the variables to be included in the latency portion of the model and can be either a matrix of predictors, a model formula with the right hand side specifying the latency variables, or the same data.frame passed to the `data` parameter. Note that when using the model formula syntax for `x_latency` it cannot handle `x_latency = ~ .`. The `curegmifs` function can fit either a either `"weibull"` or `"exponential"` model, which is specified using the `model` parameter. Other  parameters include `penalty_factor_inc` which is an optional numeric vector with length equal to the number of incidence variables, where 1 indicates that variable should be penalized and 0 indicates that variable is unpenalized (default is that all variables are penalized). Likewise `penalty_factor_lat` is an optional numeric vector with length equal to the number of latency variables, where 1 indicates that variable should be penalized and 0 indicates that variable is unpenalized (default is that all variables are penalized). Unpenalized predictors are those that we want to coerce into the model (e.g., age) so that no penalty is applied. By default the variables are centered and scaled (`scale = TRUE`). The parameter `epsilon` is the size of the coefficient update at each step (default = 0.001). The GMIFS algorithm stops when either the difference between successive log-likelihoods  is less than `thresh` (default 1e-05) or the algorithm has exceeded the maximum number of iterations (`maxit`). Initialization is automatically provided by the function though `inits` can be used to provide initial values for the incidence intercept, unpenalized incidence and latency coefficients, rate parameter, and shape parameter if fitting a Weibull mixture cure model. By default `verbose = TRUE` so that running information is echoed to the R console.
 
 ```{r, eval=FALSE}
-fitgmifs <- curegmifs(Surv(cryr, relapse.death) ~ ., data = amltrain, 
-                      x_latency = amltrain, model = "weibull")
+fitgmifs <- curegmifs(Surv(cryr, relapse.death) ~ .,
+  data = amltrain,
+  x_latency = amltrain, model = "weibull"
+)
 ```
 
 Details of the GMIFS mixture cure model have been described in Fu et al, 2022.
@@ -109,9 +112,11 @@ The `cureem` function accepts a model formula that specifies the time-to-event o
 Details of the E-M MCM have been described in the Supplementary Material of Archer et al, 2024.
 
 ```{r}
-fitem <- cureem(Surv(cryr, relapse.death) ~ ., data = amltrain, 
-                      x_latency = amltrain, model = "cox", 
-                      lambda_inc = 0.009993, lambda_lat = 0.02655)
+fitem <- cureem(Surv(cryr, relapse.death) ~ .,
+  data = amltrain,
+  x_latency = amltrain, model = "cox",
+  lambda_inc = 0.009993, lambda_lat = 0.02655
+)
 ```
 
 ### Cross-validation
@@ -127,12 +132,13 @@ The `cv_cureem` function accepts a model formula that specifies the time-to-even
 As with `cureem`, the iterative process stops when the differences between successive expected penalized complete-data log-likelihoods for both incidence and latency components are less than `thresh` (default = 0.001). By default the variables are centered and scaled (`scale = TRUE`). The user can specify the maximum number of passes over the data for each lambda using `maxit`, which defaults to 100 when `penalty = "lasso"` and 1000 when either `penalty = "MCP"` or `penalty = "SCAD"`. Initialization is automatically provided by the function though `inits` can be used to provide initial values for the incidence intercept, unpenalized indicidence and latency coefficients, rate parameter (for Weibull and exponential MCM), and shape parameter (for Weibull MCM). When  `model = "cox"`, `inits` should also include a numeric vector for the latency survival probabilities. Optionally, the user can supply a numeric vector to search for the optimal penalty for the incidence portion (`lambda_inc_list`) and a numeric vector to search for the optimal penalty for the latency portion (`lambda_lat_list`) of the model. By default the number of values to search for the optimal incidence penalty is 10 which can be changed by specifying an integer for `nlambda_int` and similarly for latency by specifying an integer for `nlambda_lat`. If `penalty` is either `"MCP"` or `"SCAD"`, the user can optionally specify the penalization parameter $\gamma$ for the incidence (`gamma_inc`) and latency (`gamma_lat`) portions of the model. By default `verbose = TRUE` so that running information is echoed to the R console. The user can also specify the penalty parameter for the incidence (`lambda_inc`) and latency (`lambda_lat`) portions of the model and the $\gamma$ penalty when MCP or SCAD is used (`gamma_inc` and `gamma_lat`).
 
 ```{r}
-set.seed(26)
-fit_cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,
-                     x_latency = training, fdr_control = FALSE,
-                     grid_tuning = FALSE, nlambda_inc = 10, 
-                     nlambda_lat = 10, n_folds = 2, seed = 23, 
-                     verbose = TRUE)
+fit_cv <- cv_cureem(Surv(Time, Censor) ~ .,
+  data = training,
+  x_latency = training, fdr_control = FALSE,
+  grid_tuning = FALSE, nlambda_inc = 10,
+  nlambda_lat = 10, n_folds = 2, seed = 23,
+  verbose = TRUE
+)
 ```
 
 Notice in the previous section describing `cureem` that values were supplied for the $\lambda$ penalty parameters for both the incidence and latency portions of the model using `lambda_inc` and `lambda_lat`. Those values were determined from the following repeated 10-fold cross-validation where the optimal $\lambda$ for the incidence portion was identified by fitting the models to maximize the AUC while the optimal $\lambda$ for the latency portion was identified by fitting the models to maximize the C-statistic. After the CV procedure the mode for each was taken. Because the run time for the repeated 10-fold CV procedure was 5.65 hours, this code chunk is not evaluated herein.
@@ -141,22 +147,25 @@ Notice in the previous section describing `cureem` that values were supplied for
 lambda_inc <- lambda_lat <- rep(0, 100)
 for (k in 1:100) {
   print(k)
-  coxem_auc_k <- cv_cureem(Surv(cryr, relapse.death) ~ ., 
-                           data = amltrain, x_latency = amltrain, 
-                           model = "cox", penalty = "lasso", 
-                           scale = TRUE, grid_tuning = TRUE, 
-                           nfolds = 10, nlambda_inc = 20, 
-                           nlambda_lat = 20, verbose = FALSE, 
-                           parallel = TRUE, measure_inc = "auc")
+  coxem_auc_k <- cv_cureem(Surv(cryr, relapse.death) ~ .,
+    data = amltrain, x_latency = amltrain,
+    model = "cox", penalty = "lasso",
+    scale = TRUE, grid_tuning = TRUE,
+    nfolds = 10, nlambda_inc = 20,
+    nlambda_lat = 20, verbose = FALSE,
+    parallel = TRUE, measure_inc = "auc"
+  )
   lambda_inc[k] <- coxem_auc_k$selected_lambda_inc
-  coxem_c_k <- cv_cureem(Surv(cryr, relapse.death) ~ ., data = amltrain, 
-                           x_latency = amltrain, model = "cox", 
-                           penalty = "lasso", scale = TRUE, 
-                           grid_tuning = TRUE, nfolds = 10, 
-                           nlambda_inc = 20, nlambda_lat = 20, 
-                           verbose = FALSE, parallel = TRUE, 
-                           measure_inc = "c") 
-  lambda_lat[k]<-coxem_c_k$selected_lambda_lat
+  coxem_c_k <- cv_cureem(Surv(cryr, relapse.death) ~ .,
+    data = amltrain,
+    x_latency = amltrain, model = "cox",
+    penalty = "lasso", scale = TRUE,
+    grid_tuning = TRUE, nfolds = 10,
+    nlambda_inc = 20, nlambda_lat = 20,
+    verbose = FALSE, parallel = TRUE,
+    measure_inc = "c"
+  )
+  lambda_lat[k] <- coxem_c_k$selected_lambda_lat
 }
 table(lambda_inc)
 table(lambda_lat)
@@ -171,7 +180,7 @@ args(cv_curegmifs)
 The `cv_curegmifs` function accepts a model formula that specifies the time-to-event outcome on the left-hand side of the equation as a `Surv` object and any incidence predictor variable(s) on the right-hand side of the equation. Note that at least some incidence predictor variables must be included in order to fit a penalized mixture cure model, otherwise, the `survival` package functions should be used to fit time-to-event models that lack an incidence component. The `data` parameter specifies the name of the data.frame and the optional `subset` parameter can be used to limit model fitting to a subset of observations in the data. The `x_latency` parameter specifies the variables to be included in the latency portion of the model and can be either a matrix of predictors, a model formula with the right hand side specifying the latency variables, or the same data.frame passed to the `data` parameter. Note that when using the model formula syntax for `x_latency` it cannot handle `x_latency = ~ .`. The `cv_curegmifs` function can fit either a either `"weibull"` or `"exponential"` model, which is specified using the `model` parameter. Other  parameters include `penalty_factor_inc` which is an optional numeric vector with length equal to the number of incidence variables, where 1 indicates that variable should be penalized and 0 indicates that variable is unpenalized (default is that all variables are penalized). Likewise `penalty_factor_lat` is an optional numeric vector with length equal to the number of latency variables, where 1 indicates that variable should be penalized and 0 indicates that variable is unpenalized (default is that all variables are penalized). Unpenalized predictors are those that we want to coerce into the model (e.g., age) so that no penalty is applied. The user can choose to use the model-X knock-off procedure to control the false discovery rate (FDR) by specifying `fdr_control = TRUE` and optionally changing the FDR threshold (default `fdr = 0.20`) (Candes et al, 2018). By default the variables are centered and scaled (`scale = TRUE`). The parameter `epsilon` is the size of the coefficient update at each step (default = 0.001). The GMIFS algorithm stops when either the difference between successive log-likelihoods  is less than `thresh` (default 1e-05) or the algorithm has exceeded the maximum number of iterations (`maxit`). Initialization is automatically provided by the function though `inits` can be used to provide initial values for the incidence intercept, unpenalized indicidence and latency coefficients, rate parameter, and shape parameter if fitting a Weibull mixture cure model. Other useful parameters for the cross-validation function include `n_folds`, an integer specifying the number of folds for the k-fold cross-validation procedure (default is 5); `measure_inc` which specifies the evaluation criterion used in selecting the optimal penalty which can be `"c"` for the C-statistic using cure status weighting (Asano and Hirakawa, 2017) or `"auc"` for cure prediction using mean score imputation (Asano et al, 2014) (default is `measure_inc = "c"`); `one_se` is a logical variable that if TRUE then the one standard error rule is used which selects the most parsimonious model having evaluation criterion no more than one standard error worse than that of the best evaluation criterion (default is FALSE); and `cure_cutoff` which is a numeric value representing the cutoff time used to represent subjects not experiencing the event by this time are cured which is used to produce a proxy for the unobserved cure status when calculating the C-statistic and AUC (default is 5). If the logical parameter `parallel` is TRUE, cross-validation will be performed using parallel processing which requires the `foreach` and `doMC` R packages. To foster reproducibility of cross-validation results, `seed` can be set to an integer. By default `verbose = TRUE` so that running information is echoed to the R console.
 
 ## Other Package Functions
-The four modeling functions `cureem`, `curegmifs`, `cv_cureem`, and `cv_curegmifs` all result in an object of class `mixturecure`. Generic functions for resulting `mixturecure` objects are available for extracting meaningful results. The `print` function returns all objects stored in the fitted model.
+The four modeling functions `cureem`, `curegmifs`, `cv_cureem`, and `cv_curegmifs` all result in an object of class `mixturecure`. Generic functions for resulting `mixturecure` objects are available for extracting meaningful results. The `print` function prints the first several incidence and latency coefficients and the rate (exponential and Weibull) and alpha (Weibull) when fitting a parametric MCM and returns the fitted object invisible to the user.
 
 ```{r print}
 print(fitem)
@@ -179,6 +188,8 @@ print(fitem)
 
 The `summary` function prints the following output for a model fit using either `cureem` or `curegmifs`:
 
+* the number of non-zero coefficients in the incidence portion of the fitted mixture cure model when using the minimum AIC
+* the number of non-zero coefficients in the latency portions of the fitted mixture cure model when using the minimum AIC
 * the step and value that maximizes the log-likelihood;
 * the step and value that minimizes the AIC;  
 * the step and value that minimizes the modified AIC (mAIC); 
@@ -193,10 +204,9 @@ summary(fitem)
 
 The `summary` function prints the following output for a model fit using either `cv_cureem` or `cv_curegmifs` when `fdr_control = FALSE`:
 
-* logLik;
-* AIC;
-* BIC
-at the optimal step.
+* the number of non-zero coefficients in the incidence portion of the fitted mixture cure model 
+* the number of non-zero coefficients in the latency portions of the fitted mixture cure model 
+
 
 ```{r}
 summary(fit_cv)
@@ -265,18 +275,18 @@ km_cured <- survfit(Surv(cryr, relapse.death) ~ p_group, data = amltrain)
 ```
 
 ```{r, echo = FALSE, fig = TRUE}
-plot(km_cured, mark.time = TRUE, lty = c(1, 2), xlab = "Time (years)", ylab = "Relapse-free survival") 
+plot(km_cured, mark.time = TRUE, lty = c(1, 2), xlab = "Time (years)", ylab = "Relapse-free survival")
 legend(c(.9, .1), legend = c("Cured", "Susceptible"), lty = c(1, 2), bty = "n")
 ```
 
 We can assess how well our MCM identified higher versus lower risk patients among those predicted to be susceptible visually by examining the Kaplan-Meier curves.
 
 ```{r}
-km_suscept <- survfit(Surv(cryr, relapse.death) ~ train_predict$latency_risk, data = amltrain, subset = (p_group == "Susceptible")) 
+km_suscept <- survfit(Surv(cryr, relapse.death) ~ train_predict$latency_risk, data = amltrain, subset = (p_group == "Susceptible"))
 ```
 
 ```{r, echo = FALSE, fig = TRUE}
-plot(km_suscept, mark.time = TRUE, lty = c(1, 2), xlab = "Time (years)", ylab = "Relapse-free survival") 
+plot(km_suscept, mark.time = TRUE, lty = c(1, 2), xlab = "Time (years)", ylab = "Relapse-free survival")
 legend(c(.9, .1), legend = c("Higher risk", "Lower risk"), lty = c(1, 2), bty = "n")
 ```
 
@@ -295,20 +305,20 @@ test_p_group <- ifelse(test_predict$p_uncured < 0.50, "Cured", "Susceptible")
 Then we can assess how well our MCM identified patients likely to be cured from those likely to be susceptible visually by examining the Kaplan-Meier curves.
 
 ```{r}
-km_cured_test <- survfit(Surv(cryr, relapse.death) ~ test_p_group, data = amltest) 
+km_cured_test <- survfit(Surv(cryr, relapse.death) ~ test_p_group, data = amltest)
 ```
 
 ```{r, echo = FALSE, fig = TRUE}
-plot(km_cured_test, mark.time = TRUE, lty = c(1, 2), xlab = "Time (years)", ylab = "Relapse-free survival") 
+plot(km_cured_test, mark.time = TRUE, lty = c(1, 2), xlab = "Time (years)", ylab = "Relapse-free survival")
 legend(c(.4, .1), legend = c("Cured", "Susceptible"), lty = c(1, 2), bty = "n")
 ```
 
 ```{r}
-km_suscept_test <- survfit(Surv(cryr, relapse.death) ~ test_predict$latency_risk, data = amltest, subset = (test_p_group == "Susceptible")) 
+km_suscept_test <- survfit(Surv(cryr, relapse.death) ~ test_predict$latency_risk, data = amltest, subset = (test_p_group == "Susceptible"))
 ```
 
 ```{r, echo = FALSE, fig = TRUE}
-plot(km_suscept_test, mark.time = TRUE, lty = c(1, 2), xlab = "Time (years)", ylab = "Relapse-free survival") 
+plot(km_suscept_test, mark.time = TRUE, lty = c(1, 2), xlab = "Time (years)", ylab = "Relapse-free survival")
 legend(c(.4, .1), legend = c("Higher risk", "Lower risk"), lty = c(1, 2), bty = "n")
 ```
 

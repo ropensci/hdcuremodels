@@ -87,8 +87,10 @@ set.seed(1234)
 data <- generate_cure_data(n = 200, j = 50, n_true = 10, a = 1.8, rho = 0.2)
 training <- data$training
 testing <- data$testing
-fit <- cureem(Surv(Time, Censor) ~ ., data = training,
-              x_latency = training, model = "cox", penalty = "lasso",
-              lambda_inc = 0.05, lambda_lat = 0.05,
-              gamma_inc = 6, gamma_lat = 10)
+fit <- cureem(Surv(Time, Censor) ~ .,
+  data = training,
+  x_latency = training, model = "cox", penalty = "lasso",
+  lambda_inc = 0.05, lambda_lat = 0.05,
+  gamma_inc = 6, gamma_lat = 10
+)
 }

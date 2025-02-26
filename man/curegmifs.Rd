@@ -133,9 +133,10 @@ temp <- generate_cure_data(n = 100, j = 10, n_true = 10, a = 1.8)
 training <- temp$training
 
 fit <- curegmifs(Surv(Time, Censor) ~ .,
-         data = training, x_latency = training,
-         model = "weibull", thresh = 1e-4, maxit = 2000, epsilon = 0.01,
-         verbose = FALSE)
+  data = training, x_latency = training,
+  model = "weibull", thresh = 1e-4, maxit = 2000, epsilon = 0.01,
+  verbose = FALSE
+)
 }
 \references{
 Fu, H., Nicolet, D., Mrozek, K., Stone, R. M., Eisfeld, A. K.,

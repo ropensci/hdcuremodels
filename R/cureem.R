@@ -131,9 +131,11 @@
 #' set.seed(1234)
 #' temp <- generate_cure_data(n = 80, j = 100, n_true = 10, a = 1.8)
 #' training <- temp$training
-#' fit <- cureem(Surv(Time, Censor) ~ ., data = training, x_latency = training,
-#'                  model = "cox", penalty = "lasso", lambda_inc = 0.1,
-#'                  lambda_lat = 0.1, gamma_inc = 6, gamma_lat = 10)
+#' fit <- cureem(Surv(Time, Censor) ~ .,
+#'   data = training, x_latency = training,
+#'   model = "cox", penalty = "lasso", lambda_inc = 0.1,
+#'   lambda_lat = 0.1, gamma_inc = 6, gamma_lat = 10
+#' )
 cureem <- function(formula, data, subset, x_latency = NULL,
                    model = c("cox", "weibull", "exponential"),
                    penalty = c("lasso", "MCP", "SCAD"),
@@ -147,10 +149,12 @@ cureem <- function(formula, data, subset, x_latency = NULL,
   if (m[1] == 0) stop("A \"formula\" argument is required")
   mf <- mf[c(1L, m)]
   mf[[1L]] <- as.name("model.frame")
-  if (missing(data))
+  if (missing(data)) {
     mf[["data"]] <- environment(formula)
-  if (missing(data))
+  }
+  if (missing(data)) {
     data <- environment(formula)
+  }
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
   model <- match.arg(model)
@@ -165,8 +169,9 @@ cureem <- function(formula, data, subset, x_latency = NULL,
     } else {
       e <- substitute(subset)
       r <- eval(e, data)
-      if (!is.logical(r))
+      if (!is.logical(r)) {
         stop("'subset' must evaluate to logical")
+      }
       r <- r & !is.na(r)
     }
     if ("character" %in% is(x_latency) || "numeric" %in% is(x_latency)) {
@@ -180,9 +185,12 @@ cureem <- function(formula, data, subset, x_latency = NULL,
       survnames <- strsplit(as.character(text), ",")
       time_name <- substr(survnames[[2]][1], 6, nchar(survnames[[2]][1]))
       censor_name <- trimws(strsplit(survnames[[2]][2], ")")[[1]][1])
-      x_latency <- x_latency[r, !(colnames(x_latency) %in% c(time_name,
-                                                             censor_name)),
-                             drop = FALSE]
+      x_latency <- x_latency[r, !(colnames(x_latency) %in% c(
+        time_name,
+        censor_name
+      )),
+      drop = FALSE
+      ]
       x_latency <- as.matrix(x_latency)
     } else if ("formula" %in% is(x_latency)) {
       x_latency <- model.matrix(update.formula(x_latency, new = ~ . - 1), data)
@@ -195,24 +203,32 @@ cureem <- function(formula, data, subset, x_latency = NULL,
   }
   x_lat <- x_latency
   if (is.null(maxit)) maxit <- ifelse(penalty == "lasso", 100, 1000)
-  if (nrow(x_inc) != nrow(x_lat) || nrow(x_lat) != length(time) || length(time) != length(event))
+  if (nrow(x_inc) != nrow(x_lat) || nrow(x_lat) != length(time) || length(time) != length(event)) {
     stop("Input dimension mismatch")
+  }
   if (class(x_inc)[1] == "data.frame" || class(x_lat)[1] == "data.frame") {
     x_inc <- as.matrix(x_inc)
     x_lat <- as.matrix(x_lat)
   }
-  if (is.null(penalty_factor_inc))
+  if (is.null(penalty_factor_inc)) {
     penalty_factor_inc <- rep(1, ncol(x_inc))
-  if (is.null(penalty_factor_lat))
+  }
+  if (is.null(penalty_factor_lat)) {
     penalty_factor_lat <- rep(1, ncol(x_lat))
-  if (any(!c(penalty_factor_inc, penalty_factor_inc) %in% c(0, 1)))
+  }
+  if (any(!c(penalty_factor_inc, penalty_factor_inc) %in% c(0, 1))) {
     stop("Penalty factors specified in penalty_factor_inc and
          penalty_factor_inc can only include 0 or 1")
-  if (any(c(lambda_inc, lambda_lat, gamma_inc, gamma_lat) <= 0))
+  }
+  if (any(c(lambda_inc, lambda_lat, gamma_inc, gamma_lat) <= 0)) {
     stop("Penalty pamameters lambda and gamma should be positive")
-  if (!is.null(inits))
-    inits <- inits_check(model, N = length(time), penalty_factor_inc,
-                         penalty_factor_lat, inits)
+  }
+  if (!is.null(inits)) {
+    inits <- inits_check(model,
+      N = length(time), penalty_factor_inc,
+      penalty_factor_lat, inits
+    )
+  }
   if (model != "cox" && penalty != "lasso") {
     warning("MCP/SCAD penalized parametric models are not currently supported.
             An L1 penalized model was fitted instead.")
@@ -223,35 +239,50 @@ cureem <- function(formula, data, subset, x_latency = NULL,
   w_u <- self_scale(x_lat[, penalty_factor_lat == 0, drop = FALSE], scale)
   w_p <- self_scale(x_lat[, penalty_factor_lat == 1, drop = FALSE], scale)
   if (model == "cox" && penalty == "lasso") {
-    fit <- cox_l1(x_u, x_p, w_u, w_p, time, event, lambda_inc, lambda_lat,
-                  inits, maxit, thresh)
+    fit <- cox_l1(
+      x_u, x_p, w_u, w_p, time, event, lambda_inc, lambda_lat,
+      inits, maxit, thresh
+    )
   } else if (model == "cox" && penalty %in% c("MCP", "SCAD")) {
-    fit <- cox_mcp_scad(x_u, x_p, w_u, w_p, time, event, penalty, lambda_inc,
-                        lambda_lat, gamma_inc, gamma_lat, inits, maxit, thresh)
+    fit <- cox_mcp_scad(
+      x_u, x_p, w_u, w_p, time, event, penalty, lambda_inc,
+      lambda_lat, gamma_inc, gamma_lat, inits, maxit, thresh
+    )
   } else if (model == "weibull") {
-    fit <- weib_EM(x_u, x_p, w_u, w_p, time, event, lambda_inc, lambda_lat,
-                   inits, maxit, thresh)
+    fit <- weib_EM(
+      x_u, x_p, w_u, w_p, time, event, lambda_inc, lambda_lat,
+      inits, maxit, thresh
+    )
   } else if (model == "exponential") {
-    fit <- exp_EM(x_u, x_p, w_u, w_p, time, event, lambda_inc, lambda_lat,
-                  inits, maxit, thresh)
+    fit <- exp_EM(
+      x_u, x_p, w_u, w_p, time, event, lambda_inc, lambda_lat,
+      inits, maxit, thresh
+    )
   }
-  b_path <- matrix(NA, dim(fit$b_p_path)[1], ncol(x_inc))
-  beta_path <- matrix(NA, dim(fit$beta_p_path)[1], ncol(x_lat))
+  b_path <- matrix(NA, nrow = dim(fit$b_p_path)[1], ncol = dim(x_inc)[2])
+  beta_path <- matrix(NA, nrow = dim(fit$beta_p_path)[1], ncol = dim(x_lat)[2])
   b_path[, penalty_factor_inc == 0] <- fit$b_u_path
   b_path[, penalty_factor_inc == 1] <- fit$b_p_path
   beta_path[, penalty_factor_lat == 0] <- fit$beta_u_path
   beta_path[, penalty_factor_lat == 1] <- fit$beta_p_path
   colnames(b_path) <- colnames(x_inc)
   colnames(beta_path) <- colnames(x_lat)
-  output <- list(b_path = b_path, beta_path = beta_path,
-                 b0_path = fit$itct_path, logLik_inc = fit$lik_inc,
-                 logLik_lat = fit$lik_lat, x_incidence = x_inc,
-                 x_latency = x_lat, y = y, model = model, scale = scale,
-                 method = "EM", call = cl)
-  if (model %in% c("exponential", "weibull"))
+  b0_path <- fit$itct_path
+  logLik_inc <- fit$lik_inc
+  logLik_lat <- fit$lik_lat
+  output <- list(
+    b_path = b_path, beta_path = beta_path,
+    b0_path = b0_path, logLik_inc = logLik_inc,
+    logLik_lat = logLik_lat, x_incidence = x_inc,
+    x_latency = x_lat, y = y, model = model, scale = scale,
+    method = "EM", call = cl
+  )
+  if (model %in% c("exponential", "weibull")) {
     output$rate <- fit$lambda_path
-  if (model == "weibull")
+  }
+  if (model == "weibull") {
     output$alpha <- fit$alpha_path
+  }
   output$cv <- FALSE
   class(output) <- "mixturecure"
   return(output)

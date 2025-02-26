@@ -141,10 +141,12 @@
 #' training <- temp$training
 #'
 # Fit a penalized Weibull MCM using GMIFS selecting parameters using 2-fold CV
-#' fit.cv <- cv_curegmifs(Surv(Time, Censor) ~ ., data = training,
-#'                       x_latency = training, fdr_control = FALSE,
-#'                       maxit = 450, epsilon = 0.01 ,n_folds = 2,
-#'                      seed = 23, verbose = TRUE)
+#' fit.cv <- cv_curegmifs(Surv(Time, Censor) ~ .,
+#'   data = training,
+#'   x_latency = training, fdr_control = FALSE,
+#'   maxit = 450, epsilon = 0.01, n_folds = 2,
+#'   seed = 23, verbose = TRUE
+#' )
 cv_curegmifs <- function(formula, data, subset, x_latency = NULL,
                          model = c("weibull", "exponential"),
                          penalty_factor_inc = NULL, penalty_factor_lat = NULL,
@@ -159,10 +161,12 @@ cv_curegmifs <- function(formula, data, subset, x_latency = NULL,
   if (m[1] == 0) stop("A \"formula\" argument is required")
   mf <- mf[c(1L, m)]
   mf[[1L]] <- as.name("model.frame")
-  if (missing(data))
+  if (missing(data)) {
     mf[["data"]] <- environment(formula)
-  if (missing(data))
+  }
+  if (missing(data)) {
     data <- environment(formula)
+  }
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
   model <- match.arg(model)
@@ -177,8 +181,9 @@ cv_curegmifs <- function(formula, data, subset, x_latency = NULL,
     } else {
       e <- substitute(subset)
       r <- eval(e, data)
-      if (!is.logical(r))
+      if (!is.logical(r)) {
         stop("'subset' must evaluate to logical")
+      }
       r <- r & !is.na(r)
     }
     if ("character" %in% is(x_latency) || "numeric" %in% is(x_latency)) {
@@ -193,9 +198,9 @@ cv_curegmifs <- function(formula, data, subset, x_latency = NULL,
       time_name <- substr(survnames[[2]][1], 6, nchar(survnames[[2]][1]))
       censor_name <- trimws(strsplit(survnames[[2]][2], ")")[[1]][1])
       x_latency <- x_latency[r, !(colnames(x_latency) %in%
-                                    c(time_name, censor_name)) , drop = FALSE]
+        c(time_name, censor_name)), drop = FALSE]
       x_latency <- as.matrix(x_latency)
-    }  else if ("formula" %in% is(x_latency)) {
+    } else if ("formula" %in% is(x_latency)) {
       x_latency <- model.matrix(update.formula(x_latency, new = ~ . - 1), data)
     }
   }
@@ -206,32 +211,41 @@ cv_curegmifs <- function(formula, data, subset, x_latency = NULL,
   }
   x_lat <- x_latency
   if (nrow(x_inc) != nrow(x_lat) || nrow(x_lat) != length(time) ||
-        length(time) != length(event))
+    length(time) != length(event)) {
     stop("Input dimension mismatch")
+  }
   if (class(x_inc)[1] == "data.frame" || class(x_lat)[1] == "data.frame") {
     x_inc <- as.matrix(x_inc)
     x_lat <- as.matrix(x_lat)
   }
-  if (is.null(penalty_factor_inc))
+  if (is.null(penalty_factor_inc)) {
     penalty_factor_inc <- rep(1, ncol(x_inc))
-  if (is.null(penalty_factor_lat))
+  }
+  if (is.null(penalty_factor_lat)) {
     penalty_factor_lat <- rep(1, ncol(x_lat))
-  if (any(!c(penalty_factor_inc, penalty_factor_inc) %in% c(0, 1)))
+  }
+  if (any(!c(penalty_factor_inc, penalty_factor_inc) %in% c(0, 1))) {
     stop("Penalty factors specified in penalty_factor_inc and penalty_factor_inc
          can only include 0 or 1")
-  if (fdr > 1 || fdr < 0)
+  }
+  if (fdr > 1 || fdr < 0) {
     stop("FDR should be between 0 and 1")
-  if (!is.null(inits))
-    inits <- inits_check(model, N = length(time), penalty_factor_inc,
-                         penalty_factor_lat, inits)
+  }
+  if (!is.null(inits)) {
+    inits <- inits_check(model,
+      N = length(time), penalty_factor_inc,
+      penalty_factor_lat, inits
+    )
+  }
   x_u <- self_scale(x_inc[, penalty_factor_inc == 0, drop = FALSE], scale)
   x_p <- self_scale(x_inc[, penalty_factor_inc == 1, drop = FALSE], scale)
   w_u <- self_scale(x_lat[, penalty_factor_lat == 0, drop = FALSE], scale)
   w_p <- self_scale(x_lat[, penalty_factor_lat == 1, drop = FALSE], scale)
   if (fdr_control) {
     res <- cv.gmifs.fdr(x_u, x_p, w_u, w_p, time, event, model, fdr, thresh,
-                        nIter = maxit, epsilon, inits, n_folds, measure_inc,
-                        one_se, cure_cutoff, parallel, seed, verbose)
+      nIter = maxit, epsilon, inits, n_folds, measure_inc,
+      one_se, cure_cutoff, parallel, seed, verbose
+    )
     b <- rep(NA, ncol(x_inc))
     beta <- rep(NA, ncol(x_lat))
     b[penalty_factor_inc == 0] <- res$b_u
@@ -240,23 +254,28 @@ cv_curegmifs <- function(formula, data, subset, x_latency = NULL,
     beta[penalty_factor_lat == 1] <- res$beta_p
     names(b) <- colnames(x_inc)
     names(beta) <- colnames(x_latency)
-    output <- list(b0 = res$b0, b = b, beta = beta, rate = res$rate,
-                   alpha = res$alpha, selected_index_inc =
-                     (seq_len(ncol(x_inc)))[penalty_factor_inc
-                                            == 1][res$selected_b],
-                   selected_index_lat =
-                     (seq_len(ncol(x_lat)))[penalty_factor_lat
-                                            == 1][res$selected_beta])
-    if (!is.null(colnames(x_inc)))
+    output <- list(
+      b0 = res$b0, b = b, beta = beta, rate = res$rate,
+      alpha = res$alpha, selected_index_inc =
+        (seq_len(ncol(x_inc)))[penalty_factor_inc
+        == 1][res$selected_b],
+      selected_index_lat =
+        (seq_len(ncol(x_lat)))[penalty_factor_lat
+        == 1][res$selected_beta]
+    )
+    if (!is.null(colnames(x_inc))) {
       names(output$selected_index_inc) <-
         colnames(x_inc)[output$selected_index_inc]
-    if (!is.null(colnames(x_lat)))
+    }
+    if (!is.null(colnames(x_lat))) {
       names(output$selected_index_lat) <-
         colnames(x_lat)[output$selected_index_lat]
+    }
   } else {
     res <- cv.gmifs.nofdr(x_u, x_p, w_u, w_p, time, event, model, thresh,
-                          nIter = maxit, epsilon, inits, n_folds, measure_inc,
-                          one_se, cure_cutoff, parallel, seed, verbose)
+      nIter = maxit, epsilon, inits, n_folds, measure_inc,
+      one_se, cure_cutoff, parallel, seed, verbose
+    )
     b <- rep(NA, ncol(x_inc))
     beta <- rep(NA, ncol(x_lat))
     b[penalty_factor_inc == 0] <- res$b_u
@@ -265,12 +284,14 @@ cv_curegmifs <- function(formula, data, subset, x_latency = NULL,
     beta[penalty_factor_lat == 1] <- res$beta_p
     names(b) <- colnames(x_inc)
     names(beta) <- colnames(x_latency)
-    output <- list(selected_step_inc = res$model.select.inc,
-                   selected_step_lat = res$model.select.lat,
-                   b0 = res$b0, b = b, beta  = beta, rate = res$rate,
-                   logLik = res$logLik, max_c = res$max.c, x_incidence = x_inc,
-                   x_latency = x_lat, y = y, model = model, scale = scale,
-                   method = "GMIFS")
+    output <- list(
+      selected_step_inc = res$model.select.inc,
+      selected_step_lat = res$model.select.lat,
+      b0 = res$b0, b = b, beta = beta, rate = res$rate,
+      logLik = res$logLik, max_c = res$max.c, x_incidence = x_inc,
+      x_latency = x_lat, y = y, model = model, scale = scale,
+      method = "GMIFS"
+    )
     if (model == "weibull") output$alpha <- res$alpha
     class(output) <- "cvmixturecure"
     if (measure_inc == "auc") output$max.auc <- res$max.auc

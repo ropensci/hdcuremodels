@@ -188,17 +188,20 @@
 #' set.seed(1234)
 #' temp <- generate_cure_data(n = 200, j = 25, n_true = 5, a = 1.8)
 #' training <- temp$training
-
 # Fit a penalized Cox MCM selecting parameters using 2-fold CV
-#' fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,
-#'                  x_latency = training, fdr_control = FALSE,
-#'                  grid_tuning = FALSE, nlambda_inc = 10, nlambda_lat = 10,
-#'                  n_folds = 2, seed = 23, verbose = TRUE)
+#' fit.cv <- cv_cureem(Surv(Time, Censor) ~ .,
+#'   data = training,
+#'   x_latency = training, fdr_control = FALSE,
+#'   grid_tuning = FALSE, nlambda_inc = 10, nlambda_lat = 10,
+#'   n_folds = 2, seed = 23, verbose = TRUE
+#' )
 # Select variables from a penalized Weibull MCM with FDR control and CV
-#' fit.cv.fdr <- cv_cureem(Surv(Time, Censor) ~ ., data = training,
-#'                  x_latency = training, model = "weibull", penalty = "lasso",
-#'                  fdr_control = TRUE, grid_tuning = FALSE, nlambda_inc = 10,
-#'                  nlambda_lat = 10, n_folds = 2, seed = 23, verbose = TRUE)
+#' fit.cv.fdr <- cv_cureem(Surv(Time, Censor) ~ .,
+#'   data = training,
+#'   x_latency = training, model = "weibull", penalty = "lasso",
+#'   fdr_control = TRUE, grid_tuning = FALSE, nlambda_inc = 10,
+#'   nlambda_lat = 10, n_folds = 2, seed = 23, verbose = TRUE
+#' )
 cv_cureem <- function(formula, data, subset, x_latency = NULL,
                       model = c("cox", "weibull", "exponential"),
                       penalty = c("lasso", "MCP", "SCAD"),
@@ -218,10 +221,12 @@ cv_cureem <- function(formula, data, subset, x_latency = NULL,
   if (m[1] == 0) stop("A \"formula\" argument is required")
   mf <- mf[c(1L, m)]
   mf[[1L]] <- as.name("model.frame")
-  if (missing(data))
+  if (missing(data)) {
     mf[["data"]] <- environment(formula)
-  if (missing(data))
+  }
+  if (missing(data)) {
     data <- environment(formula)
+  }
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
   model <- match.arg(model)
@@ -237,8 +242,9 @@ cv_cureem <- function(formula, data, subset, x_latency = NULL,
     } else {
       e <- substitute(subset)
       r <- eval(e, data)
-      if (!is.logical(r))
+      if (!is.logical(r)) {
         stop("'subset' must evaluate to logical")
+      }
       r <- r & !is.na(r)
     }
     if ("character" %in% is(x_latency) || "numeric" %in% is(x_latency)) {
@@ -253,11 +259,13 @@ cv_cureem <- function(formula, data, subset, x_latency = NULL,
       time_name <- substr(survnames[[2]][1], 6, nchar(survnames[[2]][1]))
       censor_name <- trimws(strsplit(survnames[[2]][2], ")")[[1]][1])
       x_latency <- x_latency[r, !(colnames(x_latency) %in%
-                                    c(time_name, censor_name)), drop = FALSE]
+        c(time_name, censor_name)), drop = FALSE]
       x_latency <- as.matrix(x_latency)
-    }  else if ("formula" %in% is(x_latency)) {
-      x_latency <- model.matrix(update.formula(x_latency, new = ~ . - 1,
-                                               data = data), data)
+    } else if ("formula" %in% is(x_latency)) {
+      x_latency <- model.matrix(update.formula(x_latency,
+        new = ~ . - 1,
+        data = data
+      ), data)
     }
   }
   x_inc <- x
@@ -275,28 +283,39 @@ cv_cureem <- function(formula, data, subset, x_latency = NULL,
     if (is.null(nlambda_inc)) nlambda_lat <- 50
   }
   if (nrow(x_inc) != nrow(x_lat) || nrow(x_lat) != length(time) ||
-      length(time) != length(event))
+    length(time) != length(event)) {
     stop("Input dimension mismatch")
-  if (is.null(penalty_factor_inc))
+  }
+  if (is.null(penalty_factor_inc)) {
     penalty_factor_inc <- rep(1, ncol(x_inc))
-  if (is.null(penalty_factor_lat))
+  }
+  if (is.null(penalty_factor_lat)) {
     penalty_factor_lat <- rep(1, ncol(x_lat))
-  if (any(!c(penalty_factor_inc, penalty_factor_inc) %in% c(0, 1)))
+  }
+  if (any(!c(penalty_factor_inc, penalty_factor_inc) %in% c(0, 1))) {
     stop("Penalty factors specified in penalty_factor_inc and penalty_factor_inc
          can only include 0 or 1")
-  if (any(c(lambda_inc_list, lambda_lat_list, gamma_inc, gamma_lat) <= 0))
+  }
+  if (any(c(lambda_inc_list, lambda_lat_list, gamma_inc, gamma_lat) <= 0)) {
     stop("Penalty pamameters lambda and gamma should be positive")
-  if (fdr > 1 || fdr < 0)
+  }
+  if (fdr > 1 || fdr < 0) {
     stop("FDR should be between 0 and 1")
+  }
   if (lambda_min_ratio_inc > 1 || lambda_min_ratio_inc < 0 ||
-        lambda_min_ratio_lat > 1 || lambda_min_ratio_lat < 0)
+    lambda_min_ratio_lat > 1 || lambda_min_ratio_lat < 0) {
     stop("lambda_min_ratio_inc and lambda_min_ratio_lat should be between
          0 and 1")
-  if (any(c(lambda_inc_list, lambda_lat_list, gamma_inc, gamma_lat) <= 0))
+  }
+  if (any(c(lambda_inc_list, lambda_lat_list, gamma_inc, gamma_lat) <= 0)) {
     stop("Penalty pamameters lambda and gamma should be positive")
-  if (!is.null(inits))
-    inits <- inits_check(model, N = length(time), penalty_factor_inc,
-                         penalty_factor_lat, inits)
+  }
+  if (!is.null(inits)) {
+    inits <- inits_check(model,
+      N = length(time), penalty_factor_inc,
+      penalty_factor_lat, inits
+    )
+  }
   if (model != "cox" && penalty != "lasso") {
     warning("MCP/SCAD penalized parametric models are not currently supported.
             An L1 penalized model was fitted instead.")
@@ -308,50 +327,60 @@ cv_cureem <- function(formula, data, subset, x_latency = NULL,
   w_p <- self_scale(x_lat[, penalty_factor_lat == 1, drop = FALSE], scale)
   if (fdr_control) {
     res <- cv.em.fdr(x_u, x_p, w_u, w_p, time, event, model, penalty, fdr,
-                     thresh, nIter = maxit, penalty_factor_inc,
-                     penalty_factor_lat, grid_tuning, lambda_inc_list,
-                     lambda_lat_list, nlambda_inc, nlambda_lat,
-                     lambda_min_ratio_inc, lambda_min_ratio_lat,
-                     gamma_inc, gamma_lat, inits, n_folds, measure_inc, one_se,
-                     cure_cutoff, parallel, seed, verbose)
+      thresh,
+      nIter = maxit, penalty_factor_inc,
+      penalty_factor_lat, grid_tuning, lambda_inc_list,
+      lambda_lat_list, nlambda_inc, nlambda_lat,
+      lambda_min_ratio_inc, lambda_min_ratio_lat,
+      gamma_inc, gamma_lat, inits, n_folds, measure_inc, one_se,
+      cure_cutoff, parallel, seed, verbose
+    )
     if (!is.null(x_u)) {
       b <- rep(NA, ncol(x_inc))
-      b[penalty_factor_inc == 0] <- res$b[seq_len(ncol(x_u))]
+      b[penalty_factor_inc == 0] <- res$b[1:ncol(x_u)]
       b[penalty_factor_inc == 1] <- res$b[(ncol(x_u) + 1):(length(res$b))]
     } else {
       b <- res$b
     }
     if (!is.null(w_u)) {
       beta <- rep(NA, ncol(x_lat))
-      beta[penalty_factor_lat == 0] <- res$beta[seq_len(ncol(w_u))]
+      beta[penalty_factor_lat == 0] <- res$beta[1:ncol(w_u)]
       beta[penalty_factor_lat == 1] <- res$beta[(ncol(w_u) + 1):
-                                                  (length(res$beta))]
+      (length(res$beta))]
     } else {
       beta <- res$beta
     }
     names(b) <- colnames(x_inc)
     names(beta) <- colnames(x_latency)
-    output <- list(b0 = res$b0, b = b, beta = beta, rate = res$rate,
-                   alpha = res$alpha,
-                   selected_index_inc =
-                     (seq_len(ncol(x_inc)))[penalty_factor_inc == 1][
-                                                                res$selected_b],
-                   selected_index_lat =
-                     (seq_len(ncol(x_lat)))[penalty_factor_lat == 1][
-                                                             res$selected_beta])
-    if (!is.null(colnames(x_inc)))
+    output <- list(
+      b0 = res$b0, b = b, beta = beta, rate = res$rate,
+      alpha = res$alpha,
+      selected_index_inc =
+        (seq_len(ncol(x_inc)))[penalty_factor_inc == 1][
+          res$selected_b
+        ],
+      selected_index_lat =
+        (seq_len(ncol(x_lat)))[penalty_factor_lat == 1][
+          res$selected_beta
+        ]
+    )
+    if (!is.null(colnames(x_inc))) {
       names(output$selected_index_inc) <-
         colnames(x_inc)[output$selected_index_inc]
-    if (!is.null(colnames(x_lat)))
+    }
+    if (!is.null(colnames(x_lat))) {
       names(output$selected_index_lat) <-
         colnames(x_lat)[output$selected_index_lat]
+    }
   } else {
     res <- cv.em.nofdr(x_u, x_p, w_u, w_p, time, event, model, penalty,
-                       thresh, nIter = maxit, grid_tuning, lambda_inc_list,
-                       lambda_lat_list, nlambda_inc, nlambda_lat,
-                       lambda_min_ratio_inc, lambda_min_ratio_lat, gamma_inc,
-                       gamma_lat, inits, n_folds, measure_inc, one_se,
-                       cure_cutoff, parallel, seed, verbose)
+      thresh,
+      nIter = maxit, grid_tuning, lambda_inc_list,
+      lambda_lat_list, nlambda_inc, nlambda_lat,
+      lambda_min_ratio_inc, lambda_min_ratio_lat, gamma_inc,
+      gamma_lat, inits, n_folds, measure_inc, one_se,
+      cure_cutoff, parallel, seed, verbose
+    )
     if (!is.null(x_u)) {
       b <- rep(NA, ncol(x_inc))
       b[penalty_factor_inc == 0] <- res$b[1:ncol(x_u)]

@@ -245,14 +245,18 @@ library(survival)
 set.seed(1234)
 temp <- generate_cure_data(n = 200, j = 25, n_true = 5, a = 1.8)
 training <- temp$training
-fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,
-                 x_latency = training, fdr_control = FALSE,
-                 grid_tuning = FALSE, nlambda_inc = 10, nlambda_lat = 10,
-                 n_folds = 2, seed = 23, verbose = TRUE)
-fit.cv.fdr <- cv_cureem(Surv(Time, Censor) ~ ., data = training,
-                 x_latency = training, model = "weibull", penalty = "lasso",
-                 fdr_control = TRUE, grid_tuning = FALSE, nlambda_inc = 10,
-                 nlambda_lat = 10, n_folds = 2, seed = 23, verbose = TRUE)
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ .,
+  data = training,
+  x_latency = training, fdr_control = FALSE,
+  grid_tuning = FALSE, nlambda_inc = 10, nlambda_lat = 10,
+  n_folds = 2, seed = 23, verbose = TRUE
+)
+fit.cv.fdr <- cv_cureem(Surv(Time, Censor) ~ .,
+  data = training,
+  x_latency = training, model = "weibull", penalty = "lasso",
+  fdr_control = TRUE, grid_tuning = FALSE, nlambda_inc = 10,
+  nlambda_lat = 10, n_folds = 2, seed = 23, verbose = TRUE
+)
 }
 \references{
 Archer, K. J., Fu, H., Mrozek, K., Nicolet, D., Mims, A. S.,

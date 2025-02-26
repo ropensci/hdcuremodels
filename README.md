@@ -87,9 +87,11 @@ parameters for incidence and latency, `lambda.inc` and `lambda.lat` were
 previously determined using cross-validation.
 
 ``` r
-fitem <- cureem(Surv(cryr, relapse.death) ~ ., data = amltrain, 
-                      x_latency = amltrain, model = "cox", 
-                      lambda_inc = 0.009993, lambda_lat = 0.02655)
+fitem <- cureem(Surv(cryr, relapse.death) ~ .,
+  data = amltrain,
+  x_latency = amltrain, model = "cox",
+  lambda_inc = 0.009993, lambda_lat = 0.02655
+)
 ```
 
 Coefficient estimates can be extracted from the fitted model using the
@@ -135,7 +137,7 @@ patients among those predicted to be susceptible visually by examining
 the Kaplan-Meier curves.
 
 ``` r
-km_suscept <- survfit(Surv(cryr, relapse.death) ~ train_predict$latency_risk, data = amltrain, subset = (p_group == "Susceptible")) 
+km_suscept <- survfit(Surv(cryr, relapse.death) ~ train_predict$latency_risk, data = amltrain, subset = (p_group == "Susceptible"))
 ```
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />

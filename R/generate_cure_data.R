@@ -54,10 +54,12 @@
 #' data <- generate_cure_data(n = 200, j = 50, n_true = 10, a = 1.8, rho = 0.2)
 #' training <- data$training
 #' testing <- data$testing
-#' fit <- cureem(Surv(Time, Censor) ~ ., data = training,
-#'               x_latency = training, model = "cox", penalty = "lasso",
-#'               lambda_inc = 0.05, lambda_lat = 0.05,
-#'               gamma_inc = 6, gamma_lat = 10)
+#' fit <- cureem(Surv(Time, Censor) ~ .,
+#'   data = training,
+#'   x_latency = training, model = "cox", penalty = "lasso",
+#'   lambda_inc = 0.05, lambda_lat = 0.05,
+#'   gamma_inc = 6, gamma_lat = 10
+#' )
 generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
                                n_true = 10, a = 1, rho = 0.5, itct_mean = 0.5,
                                cens_ub = 20, alpha = 1, lambda = 2,
@@ -71,10 +73,11 @@ generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
   sd <- 0.5
   block_sz <- round(j / n_true)
   corr_x_p <- matrix(0, j, j)
-  for (i in 1:n_true)
-  corr_x_p[(block_sz * (i - 1) + 1):(block_sz * i), (block_sz * (i - 1) + 1) :
-             (block_sz * i)] <- rho ^ abs(outer(1:block_sz, 1:block_sz, "-"))
-  sigma_x_p <- sd ^ 2 * corr_x_p
+  for (i in 1:n_true) {
+    corr_x_p[(block_sz * (i - 1) + 1):(block_sz * i), (block_sz * (i - 1) + 1):
+    (block_sz * i)] <- rho^abs(outer(1:block_sz, 1:block_sz, "-"))
+  }
+  sigma_x_p <- sd^2 * corr_x_p
   x_p <- mvnfast::rmvn(n, mu = rep(0, j), sigma = sigma_x_p)
   x_u <- matrix(rnorm(n * nonp, sd = sd), ncol = nonp)
   w_p <- x_p
@@ -90,8 +93,8 @@ generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
     ## penalized
     nonzero_b <- nonzero_beta <- rep(NA, n_true)
     for (i in 1:n_true) {
-      nonzero_b[i] <- sample((block_sz * (i - 1) + 1) : (block_sz * i), 1)
-      nonzero_beta[i] <- sample((block_sz * (i - 1) + 1) : (block_sz * i), 1)
+      nonzero_b[i] <- sample((block_sz * (i - 1) + 1):(block_sz * i), 1)
+      nonzero_beta[i] <- sample((block_sz * (i - 1) + 1):(block_sz * i), 1)
     }
     b_p <- beta_p <- rep(0, j)
     b_p[nonzero_b] <- a * sample(c(1, -1), n_true, replace = TRUE)
@@ -103,9 +106,11 @@ generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
     beta_u <- abs(rnorm(nonp, mean = 0.3, sd = 0.1)) * sign_u
     ## penalized
     nonzero_b <- rep(NA, n_true)
-    for (i in 1:n_true) nonzero_b[i] <- sample((block_sz * (i - 1) + 1):
-                                                 (block_sz * i), 1)
-    b_p  <- rep(0, j)
+    for (i in 1:n_true) {
+      nonzero_b[i] <- sample((block_sz * (i - 1) + 1):
+      (block_sz * i), 1)
+    }
+    b_p <- rep(0, j)
     b_p[nonzero_b] <- a * sample(c(1, -1), n_true, replace = TRUE)
     beta_p <- b_p
     nonzero_beta <- nonzero_b
@@ -120,10 +125,12 @@ generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
   ## survival
   beta_w <- w_u %*% beta_u + w_p %*% beta_p
   if (model == "weibull") {
-    t <- rweibull(n, shape = alpha, scale = 1 / lambda * exp(- beta_w / alpha))
+    t <- rweibull(n, shape = alpha, scale = 1 / lambda * exp(-beta_w / alpha))
   } else if (model == "GG") {
-    t <- flexsurv::rgengamma(n, mu = - log(lambda) - beta_w / alpha,
-                             sigma = 1 / alpha, Q = 2)
+    t <- flexsurv::rgengamma(n,
+      mu = -log(lambda) - beta_w / alpha,
+      sigma = 1 / alpha, Q = 2
+    )
   } else if (model == "Gompertz") {
     t <- flexsurv::rgompertz(n, shape = 0.2, rate = exp(beta_w))
   } else if (model == "nonparametric") {
@@ -132,8 +139,10 @@ generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
     t <- rep(NA, n)
     for (i in 1:n) {
       u <- runif(1)
-      t[i] <- uniroot(function(a) flexsurv::pgengamma(a, mu = - log(2), sigma = 1, Q = 0.5, lower.tail = FALSE)^exp(beta_w[i]) - u,
-                      c(0, 20), extendInt = "yes")$root
+      t[i] <- uniroot(function(a) flexsurv::pgengamma(a, mu = -log(2), sigma = 1, Q = 0.5, lower.tail = FALSE)^exp(beta_w[i]) - u,
+        c(0, 20),
+        extendInt = "yes"
+      )$root
     }
   }
   u <- runif(n, 0, cens_ub)
@@ -142,18 +151,28 @@ generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
   time[y == 0] <- u[y == 0]
 
   ## training and test
-  tr_data <- list(x_u = x_u[tr_i, ], x_p = x_p[tr_i, ], w_u = w_u[tr_i, ],
-                  w_p = w_p[tr_i, ], time = time[tr_i], y = y[tr_i],
-                  delta = delta[tr_i])
-  te_data <- list(x_u = x_u[te_i, ], x_p = x_p[te_i, ], w_u = w_u[te_i, ],
-                  w_p = w_p[te_i, ], time = time[te_i], y = y[te_i],
-                  delta = delta[te_i])
-  training <- data.frame(Time = tr_data$time, Censor = tr_data$delta,
-                         tr_data$x_u, tr_data$x_p)
-  testing <- data.frame(Time = te_data$time, Censor = te_data$delta,
-                        te_data$x_u, te_data$x_p)
-  parameters <- list(nonzero_b = nonzero_b, nonzero_beta = nonzero_beta,
-                     b_u = b_u, beta_u = beta_u, b_p_nz = b_p[nonzero_b],
-                     beta_p_nz = beta_p[nonzero_beta], itct = itct)
+  tr_data <- list(
+    x_u = x_u[tr_i, ], x_p = x_p[tr_i, ], w_u = w_u[tr_i, ],
+    w_p = w_p[tr_i, ], time = time[tr_i], y = y[tr_i],
+    delta = delta[tr_i]
+  )
+  te_data <- list(
+    x_u = x_u[te_i, ], x_p = x_p[te_i, ], w_u = w_u[te_i, ],
+    w_p = w_p[te_i, ], time = time[te_i], y = y[te_i],
+    delta = delta[te_i]
+  )
+  training <- data.frame(
+    Time = tr_data$time, Censor = tr_data$delta,
+    tr_data$x_u, tr_data$x_p
+  )
+  testing <- data.frame(
+    Time = te_data$time, Censor = te_data$delta,
+    te_data$x_u, te_data$x_p
+  )
+  parameters <- list(
+    nonzero_b = nonzero_b, nonzero_beta = nonzero_beta,
+    b_u = b_u, beta_u = beta_u, b_p_nz = b_p[nonzero_b],
+    beta_p_nz = beta_p[nonzero_beta], itct = itct
+  )
   return(list(training = training, testing = testing, parameters = parameters))
 }

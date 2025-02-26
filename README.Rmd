@@ -66,9 +66,11 @@ cure_estimate(km_train)
 We now fit a penalized MCM using the E-M algorithm where the penalty parameters for incidence and latency, `lambda.inc` and `lambda.lat` were previously determined using cross-validation.
 
 ```{r fit}
-fitem <- cureem(Surv(cryr, relapse.death) ~ ., data = amltrain, 
-                      x_latency = amltrain, model = "cox", 
-                      lambda_inc = 0.009993, lambda_lat = 0.02655)
+fitem <- cureem(Surv(cryr, relapse.death) ~ .,
+  data = amltrain,
+  x_latency = amltrain, model = "cox",
+  lambda_inc = 0.009993, lambda_lat = 0.02655
+)
 ```                      
 
 Coefficient estimates can be extracted from the fitted model using the `coef` for any of these model criteria ("logLik", "AIC", "cAIC", "mAIC", "BIC", "mBIC", "EBIC") or by specifying the step at which the model is desired by specifying the `model_select` parameter. For example,
@@ -96,19 +98,19 @@ km_cured <- survfit(Surv(cryr, relapse.death) ~ p_group, data = amltrain)
 ```
 
 ```{r, echo = FALSE, fig = TRUE}
-plot(km_cured, mark.time = TRUE, lty = c(1,2), xlab = "Time (years)", ylab = "Relapse-free survival") 
+plot(km_cured, mark.time = TRUE, lty = c(1, 2), xlab = "Time (years)", ylab = "Relapse-free survival")
 legend(c(.9, .1), legend = c("Cured", "Susceptible"), lty = c(1, 2), bty = "n")
 ```
 
 We can assess how well our MCM identified higher versus lower risk patients among those predicted to be susceptible visually by examining the Kaplan-Meier curves.
 
 ```{r kmsusc}
-km_suscept <- survfit(Surv(cryr, relapse.death) ~ train_predict$latency_risk, data = amltrain, subset = (p_group == "Susceptible")) 
+km_suscept <- survfit(Surv(cryr, relapse.death) ~ train_predict$latency_risk, data = amltrain, subset = (p_group == "Susceptible"))
 ```
 
 ```{r, echo = FALSE, fig = TRUE}
-plot(km_suscept, mark.time = TRUE, lty = c(1,2), xlab = "Time (years)", ylab = "Relapse-free survival") 
-legend(c(.9, .1), legend = c("Higher risk", "Lower risk"), lty = c(1,2), bty = "n")
+plot(km_suscept, mark.time = TRUE, lty = c(1, 2), xlab = "Time (years)", ylab = "Relapse-free survival")
+legend(c(.9, .1), legend = c("Higher risk", "Lower risk"), lty = c(1, 2), bty = "n")
 ```
 
 Of course, we expect our model to perform well on our training data. We can also assess how well our fitted MCM performs using the independent test set `amltest`. In this case we use the `predict` function with `newdata` specified.

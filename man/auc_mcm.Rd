@@ -17,7 +17,7 @@ training data are used.}
 \item{cure_cutoff}{cutoff value for cure, used to produce a proxy for the
 unobserved cure status; default is 5.}
 
-\item{model_select}{for models fit using \code{curegmifs} or \code{cureem}
+\item{model_select}{a case-sensitive parameter for models fit using \code{curegmifs} or \code{cureem}
 any step along the solution path can be selected. The default is
 \code{model_select = "AIC"} which calculates the predicted values using
 the coefficients from the model having the lowest AIC. Other options are
@@ -45,9 +45,10 @@ temp <- generate_cure_data(n = 100, j = 10, n_true = 10, a = 1.8)
 training <- temp$training
 testing <- temp$testing
 fit <- curegmifs(Surv(Time, Censor) ~ .,
-                  data = training, x_latency = training,
-                  model = "weibull", thresh = 1e-4, maxit = 2000,
-                  epsilon = 0.01, verbose = FALSE)
+  data = training, x_latency = training,
+  model = "weibull", thresh = 1e-4, maxit = 2000,
+  epsilon = 0.01, verbose = FALSE
+)
 auc_mcm(fit, model_select = "cAIC")
 auc_mcm(fit, newdata = testing)
 }

@@ -103,9 +103,10 @@
 #' training <- temp$training
 #'
 #' fit <- curegmifs(Surv(Time, Censor) ~ .,
-#'          data = training, x_latency = training,
-#'          model = "weibull", thresh = 1e-4, maxit = 2000, epsilon = 0.01,
-#'          verbose = FALSE)
+#'   data = training, x_latency = training,
+#'   model = "weibull", thresh = 1e-4, maxit = 2000, epsilon = 0.01,
+#'   verbose = FALSE
+#' )
 curegmifs <- function(formula, data, subset, x_latency = NULL,
                       model = c("weibull", "exponential"),
                       penalty_factor_inc = NULL, penalty_factor_lat = NULL,
@@ -117,10 +118,12 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
   if (m[1] == 0) stop("A \"formula\" argument is required")
   mf <- mf[c(1L, m)]
   mf[[1L]] <- as.name("model.frame")
-  if (missing(data))
+  if (missing(data)) {
     mf[["data"]] <- environment(formula)
-  if (missing(data))
+  }
+  if (missing(data)) {
     data <- environment(formula)
+  }
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
   model <- match.arg(model)
@@ -134,8 +137,9 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
     } else {
       e <- substitute(subset)
       r <- eval(e, data)
-      if (!is.logical(r))
+      if (!is.logical(r)) {
         stop("'subset' must evaluate to logical")
+      }
       r <- r & !is.na(r)
     }
     if ("character" %in% is(x_latency) || "numeric" %in% is(x_latency)) {
@@ -150,9 +154,9 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
       time_name <- substr(survnames[[2]][1], 6, nchar(survnames[[2]][1]))
       censor_name <- trimws(strsplit(survnames[[2]][2], ")")[[1]][1])
       x_latency <- x_latency[r, !(colnames(x_latency) %in%
-                                    c(time_name, censor_name)) , drop = FALSE]
+        c(time_name, censor_name)), drop = FALSE]
       x_latency <- as.matrix(x_latency)
-    }  else if ("formula" %in% is(x_latency)) {
+    } else if ("formula" %in% is(x_latency)) {
       x_latency <- model.matrix(update.formula(x_latency, new = ~ . - 1), data)
     }
   }
@@ -163,8 +167,9 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
   }
   x_lat <- x_latency
   if (nrow(x_inc) != nrow(x_lat) || nrow(x_lat) != length(time) ||
-        length(time) != length(event))
+    length(time) != length(event)) {
     stop("Input dimension mismatch")
+  }
   if (class(x_inc)[1] == "data.frame" || class(x_lat)[1] == "data.frame") {
     x_inc <- as.matrix(x_inc)
     x_lat <- as.matrix(x_lat)
@@ -173,42 +178,55 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
     stop("Error: Only 'weibull' or 'exponential' available for model
          parameter.")
   }
-  if (is.null(penalty_factor_inc))
+  if (is.null(penalty_factor_inc)) {
     penalty_factor_inc <- rep(1, ncol(x_inc))
-  if (is.null(penalty_factor_lat))
+  }
+  if (is.null(penalty_factor_lat)) {
     penalty_factor_lat <- rep(1, ncol(x_lat))
-  if (any(!c(penalty_factor_inc, penalty_factor_inc) %in% c(0, 1)))
+  }
+  if (any(!c(penalty_factor_inc, penalty_factor_inc) %in% c(0, 1))) {
     stop("Penalty factors specified in penalty_factor_inc and penalty_factor_inc
          can only include 0 or 1")
-  if (!is.null(inits))
-    inits <- inits_check(model, N = length(time), penalty_factor_inc,
-                         penalty_factor_lat, inits)
+  }
+  if (!is.null(inits)) {
+    inits <- inits_check(model,
+      N = length(time), penalty_factor_inc,
+      penalty_factor_lat, inits
+    )
+  }
   x_u <- self_scale(x_inc[, penalty_factor_inc == 0, drop = FALSE], scale)
   x_p <- self_scale(x_inc[, penalty_factor_inc == 1, drop = FALSE], scale)
   w_u <- self_scale(x_lat[, penalty_factor_lat == 0, drop = FALSE], scale)
   w_p <- self_scale(x_lat[, penalty_factor_lat == 1, drop = FALSE], scale)
-  if (model == "exponential")
-    res <- exp_cure(x_u, x_p, w_u, w_p, time, event, epsilon, thresh, maxit,
-                    inits, verbose)
-  else if (model == "weibull")
-    res <- weibull.cure(x_u, x_p, w_u, w_p, time, event, epsilon, thresh, maxit,
-                        inits, verbose)
+  if (model == "exponential") {
+    res <- exp_cure(
+      x_u, x_p, w_u, w_p, time, event, epsilon, thresh, maxit,
+      inits, verbose
+    )
+  } else if (model == "weibull") {
+    res <- weibull.cure(
+      x_u, x_p, w_u, w_p, time, event, epsilon, thresh, maxit,
+      inits, verbose
+    )
+  }
   nstep <- length(res$logLikelihood)
   if (nstep == maxit) warning("Maximum step of iterations achieved.
                            Algorithm may not converge.")
-  b_path <- matrix(NA, nstep, ncol(x_inc))
-  beta_path <- matrix(NA, nstep, ncol(x_lat))
+  b_path <- matrix(NA, nrow = nstep, ncol = ncol(x_inc))
+  beta_path <- matrix(NA, nrow = nstep, ncol = ncol(x_lat))
   b_path[, penalty_factor_inc == 0] <- res$b_u_path
   b_path[, penalty_factor_inc == 1] <- res$b_p_path
   beta_path[, penalty_factor_lat == 0] <- res$beta_u_path
   beta_path[, penalty_factor_lat == 1] <- res$beta_p_path
   colnames(b_path) <- colnames(x_inc)
   colnames(beta_path) <- colnames(x_lat)
-  output <- list(b_path = b_path, beta_path = beta_path,
-                 b0_path = res$itct_path, rate_path = res$lambda_path,
-                 logLik = res$logLikelihood, x_incidence = x_inc,
-                 x_latency = x_lat, y = y, model = model, scale = scale,
-                 method = "GMIFS", call = cl)
+  output <- list(
+    b_path = b_path, beta_path = beta_path,
+    b0_path = res$itct_path, rate_path = res$lambda_path,
+    logLik = res$logLikelihood, x_incidence = x_inc,
+    x_latency = x_lat, y = y, model = model, scale = scale,
+    method = "GMIFS", call = cl
+  )
   if (model == "weibull") output$alpha_path <- res$alpha_path
   output$cv <- FALSE
   class(output) <- "mixturecure"

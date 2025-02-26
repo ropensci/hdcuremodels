@@ -41,112 +41,84 @@
 #' temp <- generate_cure_data(n = 100, j = 10, n_true = 10, a = 1.8)
 #' training <- temp$training
 #' fit <- curegmifs(Surv(Time, Censor) ~ .,
-#'                    data = training, x_latency = training,
-#'                    model = "weibull", thresh = 1e-4, maxit = 2000,
-#'                    epsilon = 0.01, verbose = FALSE)
+#'   data = training, x_latency = training,
+#'   model = "weibull", thresh = 1e-4, maxit = 2000,
+#'   epsilon = 0.01, verbose = FALSE
+#' )
 #' plot(fit)
 plot.mixturecure <-
-  function(x, type = c("trace", "AIC", "BIC", "logLik", "cAIC", "mAIC",
-                       "mBIC", "EBIC"), xlab = NULL, ylab = NULL, main = NULL,
-           ...) {
-    #type <- c("trace", "AIC", "BIC", "logLik", "cAIC", "mAIC", "mBIC", "EBIC")[pmatch(type,
-    #                                                                                  c("trace", "AIC", "BIC", "logLik", "cAIC", "mAIC", "mBIC", "EBIC"))]
-    #if (!(type%in%c("trace", "AIC", "BIC", "logLik", "cAIC", "mAIC", "mBIC", "EBIC")))
-    #  stop("type must be either 'trace', 'AIC', 'BIC', 'logLik', 'cAIC', 'mAIC', 'mBIC', or 'EBIC' ")
+  function(x, type = c(
+             "trace", "AIC", "BIC", "logLik", "cAIC", "mAIC",
+             "mBIC", "EBIC"), xlab = NULL, ylab = NULL, main = NULL, ...) {
     type <- match.arg(type)
     if (!x$cv) {
-      p <- dim(x$x.incidence)[2] + dim(x$x_latency)[2]
-      if (type %in% c("AIC", "BIC", "cAIC", "mAIC", "mBIC", "EBIC")) {
-        if (!is.null(x$x.incidence)) {
-          vars_inc <- apply(x$b_path, 1, function(x) sum(x != 0))
-        } else {
-          vars_inc <- 0
-        }
-        if (!is.null(x$x_latency)) {
-          vars_lat <- apply(x$beta_path, 1, function(x) sum(x != 0))
-        } else {
-          vars_lat <- 0
-        }
-        if (x$model == "weibull") {
-          df <- vars_inc + vars_lat + 3
-        } else if (x$model == "exponential") {
-          df <- vars_inc + vars_lat + 2
-        } else if (x$model == "cox") {
-          df <- vars_inc + vars_lat + 1
-        }
-      }
-      if (is.null(xlab))
+      if (is.null(xlab)) {
         xlab <- "Step"
-      if (is.null(ylab)) {
-        if (type == "AIC") {
-          ylab <- "AIC"
-        } else if (type == "cAIC") {
-          ylab <- "cAIC"
-        } else if (type == "mAIC") {
-          ylab <- "mAIC"
-        } else if (type == "BIC") {
-          ylab <- "BIC"
-        } else if (type == "mBIC") {
-          ylab <- "mBIC"
-        } else if (type == "EBIC") {
-          ylab <- "EBIC"
-        } else if (type == "trace") {
-          ylab <- expression(hat(beta))
-        } else if (type == "logLik") {
-          ylab <- "logLikelihood"
-        }
-      }
-      if (x$method == "EM")
-        logLik <- x$logLik_inc + x$logLik_lat
-      else
-        logLik <- x$logLik
-      if (!is.null(x$x_latency) && !is.null(x$x.incidence)) {
-        coef <- cbind(b = x$b_path, beta = x$beta_path)
-      } else if (is.null(x$x_latency) && !is.null(x$x.incidence)) {
-        coef <- x$b_path
-      } else if (!is.null(x$x_latency) && is.null(x$x.incidence)) {
-        coef <- x$beta_path
       }
       if (type == "trace") {
+        if (is.null(ylab)) {
+          ylab <- expression(hat(beta))
+        }
+        if (!is.null(x$x_latency) && !is.null(x$x_incidence)) {
+          coef <- cbind(b = x$b_path, beta = x$beta_path)
+        } else if (is.null(x$x_latency) && !is.null(x$x_incidence)) {
+          coef <- x$b_path
+        } else if (!is.null(x$x_latency) && is.null(x$x_incidence)) {
+          coef <- x$beta_path
+        }
         graphics::matplot(coef, ylab = ylab, xlab = xlab, type = "l")
-      } else if (type %in% c("AIC", "cAIC", "mAIC")) {
-        AIC <- 2 * df - 2 * logLik
-        cAIC <- AIC + (2 * df * (df + 1)) / (length(x$y) - df - 1)
-        mAIC <- (2 + 2 * log(p / .5)) * df - 2 * logLik
+      } else {
+        select <- select_model(x, type)
         if (type == "AIC") {
-          plot(AIC, xlab = xlab, ylab = ylab)
-        } else if (type == "cAIC") {
-          plot(cAIC, xlab = xlab, ylab = ylab)
-        } else {
-          plot(mAIC, xlab = xlab, ylab = ylab)
+        if (is.null(ylab)) {
+          ylab <- "AIC"
         }
-      } else if (type %in% c("BIC", "mBIC", "EBIC")) {
-        BIC <- df * (log(length(x$y))) - 2 * logLik
-        mBIC <- df * (log(length(x$y)) + 2 * log(p / 4)) - 2 * logLik
-        EBIC <- log(length(x$y)) * df + 2 * (1 - .5) * log(choose(p, df)) -
-          2 * logLik
-        if (type == "BIC") {
-          plot(BIC, xlab = xlab, ylab = ylab)
-        } else if (type == "EBIC") {
-          plot(EBIC, xlab = xlab, ylab = ylab)
-        } else if (type == "mBIC") {
-          plot(mBIC, xlab = xlab, ylab = ylab)
+        plot(select$AIC, xlab = xlab, ylab = ylab)
+      } else if (type == "cAIC") {
+        if (is.null(ylab)) {
+          ylab <- "cAIC"
         }
+        plot(select$cAIC, xlab = xlab, ylab = ylab)
+      } else if (type == "mAIC") {
+        if (is.null(ylab)) {
+          ylab <- "mAIC"
+        }
+        plot(select$mAIC, xlab = xlab, ylab = ylab)
+      } else if (type == "BIC") {
+        if (is.null(ylab)) {
+          ylab <- "BIC"
+        }
+        plot(select$BIC, xlab = xlab, ylab = ylab)
+      } else if (type == "mBIC") {
+        if (is.null(ylab)) {
+          ylab <- "mBIC"
+        }
+        plot(select$mBIC, xlab = xlab, ylab = ylab)
+      } else if (type == "EBIC") {
+        if (is.null(ylab)) {
+          ylab <- "EBIC"
+        }
+        plot(select$EBIC, xlab = xlab, ylab = ylab)
       } else if (type == "logLik") {
-        plot(logLik, xlab = xlab, ylab = ylab)
+        if (is.null(ylab)) {
+          ylab <- "logLikelihood"
+        }
+        plot(select$logLik, xlab = xlab, ylab = ylab)
       }
       if (is.null(main)) {
         graphics::title(paste(type, "from MCM ", x$method, " fit",
-                              sep = " "))
+          sep = " "
+        ))
       } else {
         graphics::title(main)
       }
+    }
     } else {
       if (is.null(xlab)) xlab <- "Predictors"
-      if (is.null(ylab)) ylab <- "Coefficient Estimate"
-      names(x$b) <- colnames(x$x.incidence)
+      if (is.null(ylab)) ylab <- "Coefficient Estimates"
+      names(x$b) <- colnames(x$x_incidence)
       names(x$beta) <- colnames(x$x_latency)
-      if (!is.null(x$x.incidence)) {
+      if (!is.null(x$x_incidence)) {
         if (sum(x$b > 0) > 0) {
           b <- x$b[x$b != 0]
         } else {
@@ -161,31 +133,49 @@ plot.mixturecure <-
         }
       }
       y <- NULL
-      if (!is.null(x$x.incidence))
-        data_b <- data.frame(x = seq_along(b), y = b, vars = names(b),
-                             model_component = "Incidence")
-      if (!is.null(x$x_latency))
-        data_beta <- data.frame(x = seq_along(beta), y = beta,
-                                vars = names(beta), model_component = "Latency")
-      if (!is.null(x$x.incidence) && !is.null(x$x_latency)) {
-        bplot <- ggplot(data_b, aes(x = vars, y = y)) + geom_point() +
+      if (!is.null(x$x_incidence)) {
+        data_b <- data.frame(
+          x = seq_along(b), y = b, vars = names(b),
+          model_component = "Incidence"
+        )
+      }
+      if (!is.null(x$x_latency)) {
+        data_beta <- data.frame(
+          x = seq_along(beta), y = beta,
+          vars = names(beta), model_component = "Latency"
+        )
+      }
+      if (!is.null(x$x_incidence) && !is.null(x$x_latency)) {
+        bplot <- ggplot(data_b, aes(x = vars, y = y)) +
+          geom_point() +
           geom_segment(aes(x = vars, xend = vars, y = 0, yend = y)) +
-          xlab(xlab) + ylab(ylab) + ggtitle("Incidence") +
+          xlab(xlab) +
+          ylab(ylab) +
+          ggtitle("Incidence") +
           theme(axis.text.x = element_text(angle = 45))
-        betaplot <- ggplot(data_beta, aes(x = vars, y = y)) + geom_point() +
+        betaplot <- ggplot(data_beta, aes(x = vars, y = y)) +
+          geom_point() +
           geom_segment(aes(x = vars, xend = vars, y = 0, yend = y)) +
-          xlab(xlab) + ylab(ylab) + ggtitle("Latency") +
+          xlab(xlab) +
+          ylab(ylab) +
+          ggtitle("Latency") +
           theme(axis.text.x = element_text(angle = 45))
         ggpubr::ggarrange(bplot, betaplot, nrow = 2)
-      } else if (is.null(x$x.incidence) && !is.null(x$x_latency)) {
-        ggplot(data_beta, aes(x = vars, y = y)) + geom_point() +
+      } else if (is.null(x$x_incidence) && !is.null(x$x_latency)) {
+        ggplot(data_beta, aes(x = vars, y = y)) +
+          geom_point() +
           geom_segment(aes(x = vars, xend = vars, y = 0, yend = y)) +
-          xlab(xlab) + ylab(ylab) + ggtitle("Latency") +
+          xlab(xlab) +
+          ylab(ylab) +
+          ggtitle("Latency") +
           theme(axis.text.x = element_text(angle = 45))
-      } else if (!is.null(x$x.incidence) && is.null(x$x_latency)) {
-        ggplot(data_b, aes(x = vars, y = y)) + geom_point() +
+      } else if (!is.null(x$x_incidence) && is.null(x$x_latency)) {
+        ggplot(data_b, aes(x = vars, y = y)) +
+          geom_point() +
           geom_segment(aes(x = vars, xend = vars, y = 0, yend = y)) +
-          xlab(xlab) + ylab(ylab) + ggtitle("Incidence") +
+          xlab(xlab) +
+          ylab(ylab) +
+          ggtitle("Incidence") +
           theme(axis.text.x = element_text(angle = 45))
       }
     }
