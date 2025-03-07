@@ -1,0 +1,472 @@
+annotationData(temp)
+?ExpressionSet
+annotation(temp)
+if (!require("BiocManager", quietly = TRUE))#
+    install.packages("BiocManager")#
+#
+BiocManager::install("illuminaHumanv4.db")
+xx <- as.list(illuminaHumanv4ALIAS2PROBE)#
+if(length(xx) > 0){#
+# Get the probe identifiers for the first two aliases#
+xx[1:2]#
+# Get the first one#
+xx[[1]]#
+}
+library("illuminaHumanv4.db")
+xx <- as.list(illuminaHumanv4ALIAS2PROBE)#
+if(length(xx) > 0){#
+# Get the probe identifiers for the first two aliases#
+xx[1:2]#
+# Get the first one#
+xx[[1]]#
+}
+length(xx)
+dim(temp)
+x <- illuminaHumanv4GENENAME#
+# Get the probe identifiers that are mapped to a gene name#
+mapped_probes <- mappedkeys(x)#
+# Convert to a list#
+xx <- as.list(x[mapped_probes])#
+if(length(xx) > 0) {#
+# Get the GENENAME for the first five probes#
+xx[1:5]#
+# Get the first one#
+xx[[1]]#
+}
+x <- illuminaHumanv4SYMBOL#
+# Get the probe identifiers that are mapped to a gene symbol#
+mapped_probes <- mappedkeys(x)#
+# Convert to a list#
+xx <- as.list(x[mapped_probes])#
+if(length(xx) > 0) {#
+# Get the SYMBOL for the first five probes#
+xx[1:5]#
+# Get the first one#
+xx[[1]]#
+}
+head(x)
+head(xx)
+names(xx)
+num<-scan()
+round(num/80*100)
+num<-scan()
+round(num/24*100)
+3/24
+num<-scan()
+matrix(round(num/80*100), nrow=4)
+14/80
+6/80
+round( (79-78)/78*100)
+round( (71-46)/46*100)
+BiocManager::install("plyranges")
+library(hdcuremodels)
+hdcuremodels:::cv.em.fdr
+hdcuremodels:::cv.em.nofdr
+hdcuremodels:::initialization_cox
+hdcuremodels:::cv.em.inner
+hdcuremodels:::C.stat
+hdcuremodels:::AUC_msi
+hdcuremodels:::cure.em
+?generate_cure_data
+library(survival)#
+set.seed(1234)#
+temp <- generate_cure_data(N = 200, J = 25, nTrue = 5, A = 1.8)#
+training <- temp$Training#
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)#
+fit.cv.fdr <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, model = "weibull", penalty = "lasso",#
+                 fdr.control = TRUE, grid.tuning = FALSE, nlambda.inc = 10,#
+                 nlambda.lat = 10, n_folds = 2, seed = 23, verbose = TRUE)
+getwd()
+save.image("temp.RData")
+hdcuremodels:::cv.em.inner
+inits <- initialization_cox(training[,-(1:2)],training[,-(1:2)], training[,1], training[,2])
+inits <- hdcuremodels:::initialization_cox(training[,-(1:2)],training[,-(1:2)], training[,1], training[,2])
+inits
+inits <- hdcuremodels:::initialization_parametric(training[,-(1:2)],training[,-(1:2)], training[,1], training[,2])
+inits
+get_cox_lambda_max<- hdcuremodels:::get_cox_lambda_max
+fix(get_cox_lambda_max)
+rm(get_cox_lambda_max)
+cv.em.inner <- hdcuremodels:::cv.em.inner
+fix(cv.em.inner)
+cv.em.nofdr <- hdcuremodels:::cv.em.nofdr
+fix(cv.em.nofdr)
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)#
+fit.cv.fdr <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, model = "weibull", penalty = "lasso",#
+                 fdr.control = TRUE, grid.tuning = FALSE, nlambda.inc = 10,#
+                 nlambda.lat = 10, n_folds = 2, seed = 23, verbose = TRUE)
+hdcuremodels:::cv.em.nofdr(NULL, training[,-(1:2)], NULL, training[,-(1:2)], training[,1], training[,2], model="cox", penalty ="lasso", measure.inc="auc")
+hdcuremodels:::cv.em.nofdr(NULL, training[,-(1:2)], NULL, training[,-(1:2)], training[,1], training[,2], model="cox", penalty ="lasso", measure.inc="auc", verbose=TRUE)
+cv.em.nofdr<-hdcuremodels:::cv.em.nofdr
+fix(cv.em.nofdr)
+cv.em.nofdr(NULL, training[,-(1:2)], NULL, training[,-(1:2)], training[,1], training[,2], model="cox", penalty ="lasso", measure.inc="auc", verbose=TRUE)
+fix(cv.em.nofdr)
+cv.em.nofdr(NULL, training[,-(1:2)], NULL, training[,-(1:2)], training[,1], training[,2], model="cox", penalty ="lasso", measure.inc="auc", verbose=TRUE)
+fix(cv.em.nofdr)
+cv.em.nofdr(NULL, training[,-(1:2)], NULL, training[,-(1:2)], training[,1], training[,2], model="cox", penalty ="lasso", measure.inc="auc", verbose=TRUE)
+fix(cv.em.nofdr)
+cv.em.nofdr(NULL, training[,-(1:2)], NULL, training[,-(1:2)], training[,1], training[,2], model="cox", penalty ="lasso", measure.inc="auc", verbose=TRUE)
+cv.em.nofdr(NULL, training[,-(1:2)], NULL, training[,-(1:2)], training[,1], training[,2], model="cox", penalty ="lasso", measure.inc="auc", verbose=TRUE, seed=23)
+rm(cv.em.nodfr)
+rm(cv.em.nofdr)
+cv.em.nofdr<-hdcuremodels:::cv.em.nofdr
+fix(cv.em.nofdr)
+cv.em.nofdr(NULL, training[,-(1:2)], NULL, training[,-(1:2)], training[,1], training[,2], model="cox", penalty ="lasso", measure.inc="auc", verbose=TRUE, seed=23)
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)
+fix(hdcuremodels:::cv.em.nofdr)
+fix(cv.em.nofdr)
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)
+cv.em.nofdr2 <- cv.em.nofdr
+fix(cv_cureem)
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)
+cv.em.inner2 <- hdcuremodels:::cv.em.inner
+fix(cv.em.inner2)
+fix(cv.em.nofdr2 )
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)
+hdcuremodels:::cv.em.inner
+hdcuremodels:::cure.em
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)
+library(hdcuremodels)
+hdcuremodels:::cure.em
+hdcuremodels:::cv.em.inner
+hdcuremodels:::cv.em.nofdr
+library(hdcuremodels)
+cv.em.inner2 <- hdcuremodels:::cv.em.inner
+fix(cv.em.inner2)
+cv.em.nofdr2 <- hdcuremodels:::cv.em.nodfr
+cv.em.nofdr2 <- hdcuremodels:::cv.em.nofdr
+fix(cv.em.nofdr2)
+fix(cv_cureem)
+?cv_cureem
+library(survival)#
+set.seed(1234)#
+temp <- generate_cure_data(N = 200, J = 25, nTrue = 5, A = 1.8)#
+training <- temp$Training#
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)
+fix(cv.em.nofdr)
+fix(cv.em.nofdr2)
+library(survival)#
+set.seed(1234)#
+temp <- generate_cure_data(N = 200, J = 25, nTrue = 5, A = 1.8)#
+training <- temp$Training#
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)
+cv.em.nofdr2 <- hdcuremodels:::no.em.nofdr
+cv.em.nofdr2 <- hdcuremodels:::cv.em.nofdr
+fix(cv.em.nofdr2)
+library(survival)#
+set.seed(1234)#
+temp <- generate_cure_data(N = 200, J = 25, nTrue = 5, A = 1.8)#
+training <- temp$Training#
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)
+fix(cv.em.nofdr2)
+initialization_cox(training[,-(1:2)], training[,-(1:2)], training[,1], training[,2])
+hdcuremodels:::initialization_cox(training[,-(1:2)], training[,-(1:2)], training[,1], training[,2])
+hdcuremodels:::initialization_cox(NULL, NULL, training[,1], training[,2])
+fix(cv.em.nofdr2)
+library(survival)#
+set.seed(1234)#
+temp <- generate_cure_data(N = 200, J = 25, nTrue = 5, A = 1.8)#
+training <- temp$Training#
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)
+0.41292662 * 0.04129266^c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9 )
+fix(cv.em.nofdr2)
+library(survival)#
+set.seed(1234)#
+temp <- generate_cure_data(N = 200, J = 25, nTrue = 5, A = 1.8)#
+training <- temp$Training#
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)
+fix(cv.em.nofdr2)
+library(survival)#
+set.seed(1234)#
+temp <- generate_cure_data(N = 200, J = 25, nTrue = 5, A = 1.8)#
+training <- temp$Training#
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)
+fix(cv.em.nofdr2)
+fix(cv.em.inner2)
+library(survival)#
+set.seed(1234)#
+temp <- generate_cure_data(N = 200, J = 25, nTrue = 5, A = 1.8)#
+training <- temp$Training#
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)
+fix(cv.em.inner2)
+fix(cv.em.nofdr2)
+library(survival)#
+set.seed(1234)#
+temp <- generate_cure_data(N = 200, J = 25, nTrue = 5, A = 1.8)#
+training <- temp$Training#
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)
+library(hdcuremodels)
+hdcuremodels:::cure.em
+hdcuremodels:::cv.em.nofdr
+hdcuremodels:::cv.em.inner
+hdcuremodels:::initialization_cox
+library(hdcuremodels)
+?cv_cureem
+library(survival)#
+set.seed(1234)#
+temp <- generate_cure_data(N = 200, J = 25, nTrue = 5, A = 1.8)#
+training <- temp$Training#
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)#
+fit.cv.fdr <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, model = "weibull", penalty = "lasso",#
+                 fdr.control = TRUE, grid.tuning = FALSE, nlambda.inc = 10,#
+                 nlambda.lat = 10, n_folds = 2, seed = 23, verbose = TRUE)
+cv.em.inner2 <- hdcuremodels:::cv.em.inner
+fix(cv.em.inner2)
+library(survival)#
+set.seed(1234)#
+temp <- generate_cure_data(N = 200, J = 25, nTrue = 5, A = 1.8)#
+training <- temp$Training#
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE, parallel = TRUE)#
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE, parallel = FALSE)
+hdcuremodels:::cv.em.nofdr
+hdcuremodels:::cv.em.inner
+hdcuremodels:::cure.em
+hdcuremodels:::initialization_cox
+hdcuremodels:::initialization_parametric
+hdcuremodels:::inits_check
+hdcuremodels:::cox_l1
+hdcuremodels:::cox_mcp_scad
+hdcuremodels:::weib_EM
+hdcuremodels:::exp_EM
+?cv_cureem
+library(survival)#
+set.seed(1234)#
+temp <- generate_cure_data(N = 200, J = 25, nTrue = 5, A = 1.8)#
+training <- temp$Training#
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)
+fit.cv.fdr <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, model = "weibull", penalty = "lasso",#
+                 fdr.control = TRUE, grid.tuning = FALSE, nlambda.inc = 10,#
+                 nlambda.lat = 10, n_folds = 2, seed = 23, verbose = TRUE)
+hdcuremodels:::cv.em.fdr
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE, penalty = "MCP")
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE, penalty = "SCAD")
+fit.cv.fdr <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, model = "exponential", penalty = "lasso",#
+                 fdr.control = TRUE, grid.tuning = FALSE, nlambda.inc = 10,#
+                 nlambda.lat = 10, n_folds = 2, seed = 23, verbose = TRUE)
+?curegmifs
+fitgmifs <- curegmifs(Surv(cryr, relapse.death) ~ .,  data = amltrain,  x.latency = amltrain, model = "weibull")
+cureem
+?cureem
+library(survival)#
+set.seed(1234)#
+temp <- generate_cure_data(N = 80, J = 100, nTrue = 10, A = 1.8)#
+training <- temp$Training#
+fit <- cureem(Surv(Time, Censor) ~ ., data = training, x.latency = training,#
+                 model = "cox", penalty = "lasso",#
+                 lambda.inc = 0.1, lambda.lat = 0.1, gamma.inc = 6, gamma.lat = 10)
+print(fit)
+summary(fit)
+coef(fit)
+plot(fit)
+predict(fit)
+AUC_mcm(fit)
+?concordance
+?predict.mixturecure
+AUC(fit)
+concordance_mcm(fit)
+?curegmifs
+library(survival)#
+set.seed(1234)#
+temp <- generate_cure_data(N = 100, J = 10, nTrue = 10, A = 1.8)#
+training <- temp$Training#
+#
+fit <- curegmifs(Surv(Time, Censor) ~ .,#
+         data = training, x.latency = training,#
+         model = "weibull", thresh = 1e-4, maxit = 2000, epsilon = 0.01,#
+         verbose = FALSE)
+fit
+summary(fit)
+coef(fit)
+plot(fit)
+predict(fit)
+AUC(fit)
+concordance_mcm(fit)
+AUC(fit, model.select=1000)
+concordance_mcm(fit, model.select=1000)
+predict(fit)
+predict(fit, model.select=100)
+?cv_curegmifs
+library(survival)#
+set.seed(123)#
+temp <- generate_cure_data(N = 100, J = 15, nTrue = 3, A = 1.8, rho = 0.2)#
+training <- temp$Training#
+#
+fit.cv <- cv_curegmifs(Surv(Time, Censor) ~ ., data = training,#
+                      x.latency = training, fdr.control = FALSE,#
+                      maxit = 450, epsilon = 0.01,#
+                      n_folds = 2, seed = 23, verbose = TRUE)
+summary(fit.cv)
+coef(fit.cv)
+plot(fit.cv)
+predict(fit.cx)
+predict(fit.cv)
+AUC(fit.cv)
+concordance_mcm(fit.cv)
+?cv_cureem
+library(survival)#
+set.seed(1234)#
+temp <- generate_cure_data(N = 200, J = 25, nTrue = 5, A = 1.8)#
+training <- temp$Training#
+fit.cv <- cv_cureem(Surv(Time, Censor) ~ ., data = training,#
+                 x.latency = training, fdr.control = FALSE,#
+                 grid.tuning = FALSE, nlambda.inc = 10, nlambda.lat = 10,#
+                 n_folds = 2, seed = 23, verbose = TRUE)
+summary(fit.cv)
+coef(fit.cv)
+coef(fit.cv, model.select="AIC")
+plot(fit.cv)
+plot.mixturecure
+hdcuremodels:::plot.mixturecure
+plot(fit.cv)
+options (repos = c (#
+    ropenscireviewtools = "https://ropensci-review-tools.r-universe.dev",#
+    CRAN = "https://cloud.r-project.org"#
+))
+install.packages ("pkgcheck")
+library (pkgcheck)
+mydir <- file.path (tempdir (), "srr-demo")#
+gert::git_clone ("https://github.com/mpadge/srr-demo", path = mydir)#
+devtools::document (mydir, quiet = TRUE) # Generate documentation entries in "/man" directory#
+x <- pkgcheck (mydir)
+mydir
+mydir <- file.path (getwd(), "check_mypkg")
+mydir
+gert::git_clone ("https://github.com/kelliejarcher/hdcuremodels", path = mydir)
+devtools::document (mydir, quiet = TRUE)
+mydir
+x <- pkgcheck (mydir)
+x <- pkgcheck(mydir)
+search()
+?hdcuremodels
+?cv_cureem
+??hdcuremodels
+options (repos = c (#
+    ropenscireviewtools = "https://ropensci-review-tools.r-universe.dev",#
+    CRAN = "https://cloud.r-project.org"#
+))
+library(pkgcheck)
+mydir <- file.path("Documents", "mypkgchecks")
+getwd()
+gert::git_clone("https://github.com/kelliejarcher/hdcuremodels", path = mydir)
+devtools::document (mydir, quiet = TRUE)
+x <- pkgcheck (mydir)
+rm(list=ls())
+options (repos = c (#
+     ropenscireviewtools = "https://ropensci-review-tools.r-universe.dev",#
+     CRAN = "https://cloud.r-project.org"#
+ ))#
+library(pkgcheck)#
+mydir <- file.path("Documents", "mypkgchecks")#
+getwd()#
+gert::git_clone("https://github.com/kelliejarcher/hdcuremodels", path = mydir)#
+devtools::document (mydir, quiet = TRUE)
+x <- pkgcheck (mydir)
+install.packages ("pkgstats")
+install.packages ("pkgcheck")
+x <- pkgcheck (mydir)
+library(pkgstats)
+x <- pkgcheck (mydir)
+install.packages ("pkgstats")
+library(pkgstats)
+x <- pkgcheck (mydir)
+install.packages ("pkgstats")
+options (repos = c (#
+    ropenscireviewtools = "https://ropensci-review-tools.r-universe.dev",#
+    CRAN = "https://cloud.r-project.org"#
+))
+library (pkgstats)
+ctags_test ()
+ctags_install()
+ctags_test ()
+Sys.unsetenv (c ("GTAGSCONF", "GTAGSLABEL"))
+ctags_test ()
+options (repos = c (#
+     ropenscireviewtools = "https://ropensci-review-tools.r-universe.dev",#
+     CRAN = "https://cloud.r-project.org"#
+ ))#
+library(pkgcheck)#
+mydir <- file.path("Documents", "mypkgchecks")#
+getwd()#
+gert::git_clone("https://github.com/kelliejarcher/hdcuremodels", path = mydir)#
+devtools::document (mydir, quiet = TRUE)
+x <- pkgcheck (mydir)
+rm(list=ls())
+library(pkgcheck)
+mydir <- file.path("Documents", "mypkgchecks")
+getwd()
+gert::git_clone("https://github.com/kelliejarcher/hdcuremodels", path = mydir)
+devtools::document (mydir, quiet = TRUE)
+x <- pkgcheck (mydir)
+pkgstats::pkgstats()
+pkgcheck (mydir)
+?pkgcheck
+getwd()
+checks <- pkgcheck("/Users/archer.43/Documents/hdcuremodels")

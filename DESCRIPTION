@@ -30,3 +30,5 @@ Suggests:
     roxygen2
 VignetteBuilder: knitr
 LazyData: true
+URL: https://github.com/kelliejarcher/hdcuremodels
+BugReports: https://github.com/kelliejarcher/hdcuremodels/issues
