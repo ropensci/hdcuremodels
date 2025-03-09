@@ -1,4 +1,7 @@
 ^hdcuremodels\.Rproj$
+^CONTRIBUTING\.md
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^README\.Rmd$
+^codemeta\.json$
+^\.github$

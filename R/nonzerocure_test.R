@@ -50,25 +50,22 @@ nonzerocure_test <- function(object, reps = 1000, seed = NULL, plot = FALSE,
   if (!(c("survfit") %in% class(object))) {
     stop("object must be a survfit object")
   }
+  # Surv(Time, Censor)
+  Y <- Surv(object$time, object$n.event)
+  n <- length(Y)
   if (is.null(object$strata)) {
-    exp_model <- survival::survreg(as.formula(object$call$formula),
-      data = eval(parse(text = object$call$data)),
+    exp_model <- survival::survreg(Y ~ 1,
+      data = Y,
       dist = "exponential"
     )
-    mcm <- flexsurvcure::flexsurvcure(as.formula(object$call$formula),
-      data = eval(parse(text = object$call$data)),
+    mcm <- flexsurvcure::flexsurvcure(Y ~ 1,
+      data = Y,
       dist = "exp", mixture = TRUE
     )
     susceptible <- 1 - cure_estimate(object)
     mean <- unname(exp(exp_model$coefficients["(Intercept)"]))
     rate <- unname(mcm$coefficients["rate"])
     cured <- cure_estimate(object)
-    if (class(eval(parse(text = object$call$data))) %in%
-      c("ExpressionSet", "SummarizedExperiment")) {
-      n <- dim(eval(parse(text = object$call$data)))[2]
-    } else {
-      n <- dim(eval(parse(text = object$call$data)))[1]
-    }
     if (cured > 0 && cured < 1) {
       time_95 <- 1 / exp(rate) - log((0.05 * cured) / (0.95 * (1 - cured)))
     } else {
@@ -92,26 +89,14 @@ nonzerocure_test <- function(object, reps = 1000, seed = NULL, plot = FALSE,
     mean <- rep(NA, length(strata))
     rate <- rep(NA, length(strata))
     for (i in seq_along(strata)) {
-      ff <- as.formula(object$call$formula)
-      tt <- terms(ff)
-      tt[-1]
-      rhs_variable <- all.vars(as.formula(object$call$formula))[-(1:2)]
-
-      exp_model <- survival::survreg(tt[-1],
-        data = (eval(parse(text = object$call$data))),
-        dist = "exponential",
-        subset = ((eval(parse(
-          text =
-            object$call$data
-        )))[, rhs_variable] == strata[i])
-      )
+      group <- extract_rhs_values(object)
+      frame <- data.frame(surv = Y, group = group)
+      exp_model <- survival::survreg(surv ~ 1,
+        dist = "exponential", data = frame,
+        subset = (group == strata[i]))
       mean[i] <- exp(exp_model$coefficients["(Intercept)"])
-      mcm <- flexsurvcure::flexsurvcure(formula(tt[-1]),
-        data = (eval(parse(text = object$call$data))),
-        subset = ((eval(parse(
-          text =
-            object$call$data
-        )))[, rhs_variable] == strata[i]),
+      mcm <- flexsurvcure::flexsurvcure(surv ~ 1,
+        data = frame, subset = group == strata[i],
         dist = "exp", mixture = TRUE
       )
       rate[i] <- mcm$coefficients["rate"]

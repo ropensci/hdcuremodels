@@ -124,6 +124,12 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
   if (missing(data)) {
     data <- environment(formula)
   }
+  if (thresh < 0) {
+    stop("\"thresh\" must be non-negative")
+  }
+  if (epsilon < 0) {
+    stop("\"epsilon\" must be non-negative")
+  }
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
   model <- match.arg(model)

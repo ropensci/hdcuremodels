@@ -1,0 +1,22 @@
+test_that("multiplication works", {
+  library(survival)
+  set.seed(1234)
+  temp <- generate_cure_data(n = 200, j = 10, n_true = 10, a = 1.8)
+  training <- temp$training
+  training$group <- gl(2, 75)
+  km_fit <- survfit(Surv(Time, Censor) ~ 1, data = training)
+  output <- cure_estimate(km_fit)
+  output %>% expect_length(1)
+  expect_equal(round(output, 7), 0.5017584)
+  output %>% expect_type("double")
+  expect_error(cure_estimate(survdiff(Surv(Time, Censor) ~ 1, data = training)))
+  expect_visible(cure_estimate(km_fit))
+
+  km_fit <- survfit(Surv(Time, Censor) ~ group, data = training)
+  output <- cure_estimate(km_fit)
+  output %>% expect_length(3)
+  expect_equal(round(output[1, 2], 7), 0.4679279)
+  output %>% expect_type("list")
+  expect_error(cure_estimate(survdiff(Surv(Time, Censor) ~ group, data = training)))
+  expect_visible(cure_estimate(km_fit))
+})

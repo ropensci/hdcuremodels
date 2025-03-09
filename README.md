@@ -4,6 +4,8 @@
 # hdcuremodels
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/kelliejarcher/hdcuremodels/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kelliejarcher/hdcuremodels/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of hdcuremodels is to allow one to fit a penalized mixture cure

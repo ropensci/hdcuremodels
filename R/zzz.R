@@ -720,9 +720,9 @@ cv.em.nofdr <-
                      penalty, penalty.factor.inc, penalty.factor.lat, thresh,
                      nIter, optimal_lambda_b, optimal_lambda_beta, gamma.inc,
                      gamma.lat, inits)
-    output$selected.lambda.inc <- optimal_lambda_b
-    output$selected.lambda.lat <- optimal_lambda_beta
-    output$max.c <- max(c_stat)
+    output$selected_lambda_inc <- optimal_lambda_b
+    output$selected_lambda_lat <- optimal_lambda_beta
+    output$max_c <- max(c_stat)
     if (measure.inc == "auc")
       output$max.auc <- max(auc)
     return(output)
@@ -1062,7 +1062,6 @@ function(X_u = NULL, X_p, W_u = NULL, W_p, time, delta, epsilon = 0.001,
   if (step < nIter) {
     b_p_path <- b_p_path[1:step,]
     beta_p_path <- beta_p_path[1:step,]
-    alpha_path <- alpha_path[1:step]
     lambda_path <- lambda_path[1:step]
     b_u_path <- b_u_path[1:step,]
     itct_path <- itct_path[1:step]
@@ -2446,5 +2445,24 @@ C.stat <-
     return(C_csw_num / C_csw_denom)
   }
 
-
+extract_rhs_values <- function(model) {
+  # Extract the model formula
+  model_formula <- formula(model)
+  # Get the right-hand side (RHS) variables from the formula
+  rhs_vars <- attr(terms(model_formula), "term.labels")
+  # Extract the model call
+  model_call <- model$call
+  # Check if the model call contains the data argument
+  if (!"data" %in% names(model_call)) {
+    stop("Model call does not reference a dataset.")
+  }
+  # Evaluate the data argument from the model call in the model's environment
+  data <- eval(model_call$data, environment(model$terms))
+  if (is.null(data)) {
+    stop("Could not evaluate dataset from model call.")
+  }
+  # Extract the RHS variable values from the dataset
+  rhs_values <- data[rhs_vars]
+  return(rhs_values)
+}
 
