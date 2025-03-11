@@ -1,3 +1,9 @@
+#' @srrstats {G5.5} *Correctness tests should be run with a fixed random seed*
+#' @srrstats {G5.6a} *Parameter recovery tests should generally be expected to succeed within a defined tolerance rather than recovering exact values.*
+#' @srrstats {G5.9} **Noise susceptibility tests** *Packages should test for expected stochastic behaviour, such as through the following conditions:*
+#' @srrstats {G5.9a} *Adding trivial noise (for example, at the scale of `.Machine$double.eps`) to data does not meaningfully change results*
+#' @srrstats {G5.9b} *Running under different random seeds or initial conditions does not meaningfully change results*
+
 test_that("nonzerocure_test works", {
   library(survival)
   set.seed(1234)

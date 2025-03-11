@@ -1,3 +1,5 @@
+#' @srrstats {G5.2b} *Explicit tests should demonstrate conditions which trigger every one of those messages, and should compare the result with expected values.*
+
 test_that("coef function works correctly", {
   library(survival)
   set.seed(1234)

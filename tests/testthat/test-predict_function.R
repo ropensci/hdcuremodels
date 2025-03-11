@@ -1,3 +1,5 @@
+#' @srrstats {G5.5} *Correctness tests should be run with a fixed random seed*
+
 test_that("predict function works correctly", {
   library(survival)
   set.seed(1234)
