@@ -177,7 +177,33 @@
 #'
 #' @srrstats {G1.0} *Statistical Software should list at least one primary reference from published academic literature.*
 #' @srrstats {G1.1} *Statistical Software should document whether the algorithm(s) it implements are: An improvement on other implementations of similar algorithms in **R**.
-
+#' @srrstats {G2.1} *Implement assertions on types of inputs (see the initial point on nomenclature above).*
+#' @srrstats {G2.3a} *Use `match.arg()` or equivalent where applicable to only permit expected values.*
+#' @srrstats {G2.1a} *Provide explicit secondary documentation of expectations on data types of all vector inputs.*
+#' @srrstats {G2.2} *Appropriately prohibit or restrict submission of multivariate input to parameters expected to be univariate.*
+#' @srrstats {G2.3} *For univariate character input:*
+#' @srrstats {G2.3b} *Either: use `tolower()` or equivalent to ensure input of character parameters is not case dependent; or explicitly document that parameters are strictly case-sensitive.*
+#' @srrstats {G2.4} *Provide appropriate mechanisms to convert between different data types, potentially including:*
+#' @srrstats {G2.4e} *explicit conversion from factor via `as...()` functions*
+#' @srrstats {G2.10} *Software should ensure that extraction or filtering of single columns from tabular inputs should not presume any particular default behaviour, and should ensure all column-extraction operations behave consistently regardless of the class of tabular data used as input.*
+#' @srrstats {G5.2} *Appropriate error and warning behaviour of all functions should be explicitly demonstrated through tests. In particular,*
+#' @srrstats {G5.2a} *Every message produced within R code by `stop()`, `warning()`, `message()`, or equivalent should be unique*
+#' @srrstats {G5.5} *Correctness tests should be run with a fixed random seed*
+#' @srrstats {G5.6a} *Parameter recovery tests should generally be expected to succeed within a defined tolerance rather than recovering exact values.*
+#' @srrstats {G5.6} **Parameter recovery tests** *to test that the implementation produce expected results given data with known properties. For instance, a linear regression algorithm should return expected coefficient values for a simulated data set generated from a linear model.*
+#' @srrstats {G5.9} **Noise susceptibility tests** *Packages should test for expected stochastic behaviour, such as through the following conditions:*
+#' @srrstats {G5.9a} *Adding trivial noise (for example, at the scale of `.Machine$double.eps`) to data does not meaningfully change results*
+#' @srrstats {G5.9b} *Running under different random seeds or initial conditions does not meaningfully change results*
+#' @srrstats {RE1.0} *Regression Software should enable models to be specified via a formula interface, unless reasons for not doing so are explicitly documented.*
+#' @srrstats {RE1.1} *Regression Software should document how formula interfaces are converted to matrix representations of input data.*
+#' @srrstats {RE1.2} *Regression Software should document expected format (types or classes) for inputting predictor variables, including descriptions of types or classes which are not accepted.*
+#' @srrstats {RE1.3} *Regression Software which passes or otherwise transforms aspects of input data onto output structures should ensure that those output structures retain all relevant aspects of input data, notably including row and column names, and potentially information from other `attributes()`.*
+#' @srrstats {RE1.3a} *Where otherwise relevant information is not transferred, this should be explicitly documented.*
+#' @srrstats {RE1.4} *Regression Software should document any assumptions made with regard to input data; for example distributional assumptions, or assumptions that predictor data have mean values of zero. Implications of violations of these assumptions should be both documented and tested.*
+#' @srrstats {RE2.3} *Where applicable, Regression Software should enable data to be centred (for example, through converting to zero-mean equivalent values; or to z-scores) or offset (for example, to zero-intercept equivalent values) via additional parameters, with the effects of any such parameters clearly documented and tested.*
+#' @srrstats {RE4.0} *Regression Software should return some form of "model" object, generally through using or modifying existing class structures for model objects (such as `lm`, `glm`, or model objects from other packages), or creating a new class of model objects.*
+#' @srrstats {RE4.4} *The specification of the model, generally as a formula (via `formula()`)*
+#' @srrstats {RE4.8} *Response variables, and associated "metadata" where applicable.*
 #' @seealso \code{\link{cureem}}
 #'
 #' @keywords models
@@ -218,7 +244,7 @@ cv_cureem <- function(formula, data, subset, x_latency = NULL,
   mf <- match.call(expand.dots = FALSE)
   cl <- match.call()
   m <- match(c("formula", "data", "subset"), names(mf), 0L)
-  if (m[1] == 0) stop("A \"formula\" argument is required")
+  if (m[1] == 0) stop("Error: A \"formula\" argument is required")
   mf <- mf[c(1L, m)]
   mf[[1L]] <- as.name("model.frame")
   if (missing(data)) {
@@ -243,7 +269,7 @@ cv_cureem <- function(formula, data, subset, x_latency = NULL,
       e <- substitute(subset)
       r <- eval(e, data)
       if (!is.logical(r)) {
-        stop("'subset' must evaluate to logical")
+        stop("Error: 'subset' must evaluate to logical")
       }
       r <- r & !is.na(r)
     }
@@ -284,7 +310,7 @@ cv_cureem <- function(formula, data, subset, x_latency = NULL,
   }
   if (nrow(x_inc) != nrow(x_lat) || nrow(x_lat) != length(time) ||
     length(time) != length(event)) {
-    stop("Input dimension mismatch")
+    stop("Error: Input dimension mismatch")
   }
   if (is.null(penalty_factor_inc)) {
     penalty_factor_inc <- rep(1, ncol(x_inc))
@@ -292,23 +318,27 @@ cv_cureem <- function(formula, data, subset, x_latency = NULL,
   if (is.null(penalty_factor_lat)) {
     penalty_factor_lat <- rep(1, ncol(x_lat))
   }
+  if (any(!c(class(penalty_factor_inc), class(penalty_factor_lat)) %in% "numeric")) {
+    stop("Error: Penalty factors specified in penalty_factor_inc and penalty_factor_inc
+         must be numeric vectors comprised of 0 or 1")
+  }
   if (any(!c(penalty_factor_inc, penalty_factor_inc) %in% c(0, 1))) {
-    stop("Penalty factors specified in penalty_factor_inc and penalty_factor_inc
+    stop("Error: Penalty factors specified in penalty_factor_inc and penalty_factor_inc
          can only include 0 or 1")
   }
   if (any(c(lambda_inc_list, lambda_lat_list, gamma_inc, gamma_lat) <= 0)) {
-    stop("Penalty pamameters lambda and gamma should be positive")
+    stop("Error: Penalty pamameters lambda and gamma should be positive")
   }
   if (fdr > 1 || fdr < 0) {
-    stop("FDR should be between 0 and 1")
+    stop("Error: FDR should be between 0 and 1")
   }
   if (lambda_min_ratio_inc > 1 || lambda_min_ratio_inc < 0 ||
     lambda_min_ratio_lat > 1 || lambda_min_ratio_lat < 0) {
-    stop("lambda_min_ratio_inc and lambda_min_ratio_lat should be between
+    stop("Error: lambda_min_ratio_inc and lambda_min_ratio_lat should be between
          0 and 1")
   }
   if (any(c(lambda_inc_list, lambda_lat_list, gamma_inc, gamma_lat) <= 0)) {
-    stop("Penalty pamameters lambda and gamma should be positive")
+    stop("Error: Penalty pamameters lambda and gamma should be positive")
   }
   if (!is.null(inits)) {
     inits <- inits_check(model,
@@ -317,7 +347,7 @@ cv_cureem <- function(formula, data, subset, x_latency = NULL,
     )
   }
   if (model != "cox" && penalty != "lasso") {
-    warning("MCP/SCAD penalized parametric models are not currently supported.
+    warning("Warning: MCP/SCAD penalized parametric models are not currently supported.
             An L1 penalized model was fitted instead.")
     penalty <- "lasso"
   }

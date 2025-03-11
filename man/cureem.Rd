@@ -108,7 +108,7 @@ or \code{penalty = "SCAD"} (default is 3).}
 coefficients in the incidence portion of the model. Row is step and column
 is variable.}
 
-\item{beta_path}{Matrix representing the solution path of lthe
+\item{beta_path}{Matrix representing the solution path of the
 coefficients in the latency portion of the model. Row is step and column
 is variable.}
 

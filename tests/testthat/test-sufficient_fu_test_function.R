@@ -15,4 +15,7 @@ test_that("sufficient_fu_test works correctly", {
   expect_equal(output$n_n[1], 38)
   output %>% expect_type("list")
   output %>% expect_length(4)
+
+  fit.lm <- lm(Time ~ Censor, data = training)
+  expect_error(sufficient_fu_test(fit.lm), "Error: object must be a survfit object")
 })

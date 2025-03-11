@@ -25,4 +25,7 @@ test_that("concordance_mcm works correctly", {
   expect_error(concordance_mcm("x"))
   expect_error(concordance_mcm(1))
 
+  fit.lm <- lm(Time ~ Censor, data = training)
+  expect_error(concordance_mcm(fit.lm), "Error: class of object must be mixturecure")
+
 })

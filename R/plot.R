@@ -25,6 +25,9 @@
 #' @return this function has no returned value but is called for its side
 #' effects
 #'
+#' @srrstats {G1.4} *Software should use [`roxygen2`](https://roxygen2.r-lib.org/) to document all functions.*
+#' @srrstats {RE6.0} *Model objects returned by Regression Software (see* **RE4***) should have default `plot` methods, either through explicit implementation, extension of methods for existing model objects, or through ensuring default methods work appropriately.*
+#' @srrstats {RE6.1} *Where the default `plot` method is **NOT** a generic `plot` method dispatched on the class of return objects (that is, through an S3-type `plot.<myclass>` function or equivalent), that method dispatch (or equivalent) should nevertheless exist in order to explicitly direct users to the appropriate function.*
 #' @seealso \code{\link{curegmifs}}, \code{\link{cureem}},
 #' \code{\link{coef.mixturecure}}, \code{\link{summary.mixturecure}},
 #' \code{\link{predict.mixturecure}}

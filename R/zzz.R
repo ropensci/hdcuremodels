@@ -1,5 +1,49 @@
-# Called by cureem - this function is the optimiziation algorithm for fitting a
-# Cox LASSO model using the EM algorithm
+#' @srrstats {G2.3} *For univariate character input:*
+#' @srrstats {G2.3b} *Either: use `tolower()` or equivalent to ensure input of character parameters is not case dependent; or explicitly document that parameters are strictly case-sensitive.*
+#' @srrstats {G1.4} *Software should use [`roxygen2`](https://roxygen2.r-lib.org/) to document all functions.*
+#' @srrstats {G1.4a} *All internal (non-exported) functions should also be documented in standard [`roxygen2`](https://roxygen2.r-lib.org/) format, along with a final `@noRd` tag to suppress automatic generation of `.Rd` files.*
+#' @srrstats {G2.4} *Provide appropriate mechanisms to convert between different data types, potentially including:*
+#' @srrstats {G2.4b} *explicit conversion to continuous via `as.numeric()`*
+
+#' Optimization Function to Fit Cox LASSO Model Using the E-M Algorithm.
+#'
+#' @description
+#' The cox_l1 function is the optimization algorithm for fitting a Cox
+#' LASSO model using the EM algorithm and is called by cure.em.
+#'
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param mu_inc initial intercept for the incidence portion of the model.
+#' @param mu_lat initial intercept for the latency portion of the model.
+#' @param inits initial values used to optimization.
+#' @param nIter maximum number of interations, default is 100.
+#' @param tol small numeric value specifying convergence tolerance.
+#'
+#' @return \item{b_p_path}{Matrix representing the solution path of the
+#' penalized coefficients in the incidence portion of the model. Row is step and
+#' column is variable.}
+#' @return \item{beta_p_path}{Matrix representing the solution path of the
+#' penalized coefficients in the latency portion of the model. Row is step and
+#' column is variable.}
+#' @return \item{b_u_path}{Matrix representing the solution path of the
+#' unpenalized coefficients in the incidence portion of the model. Row is step
+#' and column is variable.}
+#' @return \item{itct_path}{Vector representing the solution path of the
+#' intercept for the incidence portion of the model.}
+#' @return \item{beta_u_path}{Matrix representing the solution path of the
+#' un penalized coefficients in the latency portion of the model. Row is step
+#' and column is variable.}
+#' @return \item{logLik_inc}{Vector representing the expected penalized
+#' complete-data log-likelihood for the incidence portion of the model for
+#' each step in the solution path.}
+#' @return \item{logLik_lat}{Vector representing the expected penalized
+#' complete-data log-likelihood for the latency portion of the model for each
+#' step in the solution path.}
+#' @noRd
 cox_l1 <-
   function (X_u = NULL, X_p = NULL, W_u = NULL, W_p = NULL, time,
             delta, mu_inc, mu_lat, inits = NULL, nIter = 100, tol = 1e-04)
@@ -156,8 +200,49 @@ cox_l1 <-
     output
   }
 
-# Called by cureem - this function is the optimiziation algorithm for fitting a
-# Cox MCP or SCAD model using the EM algorithm
+#' Optimization Function for Fitting Cox MCP or SCAD Model Using the
+#' E-M algorithm.
+#'
+#' @description
+#' The cox_mcp_scad function is the optimization algorithm for fitting a Cox
+#' LASSO model using the EM algorithm. This function is called by cureem.
+#'
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param penalty specifies either the MCP or SCAD penalty.
+#' @param mu_inc initial intercept for the incidence portion of the model.
+#' @param mu_lat initial intercept for the latency portion of the model.
+#' @param gamma_inc penalty parameter for the incidence portion of the model.
+#' @param gamma_lat penalty parameter for the latency portion of the model.
+#' @param inits initial values used to optimization.
+#' @param nIter maximum number of interations, default is 100.
+#' @param tol small numeric value specifying convergence tolerance.
+#'
+#' @return \item{b_p_path}{Matrix representing the solution path of the
+#' penalized coefficients in the incidence portion of the model. Row is step and
+#' column is variable.}
+#' @return \item{b_u_path}{Matrix representing the solution path of the
+#' unpenalized coefficients in the incidence portion of the model. Row is step
+#' and column is variable.}
+#' @return \item{itct_path}{Vector representing the solution path of the
+#' intercept for the incidence portion of the model.}
+#' @return \item{beta_p_path}{Matrix representing the solution path of the
+#' penalized coefficients in the latency portion of the model. Row is step and
+#' column is variable.}
+#' @return \item{beta_u_path}{Matrix representing the solution path of the
+#' un penalized coefficients in the latency portion of the model. Row is step
+#' and column is variable.}
+#' @return \item{logLik_inc}{Vector representing the expected penalized
+#' complete-data log-likelihood for the incidence portion of the model for
+#' each step in the solution path.}
+#' @return \item{logLik_lat}{Vector representing the expected penalized
+#' complete-data log-likelihood for the latency portion of the model for each
+#' step in the solution path.}
+#' @noRd
 cox_mcp_scad <-
   function (X_u = NULL, X_p = NULL, W_u = NULL, W_p = NULL, time,
             delta, penalty = "MCP", mu_inc, mu_lat, gamma_inc = 3, gamma_lat = 3,
@@ -304,8 +389,45 @@ cox_mcp_scad <-
     output
   }
 
-# Structures data then fits the selected EM MCM (Cox, Weibull, exponential)
-# using either LASSO, MCP, or SCAD. Called by cv.em.inner and cv.em.nofdr
+#' Wrapper Function for Fitting Parametric or Semi-parametric
+#' Penalized MCMs Using the E-M Algorithm.
+#'
+#' @description
+#' The cure.em function structures the data and then fits the selected EM MCM
+#' (Cox LASSO invokes cox_l1; Cox MCP and Cox SCAD invoke cox_mcp_scad, Weibull
+#' LASSO invokes weib_EM, and exponential LASSO invokes exp_EM) which are  the
+#' relevant optimization functions. This function is also called by cv.em.inner
+#' and cv.em.nofdr when cv_cureem is used for cross-validation.
+#'
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param event event (delta = 1) and censoring (delta = 0) indicator.
+#' @param penalty specifies either the MCP or SCAD penalty.
+#' @param penalty.factor.inc vector with length equal to the number of penalized
+#' incidence predictors where 0 indicates no penalty and 1 indicates a penalty
+#' should be applied. If not specified, default is to penalize all incidence
+#' predictors.
+#' @param penalty.factor.lat vector with length equal to the number of penalized
+#' latency predictors where 0 indicates no penalty and 1 indicates a penalty
+#' should be applied. If not specified, default is to penalize all latency
+#' predictors.
+#' @param thresh small numeric value specifying convergence tolerance.
+#' @param maxit maximum number of EM algorithm iterations.
+#' @param lambda.inc LASSO penalty parameter for incidence portion of the model.
+#' @param lambda.lat LASSO penalty for latency portion of the model.
+#' @param gamma.inc penalty parameter for the incidence portion of the model
+#' under SCAD or MCP penalty.
+#' @param gamma.lat penalty parameter for the latency portion of the model
+#' under SCAD or MCP penalty.
+#' @param inits initial values used to optimization.
+#'
+#' @return \item{output}{List that includes the relevant coefficient paths and
+#' additional parameter paths (alpha for Weibull, rate for Weibull and
+#' exponential)}
+#' @noRd
 cure.em <-
   function (X_u = NULL, X_p, W_u = NULL, W_p, time, event, model = "cox",
             penalty = "lasso", penalty.factor.inc = rep(1, ncol(x.inc)),
@@ -316,27 +438,27 @@ cure.em <-
     x.inc <- cbind(X_u, X_p)
     x.lat <- cbind(W_u, W_p)
     if (is.null(dim(x.inc)) | is.null(dim(x.lat)))
-      stop("x.inc and x.lat should be matrices with 2 or more columns")
+      stop("Error: x.inc and x.lat should be matrices with 2 or more columns")
     if ((ncol(x.inc) <= 1) | (ncol(x.lat) <= 1))
-      stop("x.inc and x.lat should be matrices with 2 or more columns")
+      stop("Error: x.inc and x.lat should be matrices with 2 or more columns")
     if (nrow(x.inc) != nrow(x.lat) | nrow(x.lat) != length(time) |
         length(time) != length(event))
-      stop("Input dimension mismatch")
+      stop("Error: Input dimension mismatch")
     if (class(x.inc)[1] == "data.frame" | class(x.lat)[1] ==
         "data.frame") {
       x.inc <- as.matrix(x.inc)
       x.lat <- as.matrix(x.lat)
     }
     if (!model %in% c("cox", "weibull", "exponential"))
-      stop("Only 'cox', 'weibull', 'exponential' available for 'model' parameter")
+      stop("Error: Only 'cox', 'weibull', 'exponential' available for 'model' parameter")
     if (!penalty %in% c("lasso", "MCP", "SCAD"))
-      stop("Only 'lasso', 'MCP', 'SCAD' available for 'penalty' parameter")
+      stop("Error: Only 'lasso', 'MCP', 'SCAD' available for 'penalty' parameter")
     if (any(!c(penalty.factor.inc, penalty.factor.lat) %in% c(0,
                                                               1)))
-      stop("Penalty factors can only contain 0 or 1")
+      stop("Error: Penalty factors can only contain 0 or 1")
     if (any(c(lambda.inc, lambda.lat, gamma.inc, gamma.lat) <=
             0))
-      stop("Penalty pamameters lambda and gamma should be positive")
+      stop("Error: Penalty pamameters lambda and gamma should be positive")
     if (!is.null(inits))
       inits <- inits_check(model, N = length(time), penalty.factor.inc,
                           penalty.factor.lat, inits)
@@ -374,8 +496,43 @@ cure.em <-
     return(output)
   }
 
-# Function for cross-validation with the EM algorithm. Used with foreach when
-# parallel computing is used. Called by cv.em.nofdr.
+#' Estimate Metrics (C-statistic and AUC) When Using Parallel Processing with
+#' Cross-Validation and the EM Algorithm for Fitting a MCM.
+#'
+#' @description
+#' When fitting the MCM using the EM algorithm, this function is called by
+#' cv.em.nofdr and is used for cross-validation when parallel computing is used.
+#'
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param folds_i selected fold for the current parallel process.
+#' @param k number of cross-validation folds.
+#' @param model character, indicating the latency distribution, either "cox",
+#' "exponential", or "weibull".
+#' @param penalty character indicating the type of penalty to impose, either
+#' "lasso", "MCP", or "SCAD".
+#' @param thresh small numeric value specifying convergence tolerance.
+#' @param nIter maximum number of interations.
+#' @param grid.tuning logical, indicates whether penalty parameters for the
+#' incidence and latency portions of the model are simultaneously examined.
+#' @param tuning_sequence sequence of lambda penalty parameter values to examine.
+#' @param gamma.inc when the penalty is "MCP" or "SCAD", the values for the
+#' gamma penalty in the incidence portion of the model.
+#' @param gamma.lat when the penalty is "MCP" or "SCAD", the values for the
+#' gamma penalty in the latency portion of the model.
+#' @param inits initial values used to optimization.
+#' @param measure.inc character, indicating metric used for optimizing the model
+#'  fit, either "c" for the MCM C-statistic or "auc" for the MCM AUC.
+#' @param cure_cutoff numeric, value indicating at what time point MCM
+#' C-statistic or MCM AUC should be calculating when optimizing.
+#'
+#' @return \item{AUC}{value of the MCM AUC at the indicated cure_cutoff.}
+#' @return \item{Cstat}{value of the MCM C-statistic at the indicated cure_cutoff}
+#' @noRd
 cv.em.inner <-
   function (X_u, X_p, W_u, W_p, time, delta, folds_i, k, model = c("cox",
                                                                    "weibull", "exponential"), penalty = c("lasso", "MCP", "SCAD"),
@@ -456,8 +613,92 @@ cv.em.inner <-
     return(res)
   }
 
-# generates knockoffs then calls cv.em.fdr function for optimization
 
+#' Generate Knockoffs Within Cross-Validated MCM E-M Algorithm For False
+#' Discovery Rate Control.
+#'
+#' @description
+#' This function generates knockoffs as part of the cross-validated MCM fitting
+#' procedure. Once the knockoffs are appended to the full dataset, this function
+#' calls cv.em.fdr function which performs the optimization.
+#'
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param model character, indicating the latency distribution, either "cox",
+#' "exponential", or "weibull".
+#' @param penalty character indicating the type of penalty to impose, either
+#' "lasso", "MCP", or "SCAD".
+#' @param fdr numeric value between 0 and 1 indicating the FDR threshold to use
+#' for variable selection.
+#' @param thresh small numeric value specifying convergence tolerance.
+#' @param nIter maximum number of interations.
+#' @param penalty.factor.inc vector with length equal to the number of penalized
+#' incidence predictors where 0 indicates no penalty and 1 indicates a penalty
+#' should be applied. If not specified, default is to penalize all incidence
+#' predictors.
+#' @param penalty.factor.lat vector with length equal to the number of penalized
+#' latency predictors where 0 indicates no penalty and 1 indicates a penalty
+#' should be applied. If not specified, default is to penalize all latency
+#' predictors.
+#' @param grid.tuning logical, indicates whether penalty parameters for the
+#' incidence and latency portions of the model are simultaneously examined.
+#' @param lambda.inc.list sequence of lambda penalty parameter values for the
+#' incidence portion of the model to examine.
+#' @param lambda.lat.list sequence of lambda penalty parameter values for the
+#' incidence portion of the model to examine.
+#' @param nlambda.inc if grid.tuning is TRUE, the ten different values of the
+#' lambda penalty parameter are examined for optimizing the indicence portion of
+#' the model. Otherwise, 50 different values of the lambda
+#' penalty parameter are examined for optimizing the indicence portion of the
+#' model.
+#' @param nlambda.lat if grid.tuning is TRUE, the ten different values of the
+#' lambda penalty parameter are examined for optimizing the latency portion of
+#' the model. Otherwise, 50 different values of the lambda
+#' penalty parameter are examined for optimizing the latency portion of the
+#' model.
+#' @param lambda.min.ratio.inc numeric value in (0, 1) representing the smallest
+#' value for the lambda penalty as a fraction of the largest lambda penalty to
+#' use in the incidence portion of the model.
+#' @param lambda.min.ratio.lat numeric value in (0, 1) representing the smallest
+#' value for the lambda penalty as a fraction of the largest lambda penalty to
+#' use in the latency portion of the model.
+#' @param gamma.inc when the penalty is "MCP" or "SCAD", the values for the
+#' gamma penalty in the incidence portion of the model.
+#' @param gamma.lat when the penalty is "MCP" or "SCAD", the values for the
+#' gamma penalty in the latency portion of the model.
+#' @param inits initial values used to optimization.
+#' @param n_folds number of folds to use in the cross-validation procedure.
+#' @param measure.inc character, indicating metric used for optimizing the model
+#'  fit, either "c" for the MCM C-statistic or "auc" for the MCM AUC.
+#' @param one.se logical, if TRUE, identifies the optimal model as the model
+#' within one SE of the selected and estimated measure.inc ("c" or "auc").
+#' Allows selection of a more parsimonious model than that achieved when
+#' maximizing "c" or "auc".
+#' @param cure_cutoff numeric, value indicating at what time point MCM
+#' C-statistic or MCM AUC should be calculating when optimizing.
+#' @param parallel logical, if TRUE, parallel processing is used.
+#' @param seed random seed to set to enhance reproducibility.
+#' @param verbose logical, if TRUE displays step process to the console.
+#'
+#' @return \item{b0}{numeric, estimated intercept for the incidence portion of
+#' the model.}
+#' @return \item{b}{vector, estimated coefficients for the incidence portion of
+#' the model.}
+#' @return \item{beta}{vector, estimated coefficients for the latency portion of
+#' the model.}
+#' @return \item{rate}{numeric, estimated rate when fitting a Weibull or
+#' exponential MCM.}
+#' @return \item{alpha}{numeric, estimated alpha parameter when fitting a
+#' Weibull MCM.}
+#' @return \item{selected_b}{indicates which, if any, of the incidence
+#' coefficients have an fdr less than the user-specified fdr threshold.}
+#' @return \item{selected_beta}{indicates which, if any, of the latency
+#' coefficients have an fdr less than the user-specified fdr threshold.}
+#' @noRd
 cv.em.fdr <-
   function (X_u, X_p, W_u, W_p, time, delta, model = c("weibull",
                                                        "exponential"), penalty = c("lasso", "MCP", "SCAD"), fdr = 0.2,
@@ -535,9 +776,70 @@ cv.em.fdr <-
                 alpha = fit$alpha, selected_b = selected_b, selected_beta = selected_beta))
   }
 
-# Function for fitting a Cox MCM using the EM algorithm
-# Called by cv_cureem and cv.em.fdr (latter first generates knockoffs then uses
-# this function for optimization)
+#' Cross-Validation Optimization Function for MCM Using the E-M Algorithm.
+#'
+#' @description
+#' This function is the main optimization function for fitting a MCM using the
+#' EM algorithm. This function is called by cv_cureem. It is also called by
+#' cv.em.fdr as cv.em.fdr first generates knockoffs then uses
+#' this function for optimization.
+#'
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param model character, indicating the latency distribution, either "cox",
+#' "exponential", or "weibull".
+#' @param penalty character indicating the type of penalty to impose, either
+#' "lasso", "MCP", or "SCAD".
+#' @param thresh small numeric value specifying convergence tolerance.
+#' @param nIter maximum number of iterations.
+#' @param grid.tuning logical, indicates whether penalty parameters for the
+#' incidence and latency portions of the model are simultaneously examined.
+#' @param lambda.inc.list sequence of lambda penalty parameter values for the
+#' incidence portion of the model to examine.
+#' @param lambda.lat.list sequence of lambda penalty parameter values for the
+#' incidence portion of the model to examine.
+#' @param nlambda.inc if grid.tuning is TRUE, the ten different values of the
+#' lambda penalty parameter are examined for optimizing the indicence portion of
+#' the model. Otherwise, 50 different values of the lambda
+#' penalty parameter are examined for optimizing the indicence portion of the
+#' model.
+#' @param nlambda.lat if grid.tuning is TRUE, the ten different values of the
+#' lambda penalty parameter are examined for optimizing the latency portion of
+#' the model. Otherwise, 50 different values of the lambda
+#' penalty parameter are examined for optimizing the latency portion of the
+#' model.
+#' @param lambda.min.ratio.inc numeric value in (0, 1) representing the smallest
+#' value for the lambda penalty as a fraction of the largest lambda penalty to
+#' use in the incidence portion of the model.
+#' @param lambda.min.ratio.lat numeric value in (0, 1) representing the smallest
+#' value for the lambda penalty as a fraction of the largest lambda penalty to
+#' use in the latency portion of the model.
+#' @param gamma.inc when the penalty is "MCP" or "SCAD", the values for the
+#' gamma penalty in the incidence portion of the model.
+#' @param gamma.lat when the penalty is "MCP" or "SCAD", the values for the
+#' gamma penalty in the latency portion of the model.
+#' @param inits initial values used to optimization.
+#' @param n_folds number of folds to use in the cross-validation procedure.
+#' @param measure.inc character, indicating metric used for optimizing the model
+#'  fit, either "c" for the MCM C-statistic or "auc" for the MCM AUC.
+#' @param one.se logical, if TRUE, identifies the optimal model as the model
+#' within one SE of the selected and estimated measure.inc ("c" or "auc").
+#' Allows selection of a more parsimonious model than that achieved when
+#' maximizing "c" or "auc".
+#' @param cure_cutoff numeric, value indicating at what time point MCM
+#' C-statistic or MCM AUC should be calculating when optimizing.
+#' @param parallel logical, if TRUE, parallel processing is used.
+#' @param seed random seed to set to enhance reproducibility.
+#' @param verbose logical, if TRUE displays step process to the console.
+#'
+#' @return list that includes the relevant coefficient paths and
+#' additional parameter paths (alpha for Weibull, rate for Weibull and
+#' exponential).
+#' @noRd
 cv.em.nofdr <-
   function (X_u, X_p, W_u, W_p, time, delta, model = c("cox", "weibull",
                                                        "exponential"), penalty = c("lasso", "MCP", "SCAD"), thresh = 0.001,
@@ -554,7 +856,7 @@ cv.em.nofdr <-
       if ((!is.null(lambda.inc.list) & !is.null(lambda.lat.list) &
            !identical(lambda.inc.list, lambda.lat.list)) | (nlambda.inc !=
                                                             nlambda.lat) | (lambda.min.ratio.inc != lambda.min.ratio.lat))
-        warning("Grid tuning is off. Same lambda sequence for incidence and latency was used.")
+        warning("Warning: Grid tuning is off. Same lambda sequence for incidence and latency was used.")
       if (length(lambda.inc.list) > length(lambda.lat.list))
         lambda.lat.list <- lambda.inc.list
       else lambda.inc.list <- lambda.lat.list
@@ -728,8 +1030,47 @@ cv.em.nofdr <-
     return(output)
   }
 
-# Called by cv_curegmifs to fit a MCM using the GMIFS algorithm with FDR control
-# using model-X knockoff procedure
+#' Generate Knockoffs Within Cross-Validated MCM GMIFS Algorithm For False
+#' Discovery Rate Control.
+#'
+#' @description
+#' This function generates knockoffs as part of the cross-validated MCM fitting
+#' procedure when using the GMIFS algorithm, so it is called by cv_curegmifs.
+#' Once the knockoffs are appended to the full dataset, this function
+#' calls cv.em.fdr function which performs the optimization.
+#'
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param model character, indicating the latency distribution, either
+#' "exponential" or "weibull".
+#' @param fdr numeric value between 0 and 1 indicating the FDR threshold to use
+#' for variable selection.
+#' @param thresh small numeric value specifying convergence tolerance.
+#' @param nIter maximum number of iterations.
+#' @param epsilon small numeric value used to update the regression coefficients.
+#' @param inits initial values used to optimization.
+#' @param n_folds number of folds to use in the cross-validation procedure.
+#' @param measure.inc character, indicating metric used for optimizing the model
+#'  fit, either "c" for the MCM C-statistic or "auc" for the MCM AUC.
+#' @param one.se logical, if TRUE, identifies the optimal model as the model
+#' within one SE of the selected and estimated measure.inc ("c" or "auc").
+#' Allows selection of a more parsimonious model than that achieved when
+#' maximizing "c" or "auc".
+#' @param cure_cutoff numeric, value indicating at what time point MCM
+#' C-statistic or MCM AUC should be calculating when optimizing.
+#' @param parallel logical, if TRUE, parallel processing is used.
+#' @param seed random seed to set to enhance reproducibility.
+#' @param verbose logical, if TRUE displays step process to the console.
+#'
+#' @return list that includes the relevant coefficient paths and
+#' additional parameter paths (alpha for Weibull, rate for Weibull and
+#' exponential).
+#'
+#' @noRd
 cv.gmifs.fdr <-
   function(X_u, X_p, W_u, W_p, time, delta, model = c("weibull", "exponential"),
            fdr = 0.2, thresh = 1e-5, nIter = 1e4, epsilon = 0.001, inits = NULL,
@@ -779,8 +1120,38 @@ cv.gmifs.fdr <-
                 selected_b = selected_b, selected_beta = selected_beta))
   }
 
-# Function for cross-validation with the GMIFS algorithm. Used with foreach when
-# parallel computing is used. Called by cv.gmifs.nofdr.
+#' Estimate Metrics (C-statistic and AUC) When Using Parallel Processing with
+#' Cross-Validation and the GMIFS Algorithm for Fitting a MCM.
+#'
+#' @description
+#' Function called by cv.gmifs.nofdr for estimating AUC and C-statistics within
+#' cross-validation procedure when using the GMIFS algorithm. Used with
+#' foreach when parallel computing is used.
+#'
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param folds_i selected fold for the current parallel process.
+#' @param k number of cross-validation folds.
+#' @param model character, indicating the latency distribution, either
+#' "exponential" or "weibull".
+#' @param thresh small numeric value specifying convergence tolerance.
+#' @param nIter maximum number of iterations.
+#' @param epsilon small numeric value used to update the regression coefficients.
+#' @param inits initial values used to optimization.
+#' @param measure.inc character, indicating metric used for optimizing the model
+#'  fit, either "c" for the MCM C-statistic or "auc" for the MCM AUC.
+#' @param cure_cutoff numeric, value indicating at what time point MCM
+#' C-statistic or MCM AUC should be calculating when optimizing.
+#' @param verbose logical, if TRUE displays step process to the console.
+#'
+#' @return \item{AUC}{value of the MCM AUC at the indicated cure_cutoff.}
+#' @return \item{Cstat}{value of the MCM C-statistic at the indicated
+#' cure_cutoff.}
+#' @noRd
 cv.gmifs.inner <-
   function(X_u, X_p, W_u, W_p, time, delta, folds_i, k,
            model = c("weibull", "exponential"), thresh = 1e-5, nIter = 1e4,
@@ -845,9 +1216,56 @@ cv.gmifs.inner <-
     return(res)
   }
 
-# Function for fitting a MCM using the GMIFS algorithm
-# Called by cv_gmifsem and cv.gmifs.fdr (latter first generates knockoffs then uses
-# this function for optimization)
+#' Cross-Validation Optimization Function for MCM Using the GMIFS Algorithm.
+#'
+#' @description
+#' Function for fitting a MCM using the GMIFS algorithm
+#' Called by cv_gmifsem and cv.gmifs.fdr (latter first generates knockoffs then uses
+#' this function for optimization)
+#'
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param model character, indicating the latency distribution, either
+#' "exponential" or "weibull".
+#' @param thresh small numeric value specifying convergence tolerance.
+#' @param nIter maximum number of iterations.
+#' @param epsilon small numeric value used to update the regression coefficients.
+#' @param inits initial values used to optimization.
+#' @param n_folds number of folds to use in the cross-validation procedure.
+#' @param measure.inc character, indicating metric used for optimizing the model
+#'  fit, either "c" for the MCM C-statistic or "auc" for the MCM AUC.
+#' @param one.se logical, if TRUE, identifies the optimal model as the model
+#' within one SE of the selected and estimated measure.inc ("c" or "auc").
+#' Allows selection of a more parsimonious model than that achieved when
+#' maximizing "c" or "auc".
+#' @param cure_cutoff numeric, value indicating at what time point MCM
+#' C-statistic or MCM AUC should be calculating when optimizing.
+#' @param parallel logical, if TRUE, parallel processing is used.
+#' @param seed random seed to set to enhance reproducibility.
+#' @param verbose logical, if TRUE displays step process to the console.
+#'
+#' @return \item{model.select.inc}{which model in the incidence path is optimal.}
+#' @return \item{model.select.lat}{which model in the latency path is optimal.}
+#' @return \item{b0}{estimated intercept for the incidence portion of the model.}
+#' @return \item{b_u}{vector of estimated unpenalized coefficients in the
+#' incidence portion of the model.}
+#' @return \item{b_p}{vector of estimated penalized coefficients in the
+#' incidence portion of the model.}
+#' @return \item{beta_u}{vector of estimated unpenalized coefficients in the
+#' latency portion of the model.}
+#' @return \item{beta_p}{vector of estimated penalized coefficients in the
+#' latency portion of the model.}
+#' @return \item{alpha}{estimated alpha parameter if fitting a Weibull MCM.}
+#' @return \item{rate}{estimated rate parameter if fitting a Weibull or
+#' exponential MCM.}
+#' @return \item{logLik}{log-Likelihood for the selected model.}
+#' @return \item{max.c}{C-statistic for the selected model.}
+#' @return \item{max.auc}{AUC for the selected model.}
+#' @noRd
 cv.gmifs.nofdr <-
   function(X_u, X_p, W_u, W_p, time, delta, model = c("weibull", "exponential"),
            thresh = 1e-5, nIter = 1e4, epsilon = 0.001, inits = NULL,
@@ -972,9 +1390,44 @@ cv.gmifs.nofdr <-
     return(output)
   }
 
-# Called by curegmifs, cv.gmifs.inner, and cv.gmifs.nofdr - this function is the
-# optimiziation algorithm for fitting an exponential mixture cure model using
-# the GMIFS algorithm
+#' Optimization Function to Fit a Penalized Exponential MCM Using the
+#' GMIFS Algorithm.
+#'
+#' @description
+#' The exp_cure function is the optimization algorithm for fitting a
+#' penalized exponential MCM using the GMIFS algorithm.
+#'
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param epsilon small numeric value used to update the regression coefficients.
+#' @param tol small numeric value specifying convergence tolerance.
+#' @param nIter maximum number of interations.
+#' @param inits initial values used to optimization.
+#' @param verbose logical, if TRUE displays step process to the console.
+#'
+#' @return \item{b_p_path}{Matrix representing the solution path of the
+#' penalized coefficients in the incidence portion of the model. Row is step and
+#' column is variable.}
+#' @return \item{beta_p_path}{Matrix representing the solution path of the
+#' penalized coefficients in the latency portion of the model. Row is step and
+#' column is variable.}
+#' @return \item{b_u_path}{Matrix representing the solution path of the
+#' unpenalized coefficients in the incidence portion of the model. Row is step
+#' and column is variable.}
+#' @return \item{itct_path}{Vector representing the solution path of the
+#' intercept for the incidence portion of the model.}
+#' @return \item{beta_u_path}{Matrix representing the solution path of the
+#' un penalized coefficients in the latency portion of the model. Row is step
+#' and column is variable.}
+#' @return \item{lambda_path}{Vector representing the solution path for the alpha
+#' parameter in the Weibull MCM.}
+#' @return \item{logLikelihood}{Vector representing the expected penalized
+#' complete-data log-likelihood for each step in the solution path.}
+#' @noRd
 exp_cure <-
 function(X_u = NULL, X_p, W_u = NULL, W_p, time, delta, epsilon = 0.001,
          tol = 1e-05, nIter = 1e4, inits = NULL, verbose) {
@@ -986,7 +1439,6 @@ function(X_u = NULL, X_p, W_u = NULL, W_p, time, delta, epsilon = 0.001,
   # delta: vector of length N, censoring status (not censored = 0)
   # epsilon: incremental size
   # tol: difference between log-likelihood
-
   N <- length(time)
   J <- ncol(X_p) # number of penalized incidence covariates
   M <- ncol(W_p) # number of penalized latency covariates
@@ -1055,7 +1507,6 @@ function(X_u = NULL, X_p, W_u = NULL, W_p, time, delta, epsilon = 0.001,
     LL0 <- LL1
     step <- 1 + step
   }
-
   ######## output ########
   b_p_path <- b_p_path[, 1:J] - b_p_path[, (J + 1):(2 * J)]
   beta_p_path <- beta_p_path[, 1:M] - beta_p_path[, (M + 1):(2 * M)]
@@ -1076,8 +1527,49 @@ function(X_u = NULL, X_p, W_u = NULL, W_p, time, delta, epsilon = 0.001,
   output
 }
 
-# Called by cureem - this function is the optimiziation algorithm for fitting a
-# exponential mixture cure model using the EM algorithm
+#' Optimization Function to Fit a Penalized Exponential MCM Using the
+#' E-M Algorithm.
+#'
+#' @description
+#' The exp_EM function is the optimization algorithm for fitting a
+#' penalized exponential MCM called by cureem (which calls internal cure.em
+#' function).
+#'
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param mu_inc initial intercept for the incidence portion of the model.
+#' @param mu_lat initial intercept for the latency portion of the model.
+#' @param inits initial values used to optimization.
+#' @param nIter maximum number of iterations.
+#' @param tol small numeric value specifying convergence tolerance.
+#'
+#' @return \item{b_p_path}{Matrix representing the solution path of the
+#' penalized coefficients in the incidence portion of the model. Row is step and
+#' column is variable.}
+#' @return \item{beta_p_path}{Matrix representing the solution path of the
+#' penalized coefficients in the latency portion of the model. Row is step and
+#' column is variable.}
+#' @return \item{b_u_path}{Matrix representing the solution path of the
+#' unpenalized coefficients in the incidence portion of the model. Row is step
+#' and column is variable.}
+#' @return \item{itct_path}{Vector representing the solution path of the
+#' intercept for the incidence portion of the model.}
+#' @return \item{beta_u_path}{Matrix representing the solution path of the
+#' un penalized coefficients in the latency portion of the model. Row is step
+#' and column is variable.}
+#' @return \item{lambda_path}{Vector representing the solution path for the
+#' lambda parameter in the exponential MCM.}
+#' @return \item{lik_inc}{Vector representing the expected penalized
+#' complete-data log-likelihood for each step in the solution path for the
+#' incidence portion of the model.}
+#' @return \item{lik_lat}{Vector representing the expected penalized
+#' complete-data log-likelihood for each step in the solution path for the
+#' latency portion of the model.}
+#' @noRd
 exp_EM <-
   function (X_u = NULL, X_p, W_u = NULL, W_p, time, delta, mu_inc,
             mu_lat, inits = NULL, nIter = 100, tol = 1e-04)
@@ -1179,8 +1671,29 @@ exp_EM <-
     output
   }
 
-# Gradient for optim when updating penalized predictors in the latency portion
-# when using EM algorithm for an exponential MCM (called by exp_EM)
+
+#' Gradient for Penalized Predictors in Latency Portion of Exponential MCM Using
+#' the E-M Algorithm.
+#'
+#' @description
+#' Gradient for optim when updating penalized predictors in the latency portion
+#' when using E-M algorithm to fit an exponential MCM (called by exp_EM).
+#'
+#' @param theta numeric vector for the penalized predictors in the
+#' exponential latency distribution.
+#' @param lambda estimated lambda parameter for exponential latency distribution.
+#' @param beta_u vector of estimated unpenalized latency coefficients.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param pir vector of estimates for the conditional distribution of the event
+#' at the current parameter estimates and observed datafor the latency
+#' distribution E-step.
+#' @param mu initial intercept for the latency portion of the model.
+#'
+#' @return value of the gradient.
+#' @noRd
 exp_grad_beta <-
   function(theta, lambda, beta_u, W_u, W_p, time, delta, pir, mu) {
     N <- dim(W_p)[1]
@@ -1198,8 +1711,27 @@ exp_grad_beta <-
     return(c(-grad + N * mu, grad + N * mu))
   }
 
-# Gradient for optim when updating unpenalized predictors in the latency
-# portion when using EM algorithm for an exponential MCM (called by exp_EM)
+#' Gradient for Unpenalized Predictors in Latency Portion of Exponential MCM
+#' Using the E-M Algorithm.
+#'
+#' @description
+#' Gradient for optim when updating unpenalized predictors in the latency
+#' portion when using E-M algorithm for an exponential MCM (called by exp_EM).
+#'
+#' @param theta numeric vector for the unpenalized predictors in the
+#' exponential latency distribution.
+#' @param beta_p vector of estimated penalized latency coefficients.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param pir vector of estimates for the conditional distribution of the event
+#' at the current parameter estimates and observed datafor the latency
+#' distribution E-step.
+#' @param mu initial intercept for the latency portion of the model.
+#'
+#' @return value of the gradient.
+#' @noRd
 exp_gradient_lat <-
   function(theta, beta_p, W_u, W_p, time, delta, pir, mu) { # latency
     log_lambda <- theta[1]
@@ -1218,8 +1750,26 @@ exp_gradient_lat <-
     return(-c(grad2, grad3))
   }
 
-# Gradient for optim when updating unpenalized predictors in an
-# exponential MCM when fit using GMIFS (called by exp_cure)
+#' Gradient for Unpenalized Predictors in Latency Portion of Exponential MCM
+#' Using the GMIFS Algorithm.
+#'
+#' @description
+#' Gradient for optim when updating unpenalized predictors in an
+#' exponential MCM when fit using GMIFS (called by exp_cure).
+#'
+#' @param theta numeric vector for the unpenalized predictors in the
+#' exponential latency distribution.
+#' @param b_p vector of estimated penalized incidence coefficients.
+#' @param beta_p vector of estimated penalized latency coefficients.
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#'
+#' @return value of the gradient.
+#' @noRd
 exp_gradient <-
   function(theta, b_p, beta_p, X_u, X_p, W_u, W_p, time, delta) {
     N <- length(time)
@@ -1259,8 +1809,28 @@ exp_gradient <-
     return(-c(grad2, grad3, grad4, grad5))
   }
 
-# Function for optim when updating penalized predictors in the latency portion
-# when using EM algorithm for an exponential MCM (called by exp_EM)
+#' Gradient for Penalized Predictors in Latency Portion of Exponential MCM
+#' Using the GMIFS Algorithm.
+#'
+#' @description
+#' Function for optim when updating penalized predictors in the latency portion
+#' when using EM algorithm for an exponential MCM (called by exp_EM).
+#'
+#' @param theta numeric vector for the penalized predictors in the
+#' exponential latency distribution.
+#' @param lambda estimated lambda parameter for exponential latency distribution.
+#' @param beta_u vector of estimated unpenalized latency coefficients.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param pir vector of estimates for the conditional distribution of the event
+#' at the current parameter estimates and observed datafor the latency
+#' distribution E-step.
+#' @param mu initial intercept for the latency portion of the model.
+#'
+#' @return value of the negative log-likelihood.
+#' @noRd
 exp_negloglik_lat_beta <-
   function(theta, lambda, beta_u, W_u, W_p, time, delta, pir, mu) { # latency
     N <- dim(W_p)[1]
@@ -1278,8 +1848,31 @@ exp_negloglik_lat_beta <-
     return(-sum(ll1 + ll2) + N * mu * sum(beta_p_ext))
   }
 
-# Function for optim when updating unpenalized predictors in the latency portion
-# when using EM algorithm for an exponential MCM (called by exp_EM)
+#
+
+
+#' Negative Log-likelihood for Unpenalized Predictors in Latency Portion of
+#' Exponential MCM Using the E-M Algorithm.
+#'
+#' @description
+#' Function for calculating negative log-likelihood passed to optim when
+#' updating unpenalized predictors in the latency portion of the model
+#' using E-M algorithm for an exponential MCM (called by exp_EM).
+#'
+#' @param theta numeric vector for the unpenalized predictors in the
+#' exponential latency distribution.
+#' @param beta_p vector of estimated penalized latency coefficients.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param pir vector of estimates for the conditional distribution of the event
+#' at the current parameter estimates and observed datafor the latency
+#' distribution E-step.
+#' @param mu initial intercept for the latency portion of the model.
+#'
+#' @return value of the negative log-likelihood.
+#' @noRd
 exp_negloglik_lat <-
   function(theta, beta_p, W_u, W_p, time, delta, pir, mu) { # latency
     N <- dim(W_p)[1]
@@ -1297,8 +1890,28 @@ exp_negloglik_lat <-
     return(-sum(ll1 + ll2) + N * mu * sum(abs(beta_p)))
   }
 
-# Function for optim when updating unpenalized predictors in an
-# exponential MCM when fit using GMIFS (called by exp_cure)
+
+#' Negative Log-likelihood for Unpenalized Predictors in Latency Portion of
+#' Exponential MCM Using the GMIFS Algorithm.
+#'
+#' @description
+#' Function for calculating negative log-likelihood passed to optim when
+#' updating unpenalized predictors in the latency portion of the model
+#' using GMIFS algorithm for an exponential MCM (called by exp_cure).
+#'
+#' @param theta numeric vector for the unpenalized predictors in the
+#' exponential latency distribution.
+#' @param b_p vector of estimated penalized incidence coefficients.
+#' @param beta_p vector of estimated penalized latency coefficients.
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#'
+#' @return value of the negative log-likelihood.
+#' @noRd
 exp_negloglik <-
   function(theta, b_p, beta_p, X_u, X_p, W_u, W_p, time, delta) {
     N <- length(time)
@@ -1330,8 +1943,31 @@ exp_negloglik <-
     return(-sum(ll1 + ll2))
   }
 
-# Function for identifying which coefficient in the incidence and latency
-# portions of the exponential MCM to update when using GMIFS
+
+#' Identify GMIFS Coefficient Update for Exponential MCM.
+#'
+#' @description
+#' Function for identifying which coefficient in the incidence and latency
+#' portions of the exponential MCM to update when using GMIFS, called by
+#' exp_cure.
+#'
+#' @param lambda estimated lambda parameter for exponential latency distribution.
+#' @param b_p vector of estimated penalized incidence coefficients.
+#' @param beta_p vector of estimated penalized latency coefficients.
+#' @param b_u vector of estimated unpenalized incidence coefficients.
+#' @param itct estimated intercept for incidence portion of the model.
+#' @param beta_u vector of estimated unpenalized latency coefficients.
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param epsilon small numeric value used to update the regression coefficients.
+#'
+#' @return \item{b_p}{penalized incidence coefficient to update.}
+#' @return \item{beta_p}{penalized latency coefficient to update.}
+#' @noRd
 exp_update <-
   function(lambda, b_p, beta_p, b_u, itct, beta_u, X_u, X_p, W_u, W_p, time,
            delta, epsilon) {
@@ -1365,7 +2001,22 @@ exp_update <-
     return(list(b_p = b_p, beta_p = beta_p))
   }
 
-# Function for initializing parameters for Cox MCM when using EM algorithm
+#' Function for Initializing Unpenalized Parameters for Cox MCM when Using E-M
+#' Algorithm.
+#'
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#'
+#' @return \item{itct}{estimated intercept for the incidence portion of the
+#' model.}
+#' @return \item{b_u}{estimated unpenalized coefficients for the incidence
+#' portion of the model.}
+#' @return \item{beta_u}{estimated unpenalized coefficients for the latency
+#' portion of the model.}
+#' @return \item{survprob}{estimated probabilities of survival.}
+#' @noRd
 initialization_cox <-
   function (X_u = NULL, W_u = NULL, time, delta)
   {
@@ -1426,7 +2077,15 @@ initialization_cox <-
   }
 
 
-# Function for calulating max penalty parameter lambda for Cox MCM
+#' Function for Calulating Maximum Penalty Parameter, lambda, for Cox MCM.
+#'
+#' @param x matrix of predictors.
+#' @param time time-to-event of interest.
+#' @param event event (delta = 1) and censoring (delta = 0) indicator.
+#' @param offset offset.
+#'
+#' @return value of maximum lambda.
+#' @noRd
 get_cox_lambda_max <- function(x, time, event, offset = rep(0, dim(x)[1])) {
   N <- dim(x)[1]
   beta_w <- offset
@@ -1448,8 +2107,27 @@ get_cox_lambda_max <- function(x, time, event, offset = rep(0, dim(x)[1])) {
   return(lambda_max)
 }
 
-# Function for initializing parameters in Weibull and exponential MCMs when
-# fitting the model using the EM algorithm
+
+#' Function for Initializing Unpenalized Parameters for Weibull and
+#' Exponential MCM when Using E-M Algorithm.
+#'
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param model character, indicating the latency distribution, either
+#' "exponential" or "weibull".
+#'
+#' @return \item{itct}{estimated intercept for the incidence portion of the
+#' model.}
+#' @return \item{b_u}{estimated unpenalized coefficients for the incidence
+#' portion of the model.}
+#' @return \item{beta_u}{estimated unpenalized coefficients for the latency
+#' portion of the model.}
+#' @return \item{lambda}{estimated lambda parameter for Weibull and exponential
+#' latency distribution.}
+#' @return \item{alpha}{if model is "weibull", estimated alpha parameter.}
+#' @noRd
 initialization_parametric <-
   function (X_u = NULL, W_u = NULL, time, delta, model = "weibull")
   {
@@ -1485,69 +2163,104 @@ initialization_parametric <-
     return(inits)
   }
 
-# Function for checking initial values
+
+#' Check Initial Values.
+#'
+#' @param model character, indicating the latency distribution, either "cox",
+#' "exponential", or "weibull".
+#' @param N number of observations.
+#' @param penalty.factor.inc vector with length equal to the number of penalized
+#' incidence predictors where 0 indicates no penalty and 1 indicates a penalty
+#' should be applied. If not specified, default is to penalize all incidence
+#' predictors.
+#' @param penalty.factor.lat vector with length equal to the number of penalized
+#' latency predictors where 0 indicates no penalty and 1 indicates a penalty
+#' should be applied. If not specified, default is to penalize all latency
+#' predictors.
+#' @param inits estimated initial values used to optimization.
+#'
+#' @return if no warning, returns inital values.
+#' @noRd
 inits_check <-
   function (model, N, penalty.factor.inc, penalty.factor.lat, inits) {
     if (is.null(inits$itct)) {
-      warning("Initial value of intercept is missing. Initial values were generated by the program.")
+      warning("Warning: Initial value of intercept is missing. Initial values were generated by the program.")
       return(NULL)
     }
     if (model == "cox") {
       if (is.null(inits$survprob)) {
-        warning("Initial value of survprob is missing. Initial values were generated by the program.")
+        warning("Warning: Initial value of survprob is missing. Initial values were generated by the program.")
         return(NULL)
       }
       else if (length(inits$survprob) != N) {
-        warning("Initial value of survprob has incorrect dimension. Initial values were generated by the program.")
+        warning("Warning: Initial value of survprob has incorrect dimension. Initial values were generated by the program.")
         return(NULL)
       }
     }
     if (model %in% c("weibull", "exponential")) {
       if (is.null(inits$lambda)) {
-        warning("Initial value of lambda is missing. Initial values were generated by the program.")
+        warning("Warning: Initial value of lambda is missing. Initial values were generated by the program.")
         return(NULL)
       }
       else if (inits$lambda <= 0) {
-        warning("Initial value of lambda should be positive. Initial values were generated by the program.")
+        warning("Warning: Initial value of lambda should be positive. Initial values were generated by the program.")
         return(NULL)
       }
     }
     if (model == "weibull") {
       if (is.null(inits$alpha)) {
-        warning("Initial value of alpha is missing. Initial values were generated by the program.")
+        warning("Warning: Initial value of alpha is missing. Initial values were generated by the program.")
         return(NULL)
       }
       else if (inits$alpha <= 0) {
-        warning("Initial value of alpha should be positive. Initial values were generated by the program.")
+        warning("Warning: Initial value of alpha should be positive. Initial values were generated by the program.")
         return(NULL)
       }
     }
     if (any(penalty.factor.inc == 0))
       if (is.null(inits$b_u)) {
-        warning("Initial value of b_u is missing. Initial values were generated by the program.")
+        warning("Warning: Initial value of b_u is missing. Initial values were generated by the program.")
         return(NULL)
       }
     else if (length(inits$b_u) != sum(penalty.factor.inc ==
                                       0)) {
-      warning("Initial value of b_u has incorrect dimension. Initial values were generated by the program.")
+      warning("Warning: Initial value of b_u has incorrect dimension. Initial values were generated by the program.")
       return(NULL)
     }
     if (any(penalty.factor.lat == 0))
       if (is.null(inits$beta_u)) {
-        warning("Initial value of beta_u is missing. Initial values were generated by the program.")
+        warning("Warning: Initial value of beta_u is missing. Initial values were generated by the program.")
         return(NULL)
       }
     else if (length(inits$beta_u) != sum(penalty.factor.lat ==
                                          0)) {
-      warning("Initial value of beta_u has incorrect dimension. Initial values were generated by the program.")
+      warning("Warning: Initial value of beta_u has incorrect dimension. Initial values were generated by the program.")
       return(NULL)
     }
     return(inits)
   }
 
-# Gradient for optim when updating penalized predictors in the incidence portion
-# when using EM algorithm for an exponential or Weibull MCM - called by exp_EM
-# and weib_EM
+#' Gradient for Penalized Predictors in the Incidence Portion
+#' of Parametric MCM Using the E-M Algorithm.
+#'
+#' @description
+#' This function is passed to optim when updating penalized predictors in the
+#' incidence portion of the model when using E-M algorithm for fitting either an
+#' exponential or Weibull MCM and estimates the gradient. Called
+#' by exp_EM and weib_EM.
+#'
+#' @param theta vector of penalized incidence coefficients.
+#' @param itct estimated intercept for the incidence portion of the model.
+#' @param b_u vector of estimated unpenalized incidence coefficients.
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param pir vector of estimates for the conditional distribution of the event
+#' at the current parameter estimates and observed datafor the latency
+#' distribution E-step.
+#' @param mu lasso penalty parameter for incidence portion of the model.
+#'
+#' @return value of the gradient.
+#' @noRd
 l1_grad_b <-
   function(theta, itct, b_u, X_u, X_p, pir, mu) {
     N <- dim(X_p)[1]
@@ -1565,9 +2278,27 @@ l1_grad_b <-
     return(c(-grad + N * mu, grad + N * mu))
   }
 
-# Gradient for optim when updating unpenalized predictors in the incidence
-# portion when using EM algorithm for an exponential or Weibull MCM - called by
-# exp_EM and weib_EM
+
+#' Gradient for Unpenalized Predictors in the Incidence Portion
+#' of Parametric MCM Using the E-M Algorithm.
+#'
+#' @description
+#' This function is passed to optim when updating unpenalized predictors in the
+#' incidence portion of the model when using E-M algorithm for fitting either an
+#' exponential or Weibull MCM and estimates the gradient. Called
+#' by exp_EM and weib_EM.
+#'
+#' @param theta vector of unpenalized incidence coefficients.
+#' @param b_p vector of estimated penalized incidence coefficients.
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param pir vector of estimates for the conditional distribution of the event
+#' at the current parameter estimates and observed datafor the latency
+#' distribution E-step.
+#' @param mu lasso penalty parameter for incidence portion of the model.
+#'
+#' @return value of the gradient.
+#' @noRd
 l1_gradient_inc <-
   function(theta, b_p, X_u, X_p, pir, mu) # incidence
   {
@@ -1585,9 +2316,28 @@ l1_gradient_inc <-
     return(-c(grad1, grad2))
   }
 
-# Function for optim when updating penalized predictors in the incidence portion
-# when using EM algorithm for a exponential or Exponential MCM - called by
-# exp_EM and weib_EM
+
+#' Negative Log-likelihood for Penalized Predictors in the Incidence Portion
+#' of Parametric MCM Using the E-M Algorithm.
+#'
+#' @description
+#' This function is passed to optim when updating penalized predictors in the
+#' incidence portion of the model when using E-M algorithm for fitting either an
+#' exponential or Weibull MCM and estimates the negative log-likelihood. Called
+#' by exp_EM and weib_EM.
+#'
+#' @param theta vector of unpenalized incidence coefficients.
+#' @param itct estimated intercept for the incidence portion of the model.
+#' @param b_u vector of estimated unpenalized incidence coefficients.
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param pir vector of estimates for the conditional distribution of the event
+#' at the current parameter estimates and observed datafor the latency
+#' distribution E-step.
+#' @param mu lasso penalty parameter for incidence portion of the model.
+#'
+#' @return value of negative log-likelihood.
+#' @noRd
 l1_negloglik_inc_b <-
   function(theta, itct, b_u, X_u, X_p, pir, mu) # incidence
   {
@@ -1605,9 +2355,27 @@ l1_negloglik_inc_b <-
     return(-ll)
   }
 
-# Function for optim when updating unpenalized predictors in the incidence
-# portion when using EM algorithm for an exponential or Weibull MCM - called by
-# exp_EM and weib_EM
+
+#' Negative Log-likelihood for Unpenalized Predictors in the Incidence Portion
+#' of Parametric MCM Using the E-M Algorithm.
+#'
+#' @description
+#' This function is passed to optim when updating unpenalized predictors in the
+#' incidence portion of the model when using E-M algorithm for fitting either an
+#' exponential or Weibull MCM and estimates the negative log-likelihood. Called
+#' by exp_EM and weib_EM.
+#'
+#' @param theta vector of unpenalized incidence coefficients.
+#' @param b_p vector of estimated penalized incidence coefficients.
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param pir vector of estimates for the conditional distribution of the event
+#' at the current parameter estimates and observed datafor the latency
+#' distribution E-step.
+#' @param mu lasso penalty parameter for incidence portion of the model.
+#'
+#' @return value of negative log-likelihood.
+#' @noRd
 l1_negloglik_inc <-
   function(theta, b_p, X_u, X_p, pir, mu) # incidence
   {
@@ -1624,9 +2392,32 @@ l1_negloglik_inc <-
     return(-ll)
   }
 
-# Function called by coef, summary, predict, plot, auc_mcm, concordance_mcm to
-# identify the step at which the user decides is the final model to extract
-# relevant output at that step
+#' Identify Model From Solution Path Optimizes the Information Criterion.
+#'
+#' @description
+#' This function is called by coef, summary, predict, plot, auc_mcm,
+#' concordance_mcm to identify the step at which the user decides is the final
+#' model. This function then extracts the optimal step and values for
+#' information criteria at that step.
+#'
+#' @param object an object of class "mixturecure".
+#' @param model_select a case-sensitive parameter or any (numeric) step along
+#' the solution path can be selected. The default is model_select = "AIC" which
+#' returns which model along the solution path attained the lowest AIC. Other
+#' options are model_select = "mAIC" for the modified AIC, model_select = "cAIC"
+#' for the corrected AIC, model_select = "BIC", model_select = "mBIC" for the
+#' modified BIC, model_select = "EBIC" for the extended BIC,
+#' model_select = "logLik" for the step that maximizes the log-likelihood, or
+#' any numeric value from the solution path.
+#' @return \item{select} step at which use-defined model_select attains optimum.
+#' @return \item{AIC} AIC path.
+#' @return \item{BIC} BIC path.
+#' @return \item{mAIC} modified AIC path.
+#' @return \item{mBIC} modified BIC path.
+#' @return \item{EBIC} extended BIC path.
+#' @return \item{cAIC} corrected AIC path.
+#' @return \item{logLik} log-likelihood path.
+#' @noRd
 select_model <- function(object, model_select) {
   if (!object$cv) {
   if (is.character(model_select)) {
@@ -1642,7 +2433,7 @@ select_model <- function(object, model_select) {
     )]
     if (any(!model_select %in%
             c("AIC", "BIC", "logLik", "cAIC", "mAIC", "mBIC", "EBIC"))) {
-      stop("model_select must be either 'AIC', 'BIC', 'logLik', 'cAIC',
+      stop("Error: model_select must be either 'AIC', 'BIC', 'logLik', 'cAIC',
                'mAIC', 'mBIC', or 'EBIC' ")
     }
     if (!is.null(object$x_incidence)) {
@@ -1719,8 +2510,20 @@ select_model <- function(object, model_select) {
        EBIC = EBIC, cAIC = cAIC, logLik = logLik)
 }
 
-# Function called by generate_cure_data when the model is to generate
-# nonparametric times
+
+#' Non-Parametric Time-to-Event Generator.
+#'
+#' @description
+#' Function called by generate_cure_data when the model is to generate
+#' nonparametric times.
+#'
+#' @param N number of observations
+#' @param beta_w linear predictor for the latency portion of the model.
+#' @param maxT maximum observable time-to-event.
+#' @param knots number of knots.
+#'
+#' @return time-to-event.
+#' @noRd
 nonparametric_time_generator <-
   function(N, beta_w, maxT = 20, knots = 8) {
     time <- 0:maxT
@@ -1742,7 +2545,18 @@ nonparametric_time_generator <-
     return(t)
   }
 
-# Called by cox_mcp_scad when using EM algorithm with MCP option
+
+#' MCP Penalty.
+#'
+#' @description
+#' Called by cox_mcp_scad when using EM algorithm with MCP option.
+#'
+#' @param b_p vector of penalized coefficients.
+#' @param gamma MCP penalty is parameterized by gamma > 1 and lambda >= 0.
+#' @param lambda MCP penalty is parameterized by gamma > 1and lambda >= 0.
+#'
+#' @return MCP.
+#' @noRd
 mcp_penalty <-
   function(b_p, gamma, lambda) {
     idx <- which(b_p != 0 & abs(b_p) <= gamma * lambda)
@@ -1751,7 +2565,30 @@ mcp_penalty <-
     return(s1 + s2)
   }
 
-# Called by cox_mcp_scad in M-step of EM algorithm for incidence portion
+
+#' Identify MCP and SCAD Incidence Coefficient Update for Cox MCM Using E-M
+#' Algorithm.
+#'
+#' @description
+#' Function for identifying which coefficient in the incidence
+#' portion of the Cox MCM to update when using the E-M algorithm with either
+#' the MCP or SCAD penalty.
+#'
+#' @param penalty character indicating "MCP" or "SCAD" penalty.
+#' @param pir vector of estimates for the conditional distribution of the event
+#' at the current parameter estimates and observed datafor the latency
+#' distribution E-step.
+#' @param pi_x vector of estimated probabilities of being susceptible to the
+#' event of interest.
+#' @param x_l vector for lth penalized covariate in the incidence portion of the
+#' model.
+#' @param bl coefficient estimate for the lth penalized covariate in the
+#' incidence portion of the model.
+#' @param gamma gamma penalty parameter for the incidence portion of the model.
+#' @param lambda lambda penalty parameter for the incidence portion of the model.
+#'
+#' @return which coefficient to update.
+#' @noRd
 mcp_scad_cd_upd_inc <-
   function(penalty, pir, pi_x, x_l, bl, gamma, lambda) {
     d1 <- mean((pir - pi_x) * x_l)
@@ -1774,7 +2611,29 @@ mcp_scad_cd_upd_inc <-
     }
   }
 
-# Called by cox_mcp_scad in M-step of EM algorithm for latency portion
+#' Identify MCP and SCAD Latency Coefficient Update for Cox MCM Using E-M
+#' Algorithm.
+#'
+#' @description
+#' Function for identifying which coefficient in the  latency
+#' portion of the Cox MCM to update when using the E-M algorithm with either
+#' the MCP or SCAD penalty.
+#'
+#' @param penalty character indicating "MCP" or "SCAD" penalty.
+#' @param exp_beta_w_p exponentiated coefficient for latency portion of the model.
+#' @param w_l vector for lth penalized covariate in the latency portion of the
+#' model.
+#' @param betal coefficient estimate for the lth penalized covariate in the
+#' latency portion of the model.
+#' @param Zl sum of for the lth penalized coefficient at each unique event time.
+#' @param I0 logical, matrix with number of rows corresponding to observations
+#' and number of columns corresponding to unique event times.
+#' @param d_j vector representing number of events at each unique event time.
+#' @param gamma gamma penalty parameter for the latency portion of the model.
+#' @param lambda lambda penalty parameter for the latency portion of the model.
+#'
+#' @return which coefficients to update.
+#' @noRd
 mcp_scad_cd_upd_lat <-
   function(penalty, exp_beta_w_p, w_l, betal, Zl, I0, d_j, gamma, lambda) {
     N <- length(exp_beta_w_p)
@@ -1801,8 +2660,27 @@ mcp_scad_cd_upd_lat <-
     }
   }
 
-# Gradient for optim in M-step of cox_mcp_scad in M-step of EM algorithm for
-# incidence portion
+
+#' MCP and SCAD Gradient for Cox Incidence for the E-M Algorithm.
+#'
+#' @description
+#' When fitting a Cox model using either the MCP or SCAD penalty, this
+#' gradient function is used by optim in the M-step of
+#' cox_mcp_scad in M-step of the E-M algorithm for the incidence portion of the
+#' model.
+#'
+#' @param theta value for the gradient.
+#' @param b_p vector of estimated penalized incidence coefficients.
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param pir vector of estimates for the conditional distribution of the event
+#' at the current parameter estimates and observed datafor the latency
+#' distribution E-step.
+#' @param CAP absolute value of the maximum intercept estimate (to avoid
+#' numerical instability), default is 20.
+#'
+#' @return value of the gradient.
+#' @noRd
 mcp_scad_gradient_inc <-
   function(theta, b_p, X_u, X_p, pir, CAP) # incidence
   {
@@ -1820,8 +2698,31 @@ mcp_scad_gradient_inc <-
     return(-c(grad1, grad2))
   }
 
-# Gradient for optim in M-step of cox_mcp_scad in M-step of EM algorithm for
-# latency portion
+
+#' MCP and SCAD Gradient for Cox Latency for the E-M Algorithm.
+#'
+#' @description
+#' When fitting a Cox model using either the MCP or SCAD penalty, this
+#' gradient function is used by optim in the M-step of
+#' cox_mcp_scad in M-step of the E-M algorithm for the latency portion of the
+#' model.
+#'
+#' @param theta value for the gradient.
+#' @param beta_p vector of estimated penalized latency coefficients.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param pir vector of estimates for the conditional distribution of the event
+#' at the current parameter estimates and observed datafor the latency
+#' distribution E-step.
+#' @param I0 logical, matrix with number of rows corresponding to observations
+#' and number of columns corresponding to unique event times.
+#' @param d_j vector representing number of events at each unique event time.
+#' @param CAP absolute value of the maximum intercept estimate (to avoid
+#' numerical instability), default is 20.
+#'
+#' @return value of the gradient.
+#' @noRd
 mcp_scad_gradient_lat <-
   function(theta, beta_p, W_u, W_p, delta, pir, I0, d_j, CAP) { # latency
     beta_u <- theta
@@ -1835,8 +2736,27 @@ mcp_scad_gradient_lat <-
     return(-du)
   }
 
-# Function for optim in M-step of cox_mcp_scad in M-step of EM algorithm for
-# incidence portion
+
+#' MCP and SCAD Negative Log-Likelihood Cox Incidence for the E-M Algorithm.
+#'
+#' @description
+#' When fitting a Cox model using either the MCP or SCAD penalty, this
+#' negative log-likelihood function is used by optim in the M-step of
+#' cox_mcp_scad in M-step of the E-M algorithm for the incidence portion of the
+#' model.
+#'
+#' @param theta negative log-likelihood.
+#' @param b_p vector of estimated penalized incidence coefficients.
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param pir vector of estimates for the conditional distribution of the event
+#' at the current parameter estimates and observed datafor the latency
+#' distribution E-step.
+#' @param CAP absolute value of the maximum intercept estimate (to avoid
+#' numerical instability), default is 20.
+#'
+#' @return value of the negative log-likelihood.
+#' @noRd
 mcp_scad_negloglik_inc <-
   function(theta, b_p, X_u, X_p, pir, CAP) # incidence
   {
@@ -1853,8 +2773,30 @@ mcp_scad_negloglik_inc <-
     return(-ll)
   }
 
-# Function for optim in M-step of cox_mcp_scad in M-step of EM algorithm for
-# latency portion
+#' MCP and SCAD Negative Log-Likelihood Cox Latency for the E-M Algorithm.
+#'
+#' @description
+#' When fitting a Cox model using either the MCP or SCAD penalty, this
+#' negative log-likelihood function is used by optim in the M-step of
+#' cox_mcp_scad in M-step of the E-M algorithm for the latency portion of the
+#' model.
+#'
+#' @param theta negative log-likelihood.
+#' @param beta_p vector of estimated penalized latency coefficients.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param pir vector of estimates for the conditional distribution of the event
+#' at the current parameter estimates and observed datafor the latency
+#' distribution E-step.
+#' @param I0 logical, matrix with number of rows corresponding to observations
+#' and number of columns corresponding to unique event times.
+#' @param d_j vector representing number of events at each unique event time.
+#' @param CAP absolute value of the maximum intercept estimate (to avoid
+#' numerical instability), default is 20.
+#'
+#' @return value of the negative log-likelihood.
+#' @noRd
 mcp_scad_negloglik_lat <-
   function(theta, beta_p, W_u, W_p, delta, pir, I0, d_j, CAP) { # latency
     beta_u <- theta
@@ -1867,7 +2809,17 @@ mcp_scad_negloglik_lat <-
     return(-ll)
   }
 
-# Called by cox_mcp_scad when using EM algorithm with SCAD option
+#' SCAD Penalty.
+#'
+#' @description
+#' Called by cox_mcp_scad when using EM algorithm with SCAD option.
+#'
+#' @param b_p vector of penalized coefficients.
+#' @param gamma SCAD penalty is parameterized by gamma > 1 and lambda >= 0.
+#' @param lambda SCAD penalty is parameterized by gamma > 1and lambda >= 0.
+#'
+#' @return SCAD.
+#' @noRd
 scad_penalty <-
   function(b_p, gamma, lambda) {
     idx1 <- which(b_p != 0 & abs(b_p) <= lambda)
@@ -1878,9 +2830,20 @@ scad_penalty <-
     return(s1 + s2 + s3)
   }
 
-# If scale = TRUE, this function centers and scales all covariates
-# It differs from R's scale function in that a vector of zeros is returned
-# if the SD for a vectors is 1
+
+#' Center and Scale a Matrix.
+#'
+#' @description
+#' If scale = TRUE, this function centers and scales all covariates in matrix X.
+#' It differs from R's scale function in that a vector of zeros is returned
+#' if the SD for a vectors is 1.
+#'
+#' @param X data matrix.
+#' @param scale logical, if TRUE, columns are to be centered and scaled.
+#'
+#' @return data matrix.
+#' @noRd
+#' @srrstats {G5.5} *Correctness tests should be run with a fixed random seed*
 self_scale <-
   function(X, scale) {
     if (is.null(X)) {
@@ -1901,7 +2864,17 @@ self_scale <-
     return(Xs)
   }
 
-# Called by mcp_scad_cd_upd_inc and mcp_scad_cd_upd_lat
+
+#' Softmax.
+#'
+#' @description
+#' Called by mcp_scad_cd_upd_inc and mcp_scad_cd_upd_lat
+#'
+#' @param z temp.
+#' @param gamma temp.
+#'
+#' @return softmax.
+#' @noRd
 soft <-
   function(z, gamma) {
     if (gamma >= abs(z)) {
@@ -1911,8 +2884,51 @@ soft <-
     }
   }
 
-# Called by cureem - this function is the optimiziation algorithm for fitting a
-# Weibull mixture cure model using the EM algorithm
+
+#' Internal optimization function to fit Weibull LASSO model using the E-M
+#' algorithm
+#'
+#' @description
+#' The weib_EM function is the optimization algorithm for fitting a Weibull
+#' LASSO model called by cureem for fitting the model using the EM algorithm
+#'
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param mu_inc initial intercept for the incidence portion of the model.
+#' @param mu_lat initial intercept for the latency portion of the model.
+#' @param inits initial values used to optimization.
+#' @param nIter maximum number of interations, default is 100.
+#' @param tol small numeric value specifying convergence tolerance.
+#'
+#' @return \item{b_p_path}{Matrix representing the solution path of the
+#' penalized coefficients in the incidence portion of the model. Row is step and
+#' column is variable.}
+#' @return \item{beta_p_path}{Matrix representing the solution path of the
+#' penalized coefficients in the latency portion of the model. Row is step and
+#' column is variable.}
+#' @return \item{b_u_path}{Matrix representing the solution path of the
+#' unpenalized coefficients in the incidence portion of the model. Row is step
+#' and column is variable.}
+#' @return \item{itct_path}{Vector representing the solution path of the
+#' intercept for the incidence portion of the model.}
+#' @return \item{beta_u_path}{Matrix representing the solution path of the
+#' un penalized coefficients in the latency portion of the model. Row is step
+#' and column is variable.}
+#' @return \item{alpha_path}{Vector representing the solution path for the alpha
+#' parameter in the Weibull MCM.}
+#' @return \item{lambda_path}{Vector representing the solution path for the
+#' lambda parameter in the Weibull MCM.}
+#' @return \item{lik_inc}{Vector representing the expected penalized
+#' complete-data log-likelihood for the incidence portion of the model for
+#' each step in the solution path.}
+#' @return \item{lik_lat}{Vector representing the expected penalized
+#' complete-data log-likelihood for the latency portion of the model for each
+#' step in the solution path.}
+#' @noRd
 weib_EM <-
   function (X_u = NULL, X_p, W_u = NULL, W_p, time, delta, mu_inc,
             mu_lat, inits = NULL, nIter = 100, tol = 1e-04)
@@ -2020,8 +3036,28 @@ weib_EM <-
     output
   }
 
-# Gradient for optim when updating penalized predictors in the latency portion
-# of a Weibull MCM when fit using EM (called by weib_EM)
+#' Gradient for Penalized Predictors in Weibull MCM Fit Using EM Algorithm.
+#'
+#' @description
+#' Gradient for optim when updating penalized predictors in the latency portion
+#' of a Weibull MCM when fit using EM (called by weib_EM).
+#'
+#' @param theta numeric vector for the penalized predictors in the
+#' Weibull latency distribution.
+#' @param alpha estimated alpha parameter for Weibull latency distribution.
+#' @param lambda estimated lambda parameter for Weibull latency distribution.
+#' @param beta_u vector of estimated unpenalized latency coefficients.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param pir vector of estimates for the conditional distribution of the event
+#' at the current parameter estimates and observed datafor the latency
+#' distribution E-step.
+#' @param mu initial intercept for the latency portion of the model.
+#'
+#' @return value of the gradient.
+#' @noRd
 weib_grad_beta <-
   function(theta, alpha, lambda, beta_u, W_u, W_p, time, delta, pir, mu) {
     N <- dim(W_p)[1]
@@ -2039,8 +3075,26 @@ weib_grad_beta <-
     return(c(-grad + N * mu, grad + N * mu))
   }
 
-# Gradient for optim when updating unpenalized predictors in the latency portion
-# of a Weibull MCM when fit using EM (called by weib_EM)
+#' Gradient for Unpenalized Predictors in Weibull MCM Fit Using EM Algorithm.
+#'
+#' @description
+#' Gradient for optim when updating unpenalized predictors in the latency portion
+#' of a Weibull MCM when fit using EM (called by weib_EM)
+#'
+#' @param theta numeric vector for the unpenalized predictors in the
+#' Weibull latency distribution.
+#' @param beta_p vector of estimated penalized latency coefficients.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param pir vector of estimates for the conditional distribution of the event
+#' at the current parameter estimates and observed datafor the latency
+#' distribution E-step.
+#' @param mu initial intercept for the latency portion of the model.
+#'
+#' @return value of the gradient.
+#' @noRd
 weib_gradient_lat <-
   function(theta, beta_p, W_u, W_p, time, delta, pir, mu) { # latency
     log_alpha <- theta[1]
@@ -2062,8 +3116,31 @@ weib_gradient_lat <-
     return(-c(grad1, grad2, grad3))
   }
 
-# Function for identifying which coefficient in the incidence and latency
-# portions of the Weibull MCM to update when using GMIFS, called by weibull.cure
+
+#' Identify GMIFS Coefficient Update for Weibull MCM.
+#'
+#' @description
+#' Function for identifying which coefficient in the incidence and latency
+#' portions of the Weibull MCM to update when using GMIFS, called by weibull.cure
+#'
+#' @param alpha estimated alpha parameter for Weibull latency distribution.
+#' @param lambda estimated lambda parameter for Weibull latency distribution.
+#' @param b_p vector of estimated penalized incidence coefficients.
+#' @param beta_p vector of estimated penalized latency coefficients.
+#' @param b_u vector of estimated unpenalized incidence coefficients.
+#' @param itct estimated intercept for incidence portion of the model.
+#' @param beta_u vector of estimated unpenalized latency coefficients.
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param epsilon small numeric value used to update the regression coefficients.
+#'
+#' @return \item{b_p}{penalized incidence coefficient to update.}
+#' @return \item{beta_p}{penalized latency coefficient to update.}
+#' @noRd
 weib.cure.update <-
   function(alpha, lambda, b_p, beta_p, b_u, itct, beta_u, X_u, X_p, W_u, W_p, time, delta, epsilon) {
     b_nonzero <- which(b_p != 0)
@@ -2095,9 +3172,48 @@ weib.cure.update <-
     return(list(b_p = b_p, beta_p = beta_p))
   }
 
-# Called by curegmifs, cv.gmifs.inner, and cv.gmifs.nofdr - this function is the
-# optimiziation algorithm for fitting a Weibull mixture cure model using
-# the GMIFS algorithm
+
+#' Optimization Function for Weibull MCM Using GMIFS.
+#'
+#' @description
+#' This function is Called by curegmifs, cv.gmifs.inner, and cv.gmifs.nofdr as
+#' this function is the optimiziation algorithm for fitting a Weibull mixture
+#' cure model using the GMIFS algorithm.
+#'
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param epsilon small numeric value used to update the regression coefficients.
+#' @param tol small numeric value specifying convergence tolerance.
+#' @param nIter maximum number of interations.
+#' @param inits initial values used to optimization.
+#' @param verbose logical, if TRUE displays step process to the console.
+#'
+#' @return \item{b_p_path}{Matrix representing the solution path of the
+#' penalized coefficients in the incidence portion of the model. Row is step and
+#' column is variable.}
+#' @return \item{beta_p_path}{Matrix representing the solution path of the
+#' penalized coefficients in the latency portion of the model. Row is step and
+#' column is variable.}
+#' @return \item{alpha_path}{Vector representing the solution path for the alpha
+#' parameter in the Weibull MCM.}
+#' @return \item{lambda_path}{Vector representing the solution path for the alpha
+#' parameter in the Weibull MCM.}
+#' @return \item{b_u_path}{Matrix representing the solution path of the
+#' unpenalized coefficients in the incidence portion of the model. Row is step
+#' and column is variable.}
+#' @return \item{itct_path}{Vector representing the solution path of the
+#' intercept for the incidence portion of the model.}
+#' @return \item{beta_u_path}{Matrix representing the solution path of the
+#' unpenalized coefficients in the latency portion of the model. Row is step and
+#' column is variable.}
+#' @return \item{logLikelihood}{Vector representing the expected penalized
+#' complete-data log-likelihood for each step in the solution path.}
+#'
+#' @noRd
 weibull.cure <-
   function(X_u = NULL, X_p, W_u = NULL, W_p, time, delta, epsilon = 0.001,
            tol = 1e-05, nIter = 1e4, inits = NULL, verbose) {
@@ -2205,8 +3321,24 @@ weibull.cure <-
     output
   }
 
-# Gradient for optim when updating unpenalized predictors in an
-# Weibull MCM when fit using GMIFS (called by weibull.cure)
+#' Gradient for Updating Unpenalized Predictors in Weibull MCM Using GMIFS.
+#'
+#' @description
+#' Gradient for optim when updating unpenalized predictors in an
+#' Weibull MCM when fit using GMIFS (called by weibull.cure)
+#'
+#' @param theta vector of unpenalized parameters to estimate.
+#' @param b_p vector of estimated penalized incidence coefficients.
+#' @param beta_p vector of estimated penalized latency coefficients.
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#'
+#' @return negative gradient.
+#' @noRd
 weib.cure.gradient <-
   function(theta, b_p, beta_p, X_u, X_p, W_u, W_p, time, delta) {
     N <- length(time)
@@ -2248,8 +3380,26 @@ weib.cure.gradient <-
     return(-c(grad1, grad2, grad3, grad4, grad5))
   }
 
-# Function for optim when updating unpenalized predictors in an
-# Weibull MCM when fit using GMIFS (called by weibull.cure)
+
+#' Negative Log-Likelihood for the Latency Portion of a Weibull Mixture Cure
+#' Model for GMIFS Algorithm to Update Unpenalized Predictors.
+#'
+#' @description
+#' Function for optim when updating unpenalized predictors in an
+#' Weibull mixture cure model when fit using GMIFS (called by weibull.cure).
+#'
+#' @param theta vector of unpenalized parameters to estimate.
+#' @param b_p vector of estimated penalized incidence coefficients.
+#' @param beta_p vector of estimated penalized latency coefficients.
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#'
+#' @return returns the negative log-likelihood value.
+#' @noRd
 weib.cure.negloglik <-
   function(theta, b_p, beta_p, X_u, X_p, W_u, W_p, time, delta) {
     N <- length(time)
@@ -2284,8 +3434,30 @@ weib.cure.negloglik <-
     return(-sum(ll1 + ll2))
   }
 
-# Function for optim when updating penalized predictors in the latency portion
-# of a Weibull MCM when fit using EM (called by weib_EM)
+
+#' Negative Log-Likelihood for the Latency Portion of a Weibull Mixture Cure
+#' Model for EM Algorithm to Update Penalized Predictors.
+#'
+#' @description
+#' Function for optim when updating penalized predictors in the latency portion
+#' of a Weibull MCM when fit using EM (called by weib_EM)
+#'
+#' @param theta numeric vector for the penalized predictors in the
+#' Weibull latency distribution.
+#' @param beta_p vector of estimated latency coefficients.
+#' @param alpha estimated alpha parameter for Weibull latency distribution.
+#' @param lambda estimated lambda parameter for Weibull latency distribution.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param pir vector of estimates for the conditional distribution of the event
+#' at the current parameter estimates and observed datafor the latency
+#' distribution E-step.
+#' @param mu initial intercept for the latency portion of the model.
+#'
+#' @return returns the negative log-likelihood value.
+#' @noRd
 weib_negloglik_lat_beta <-
   function(theta, alpha, lambda, beta_u, W_u, W_p, time, delta, pir, mu) { # latency
     N <- dim(W_p)[1]
@@ -2303,8 +3475,27 @@ weib_negloglik_lat_beta <-
     return(-sum(ll1 + ll2) + N * mu * sum(beta_p_ext))
   }
 
-# Function for optim when updating unpenalized predictors in the latency portion
-# of a Weibull MCM when fit using EM (called by weib_EM)
+#' Negative Log-Likelihood for the Latency Portion of a Weibull Mixture Cure
+#' Model for EM Algorithm to Update Unpenalized Predictors.
+#'
+#' @description
+#' Function for optim when updating unpenalized predictors in the latency
+#' portion of a Weibull MCM when fit using EM (called by weib_EM).
+#'
+#' @param theta numeric vector for alpha, lambda, and any unpenalized
+#' coefficients in the Weibull latency distribution.
+#' @param beta_p vector of estimated latency coefficients.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#' @param time time-to-event of interest.
+#' @param delta event (delta = 1) and censoring (delta = 0) indicator.
+#' @param pir vector of estimates for the conditional distribution of the event
+#' at the current parameter estimates and observed datafor the latency
+#' distribution E-step.
+#' @param mu initial intercept for the latency portion of the model.
+#'
+#' @return returns the negative log-likelihood value.
+#' @noRd
 weib_negloglik_lat <-
   function(theta, beta_p, W_u, W_p, time, delta, pir, mu) { # latency
     N <- dim(W_p)[1]
@@ -2324,8 +3515,26 @@ weib_negloglik_lat <-
     return(-sum(ll1 + ll2) + N * mu * sum(abs(beta_p)))
   }
 
-# Called by nonzerocure_test to simulate survival data under null model
-# If b = NULL use exponential; otherwise use uniform with b = upper limit
+#' Simulate Data under a Mixture Cure Model.
+#'
+#' @description Called by nonzerocure_test to simulate survival data under the
+#' null model. If b = NULL, censoring times are generated from an exponential
+#' distribution. If b is not null, censoring times are generated from a
+#' uniform distribution with 0 as the lower limit and b as the upper limit.
+#'
+#' @param n integer, number of observations to generate.
+#' @param mu rate for generating time-to-event from an exponential is 1/mean.
+#' @param censor_mu rate for generating censoring time from an exponential is
+#' 1/censor_mu.
+#' @param b if non-null, censoring time is generated from a uniform distribution
+#' on the interval from 0 to b.
+#' @param reps number of times to simulate data.
+#' @param seed random seed to set to enhance reproducibility.
+#'
+#' @return estimated susceptible proportion.
+#'
+#' @srrstats {G5.5} *Correctness tests should be run with a fixed random seed*
+#' @noRd
 sim_cure <-
   function(n, mu = 1, censor_mu = 3, b = NULL, reps = 10000, seed = NULL) {
     susceptible_prop <- numeric(length = reps)
@@ -2347,8 +3556,23 @@ sim_cure <-
     susceptible_prop
   }
 
-# called by cv.em.inner and cv.gmifs.inner for calculating the area under
-# the incidence curve when used in optimization
+#' Internal Function for Calculating the Area Under the Incidence Curve.
+#'
+#' @description Called by cv.em.inner and cv.gmifs.inner when the AUC is used
+#' to optimized the mixture cure model.
+#'
+#' @param cure_cutoff time at which the C-statistic should be estimated.
+#' @param b_u_hat vector of estimated unpenalized incidence coefficients.
+#' @param itct_hat estimated intercept for incidence portion of the model.
+#' @param b_p_hat vector of estimated penalized incidence coefficients.
+#' @param testing_delta vector of censoring indicator for dataset of interest.
+#' @param testing_time vector of time-to-event for dataset of interest.
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#'
+#' @return AUC under the incidence curve at the specified
+#' cure_cutoff timepoint.
+#' @noRd
 AUC_msi <- function(cure_cutoff = 5, b_u_hat = NULL, itct_hat, b_p_hat, testing_delta, testing_time,
                     X_u = NULL, X_p) {
   testing_n <- length(testing_time)
@@ -2379,8 +3603,27 @@ AUC_msi <- function(cure_cutoff = 5, b_u_hat = NULL, itct_hat, b_p_hat, testing_
   return(auc_msi)
 }
 
-# called by cv.em.inner and cv.gmifs.inner for calculating the concordance
-# when used in optimization
+#' Calculate C-statistic for Mixture Cure Model.
+
+#' @description Called by cv.em.inner and cv.gmifs.inner when
+#' the concordance statistic is used in optimization
+#'
+#' @param cure_cutoff time at which the C-statistic should be estimated.
+#' @param b_u_hat vector of estimated unpenalized incidence coefficients.
+#' @param itct_hat estimated intercept for incidence portion of the model.
+#' @param b_p_hat vector of estimated penalized incidence coefficients.
+#' @param beta_u_hat vector of estimated unpenalized latency coefficients.
+#' @param beta_p_hat vector of estimated penalized latency coefficients.
+#' @param testing_delta vector of censoring indicator for dataset of interest.
+#' @param testing_time vector of time-to-event for dataset of interest.
+#' @param X_u unpenalized predictors in the incidence portion of the model.
+#' @param X_p penalized predictors in the incidence portion of the model.
+#' @param W_u unpenalized predictors in the latency portion of the model.
+#' @param W_p penalized predictors in the latency portion of the model.
+#'
+#' @return mixture cure model c-statistic at the specified
+#' cure_cutoff timepoint.
+#' @noRd
 C.stat <-
   function(cure_cutoff = 5, b_u_hat = NULL, itct_hat, b_p_hat,
            beta_u_hat = NULL, beta_p_hat, testing_delta, testing_time,
@@ -2445,6 +3688,15 @@ C.stat <-
     return(C_csw_num / C_csw_denom)
   }
 
+
+#' Extract Variables from the Right-hand Side of a Model Formula.
+#'
+#' @param model a model formula.
+#'
+#' @return names of variables on the right-hand side of a
+#' model formula.
+#'
+#' @noRd
 extract_rhs_values <- function(model) {
   # Extract the model formula
   model_formula <- formula(model)
@@ -2454,12 +3706,12 @@ extract_rhs_values <- function(model) {
   model_call <- model$call
   # Check if the model call contains the data argument
   if (!"data" %in% names(model_call)) {
-    stop("Model call does not reference a dataset.")
+    stop("Error: Model call does not reference a dataset.")
   }
   # Evaluate the data argument from the model call in the model's environment
   data <- eval(model_call$data, environment(model$terms))
   if (is.null(data)) {
-    stop("Could not evaluate dataset from model call.")
+    stop("Error: Could not evaluate dataset from model call.")
   }
   # Extract the RHS variable values from the dataset
   rhs_values <- data[rhs_vars]

@@ -667,4 +667,8 @@
 #'   \item{ENSG00000273033}{normalized expression for indicated transcript}
 #' }
 #' @source <doi:10.1186/s13045-024-01553-6>
+#' @srrstats {G1.0} *Statistical Software should list at least one primary reference from published academic literature.*
+#' @srrstats {G1.4} *Software should use [`roxygen2`](https://roxygen2.r-lib.org/) to document all functions.*
+#' @srrstats {G5.1} *Data sets created within, and used to test, a package should be exported (or otherwise made generally available) so that users can confirm tests and run examples.*
+
 "amltest"

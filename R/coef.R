@@ -5,6 +5,8 @@
 #' coefficients from a fitted mixture cure model object fit using
 #' \code{curegmifs}, \code{cureem}, \code{cv_curegmifs}, or \code{cv_cureem}.
 #'
+#' @aliases coefficients
+#'
 #' @param object a \code{mixturecure} object resulting from \code{curegmifs},
 #' \code{cureem}, \code{cv_curegmifs}, or \code{cv_cureem}.
 #' @param model_select a case-sensitive parameter for models fit using \code{curegmifs} or \code{cureem}
@@ -22,6 +24,10 @@
 #'
 #' @return a list of estimated parameters extracted from the model object using
 #' the model selection criterion
+#'
+#' @srrstats {G1.4} *Software should use [`roxygen2`](https://roxygen2.r-lib.org/) to document all functions.*
+#' @srrstats {G5.2b} *Explicit tests should demonstrate conditions which trigger every one of those messages, and should compare the result with expected values.*
+#' @srrstats {RE4.2} *Model coefficients (via `coef()` / `coefficients()`)*
 #' @seealso \code{\link{curegmifs}}, \code{\link{cureem}},
 #' \code{\link{summary.mixturecure}}, \code{\link{plot.mixturecure}},
 #' \code{\link{predict.mixturecure}}
@@ -43,7 +49,7 @@
 coef.mixturecure <-
   function(object, model_select = "AIC", ...) {
     if (!(class(object) %in% "mixturecure")) {
-      stop("class of object must be mixturecure")
+      stop("Error: class of object must be mixturecure")
     }
     if (!object$cv) {
       if (!is.numeric(model_select))

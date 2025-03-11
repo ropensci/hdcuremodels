@@ -19,4 +19,8 @@ test_that("multiplication works", {
   output %>% expect_type("list")
   expect_error(cure_estimate(survdiff(Surv(Time, Censor) ~ group, data = training)))
   expect_visible(cure_estimate(km_fit))
+
+  fit.lm <- lm(Time ~ Censor, data = training)
+  expect_error(cure_estimate(fit.lm), "Error: object must be a survfit object")
+
 })

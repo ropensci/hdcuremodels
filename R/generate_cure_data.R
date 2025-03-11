@@ -43,7 +43,9 @@
 #' (\code{itct})}
 #'
 #' @export
-#'
+#' @srrstats {G1.4} *Software should use [`roxygen2`](https://roxygen2.r-lib.org/) to document all functions.*
+#' @srrstats {G5.9} **Noise susceptibility tests** *Packages should test for expected stochastic behaviour, such as through the following conditions:*
+#' @srrstats {G5.9b} *Running under different random seeds or initial conditions does not meaningfully change results*
 #' @import mvnfast
 #' @import flexsurv
 #' @import stats

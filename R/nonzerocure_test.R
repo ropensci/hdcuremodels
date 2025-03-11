@@ -29,7 +29,15 @@
 #' Long-Term Survivors}. John Wiley & Sons.
 #'
 #' @srrstats {G1.0} *Statistical Software should list at least one primary reference from published academic literature.*
-#'
+#' @srrstats {G1.4} *Software should use [`roxygen2`](https://roxygen2.r-lib.org/) to document all functions.*
+#' @srrstats {G2.1} *Implement assertions on types of inputs (see the initial point on nomenclature above).*
+#' @srrstats {G5.2} *Appropriate error and warning behaviour of all functions should be explicitly demonstrated through tests. In particular,*
+#' @srrstats {G5.5} *Correctness tests should be run with a fixed random seed*
+#' @srrstats {G5.6a} *Parameter recovery tests should generally be expected to succeed within a defined tolerance rather than recovering exact values.*
+#' @srrstats {G5.9} **Noise susceptibility tests** *Packages should test for expected stochastic behaviour, such as through the following conditions:*
+#' @srrstats {G5.9a} *Adding trivial noise (for example, at the scale of `.Machine$double.eps`) to data does not meaningfully change results*
+#' @srrstats {G5.9b} *Running under different random seeds or initial conditions does not meaningfully change results*
+#' @srrstats {RE4.5} *Numbers of observations submitted to model (via `nobs()`)*
 #' @seealso \code{\link{survfit}}, \code{\link{cure_estimate}},
 #' \code{\link{sufficient_fu_test}}
 #'
@@ -48,7 +56,7 @@
 nonzerocure_test <- function(object, reps = 1000, seed = NULL, plot = FALSE,
                              b = NULL) {
   if (!(c("survfit") %in% class(object))) {
-    stop("object must be a survfit object")
+    stop("Error: object must be a survfit object")
   }
   # Surv(Time, Censor)
   Y <- Surv(object$time, object$n.event)

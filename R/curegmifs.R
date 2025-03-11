@@ -49,6 +49,10 @@
 #' initialization is automatically provided by the function.
 #' @param verbose logical, if TRUE running information is printed to the
 #' console (default is FALSE).
+#' @param suppress_warning logical, if TRUE, suppresses echoing the warning that
+#' the maximum number of iterations was reached so that the algorithm may not
+#' have converged. Instead, warning is returned as part of the output with this
+#' message.
 #' @param ... additional arguments.
 #'
 #' @return \item{b_path}{Matrix representing the solution path of the
@@ -78,6 +82,8 @@
 #' @return \item{alpha_path}{Vector representing the solution path of the shape
 #' parameter for the Weibull density in the latency portion of the model.}
 #' @return \item{call}{the matched call.}
+#' @return \item{warning}{message indicating whether the maximum number of
+#' iterations was achieved which may indicate the model did not converge.}
 #'
 #' @references Fu, H., Nicolet, D., Mrozek, K., Stone, R. M., Eisfeld, A. K.,
 #' Byrd, J. C., Archer, K. J. (2022) Controlled variable selection in Weibull
@@ -86,6 +92,39 @@
 #'
 #' @srrstats {G1.0} *Statistical Software should list at least one primary reference from published academic literature.*
 #' @srrstats {G1.1} *Statistical Software should document whether the algorithm(s) it implements are: The first implementation of a novel algorithm *
+#' @srrstats {G1.4} *Software should use [`roxygen2`](https://roxygen2.r-lib.org/) to document all functions.*
+#' @srrstats {G1.3} *All statistical terminology should be clarified and unambiguously defined.*
+#' @srrstats {G1.5} *Software should include all code necessary to reproduce results which form the basis of performance claims made in associated publications.*
+#' @srrstats {G2.0a} *Provide explicit secondary documentation of any expectations on lengths of inputs*
+#' @srrstats {G2.1} *Implement assertions on types of inputs (see the initial point on nomenclature above).*
+#' @srrstats {G2.3a} *Use `match.arg()` or equivalent where applicable to only permit expected values.*
+#' @srrstats {G2.1a} *Provide explicit secondary documentation of expectations on data types of all vector inputs.*
+#' @srrstats {G2.2} *Appropriately prohibit or restrict submission of multivariate input to parameters expected to be univariate.*
+#' @srrstats {G2.3} *For univariate character input:*
+#' @srrstats {G2.3b} *Either: use `tolower()` or equivalent to ensure input of character parameters is not case dependent; or explicitly document that parameters are strictly case-sensitive.*
+#' @srrstats {G2.4} *Provide appropriate mechanisms to convert between different data types, potentially including:*
+#' @srrstats {G2.4e} *explicit conversion from factor via `as...()` functions*
+#' @srrstats {G2.10} *Software should ensure that extraction or filtering of single columns from tabular inputs should not presume any particular default behaviour, and should ensure all column-extraction operations behave consistently regardless of the class of tabular data used as input.*
+#' @srrstats {G5.2} *Appropriate error and warning behaviour of all functions should be explicitly demonstrated through tests. In particular,*
+#' @srrstats {G5.2a} *Every message produced within R code by `stop()`, `warning()`, `message()`, or equivalent should be unique*
+#' @srrstats {G5.5} *Correctness tests should be run with a fixed random seed*
+#' @srrstats {G5.6} **Parameter recovery tests** *to test that the implementation produce expected results given data with known properties. For instance, a linear regression algorithm should return expected coefficient values for a simulated data set generated from a linear model.*
+#' @srrstats {G5.6a} *Parameter recovery tests should generally be expected to succeed within a defined tolerance rather than recovering exact values.*
+#' @srrstats {G5.9a} *Adding trivial noise (for example, at the scale of `.Machine$double.eps`) to data does not meaningfully change results*
+#' @srrstats {RE1.0} *Regression Software should enable models to be specified via a formula interface, unless reasons for not doing so are explicitly documented.*
+#' @srrstats {RE1.1} *Regression Software should document how formula interfaces are converted to matrix representations of input data.*
+#' @srrstats {RE1.2} *Regression Software should document expected format (types or classes) for inputting predictor variables, including descriptions of types or classes which are not accepted.*
+#' @srrstats {RE1.3} *Regression Software which passes or otherwise transforms aspects of input data onto output structures should ensure that those output structures retain all relevant aspects of input data, notably including row and column names, and potentially information from other `attributes()`.*
+#' @srrstats {RE1.3a} *Where otherwise relevant information is not transferred, this should be explicitly documented.*
+#' @srrstats {RE1.4} *Regression Software should document any assumptions made with regard to input data; for example distributional assumptions, or assumptions that predictor data have mean values of zero. Implications of violations of these assumptions should be both documented and tested.*
+#' @srrstats {RE2.3} *Where applicable, Regression Software should enable data to be centred (for example, through converting to zero-mean equivalent values; or to z-scores) or offset (for example, to zero-intercept equivalent values) via additional parameters, with the effects of any such parameters clearly documented and tested.*
+#' @srrstats {RE3.0} *Issue appropriate warnings or other diagnostic messages for models which fail to converge.*
+#' @srrstats {RE3.2} *Ensure that convergence thresholds have sensible default values, demonstrated through explicit documentation.*
+#' @srrstats {RE3.3} *Allow explicit setting of convergence thresholds, unless reasons against doing so are explicitly documented.*
+#' @srrstats {RE4.0} *Regression Software should return some form of "model" object, generally through using or modifying existing class structures for model objects (such as `lm`, `glm`, or model objects from other packages), or creating a new class of model objects.*
+#' @srrstats {RE4.4} *The specification of the model, generally as a formula (via `formula()`)*
+#' @srrstats {RE4.7} *Where appropriate, convergence statistics*
+#' @srrstats {RE4.8} *Response variables, and associated "metadata" where applicable.*
 #' @seealso \code{\link{cv_curegmifs}}
 #' @export
 #'
@@ -111,11 +150,12 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
                       model = c("weibull", "exponential"),
                       penalty_factor_inc = NULL, penalty_factor_lat = NULL,
                       epsilon = 0.001, thresh = 1e-5, scale = TRUE, maxit = 1e4,
-                      inits = NULL, verbose = TRUE, ...) {
+                      inits = NULL, verbose = TRUE, suppress_warning = FALSE,
+                      ...) {
   mf <- match.call(expand.dots = FALSE)
   cl <- match.call()
   m <- match(c("formula", "data", "subset"), names(mf), 0L)
-  if (m[1] == 0) stop("A \"formula\" argument is required")
+  if (m[1] == 0) stop("Error: A \"formula\" argument is required")
   mf <- mf[c(1L, m)]
   mf[[1L]] <- as.name("model.frame")
   if (missing(data)) {
@@ -125,13 +165,14 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
     data <- environment(formula)
   }
   if (thresh < 0) {
-    stop("\"thresh\" must be non-negative")
+    stop("Error: \"thresh\" must be non-negative")
   }
   if (epsilon < 0) {
-    stop("\"epsilon\" must be non-negative")
+    stop("Error: \"epsilon\" must be non-negative")
   }
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
+  model <- tolower(model)
   model <- match.arg(model)
   y <- model.response(mf)
   event <- y[, 2]
@@ -144,7 +185,7 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
       e <- substitute(subset)
       r <- eval(e, data)
       if (!is.logical(r)) {
-        stop("'subset' must evaluate to logical")
+        stop("Error: 'subset' must evaluate to logical")
       }
       r <- r & !is.na(r)
     }
@@ -174,7 +215,7 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
   x_lat <- x_latency
   if (nrow(x_inc) != nrow(x_lat) || nrow(x_lat) != length(time) ||
     length(time) != length(event)) {
-    stop("Input dimension mismatch")
+    stop("Error: Input dimension mismatch")
   }
   if (class(x_inc)[1] == "data.frame" || class(x_lat)[1] == "data.frame") {
     x_inc <- as.matrix(x_inc)
@@ -190,8 +231,12 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
   if (is.null(penalty_factor_lat)) {
     penalty_factor_lat <- rep(1, ncol(x_lat))
   }
+  if (any(!c(class(penalty_factor_inc), class(penalty_factor_lat)) %in% "numeric")) {
+    stop("Error: Penalty factors specified in penalty_factor_inc and penalty_factor_inc
+         must be numeric vectors comprised of 0 or 1")
+  }
   if (any(!c(penalty_factor_inc, penalty_factor_inc) %in% c(0, 1))) {
-    stop("Penalty factors specified in penalty_factor_inc and penalty_factor_inc
+    stop("Error: Penalty factors specified in penalty_factor_inc and penalty_factor_inc
          can only include 0 or 1")
   }
   if (!is.null(inits)) {
@@ -216,8 +261,15 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
     )
   }
   nstep <- length(res$logLikelihood)
-  if (nstep == maxit) warning("Maximum step of iterations achieved.
+  warning <- "No warnings"
+  if (nstep == maxit) {
+    warning <-
+      "Warning: Maximum step of iterations achieved.
+                           Algorithm may not converge."
+    if (!suppress_warning)
+      warning("Warning: Maximum step of iterations achieved.
                            Algorithm may not converge.")
+  }
   b_path <- matrix(NA, nrow = nstep, ncol = ncol(x_inc))
   beta_path <- matrix(NA, nrow = nstep, ncol = ncol(x_lat))
   b_path[, penalty_factor_inc == 0] <- res$b_u_path
@@ -235,6 +287,7 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
   )
   if (model == "weibull") output$alpha_path <- res$alpha_path
   output$cv <- FALSE
+  output$warning <- warning
   class(output) <- "mixturecure"
   return(output)
 }

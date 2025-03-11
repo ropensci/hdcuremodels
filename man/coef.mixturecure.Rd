@@ -2,6 +2,7 @@
 % Please edit documentation in R/coef.R
 \name{coef.mixturecure}
 \alias{coef.mixturecure}
+\alias{coefficients}
 \title{Extract model coefficients from a fitted mixture cure object}
 \usage{
 \method{coef}{mixturecure}(object, model_select = "AIC", ...)

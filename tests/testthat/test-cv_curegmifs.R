@@ -47,7 +47,8 @@ test_that("cv_curegmifs function works correctly", {
   fit.cv$selected_step_lat %>% expect_length(1)
   fit.cv$logLik %>% expect_length(1)
   fit.cv$max_c %>% expect_length(1)
-
+  expect_equal(round(fit.cv$rate, 6), 2.502845)
+  expect_equal(round(fit.cv$alpha, 7), 0.7003362)
 
   fit.cv <- cv_curegmifs(Surv(Time, Censor) ~ ., data = training,
                          penalty_factor_inc = rep(c(0, 1), c(1, 11)),
@@ -92,4 +93,41 @@ test_that("cv_curegmifs function works correctly", {
   fit.cv$logLik %>% expect_length(1)
   fit.cv$max_c %>% expect_length(1)
   fit.cv$max.auc %>% expect_length(1)
+
+
+  set.seed(4)
+  temp <- generate_cure_data(n = 200, j = 10, n_true = 10, a = 1.8)
+  training <- temp$training
+  expect_error(cv_curegmifs(training$Time))
+  training$group <- gl(2, 75)
+  expect_error(cv_curegmifs(Surv(Time, Censor) ~ .,
+                         data = training, x_latency = training, thresh = -1))
+  expect_error(cv_curegmifs(Surv(Time, Censor) ~ .,
+                         data = training, x_latency = training, epsilon = -1))
+  expect_error(cv_curegmifs(Surv(Time, Censor) ~ .,
+                         data = training, x_latency = training,
+                         subset = group))
+  expect_error(cv_curegmifs(Surv(Time, Censor) ~ .,
+                         data = training, x_latency = testing))
+  expect_error(cv_curegmifs(Surv(Time, Censor) ~ .,
+                         data = training, x_latency = training,
+                         model = "cox"))
+  expect_error(cv_curegmifs(Surv(Time, Censor) ~ .,
+                         data = training, x_latency = training,
+                         penalty_factor_inc = penalty))
+  expect_error(cv_curegmifs(Surv(Time, Censor) ~ .,
+                            data = training, x_latency = training,
+                            fdr_control = TRUE, fdr = 1.2))
+
+  set.seed(16)
+  temp <- generate_cure_data(n = 100, j = 15, n_true = 3, a = 1.8, rho = 0.2)
+  training <- temp$training
+  fit.cv <- cv_curegmifs(Surv(Time, Censor) ~ .,
+                         data = training,
+                         x_latency = training, fdr_control = FALSE,
+                         maxit = 450, epsilon = 0.01, n_folds = 2,
+                         seed = 23, verbose = TRUE
+  )
+  expect_equal(round(fit.cv$rate, 6), 4.518993)
+  expect_equal(round(fit.cv$alpha, 7), 1.0191001)
 })

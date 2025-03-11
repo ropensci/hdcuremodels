@@ -25,4 +25,7 @@ test_that("auc_mcm works correctly", {
   expect_error(auc_mcm(fit, model_select = "bic"))
   expect_error(auc_mcm("x"))
   expect_error(auc_mcm(1))
+
+  fit.lm <- lm(Time ~ Censor, data = training)
+  expect_error(auc_mcm(fit.lm), "Error: class of object must be mixturecure")
 })

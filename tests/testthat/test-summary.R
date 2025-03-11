@@ -19,4 +19,6 @@ test_that("summary function works correctly", {
   expect_invisible(summary(fit.cv))
   expect_null(summary(fit.cv))
 
+  fit.lm <- lm(Time ~ Censor, data = training)
+  expect_error(summary.mixturecure(fit.lm))
 })

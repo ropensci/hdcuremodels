@@ -18,7 +18,7 @@ test_that("cureem works correctly", {
   expect_true(class(fit$b0_path) == "numeric")
   expect_true(class(fit$logLik_inc) == "numeric")
   expect_true(class(fit$logLik_lat) == "numeric")
-
+  expect_equal(round(fit$b0_path[1], 8), 0.62977197)
 
   fit <- cureem(Surv(Time, Censor) ~ .,
                 data = training, x_latency = training,
@@ -66,6 +66,7 @@ test_that("cureem works correctly", {
   expect_true(class(fit$b0_path) == "numeric")
   expect_true(class(fit$logLik_inc) == "numeric")
   expect_true(class(fit$logLik_lat) == "numeric")
+  expect_equal(round(fit$b0_path[1], 7), 0.3119246)
 
   fit <- cureem(Surv(Time, Censor) ~ .,
                 data = training, x_latency = training,
@@ -83,4 +84,26 @@ test_that("cureem works correctly", {
   expect_true(class(fit$logLik_inc) == "numeric")
   expect_true(class(fit$logLik_lat) == "numeric")
 
+  expect_error(cureem(training$Time))
+  training$group <- gl(2, 30)
+  training$penalty <- rnorm(dim(training)[1])
+  expect_error(cureem(Surv(Time, Censor) ~ .,
+                      data = training, x_latency = training,
+                      subset = group))
+  expect_error(cureem(Surv(Time, Censor) ~ .,
+                      data = training, x_latency = testing))
+  expect_error(cureem(Surv(Time, Censor) ~ .,
+                      data = training, x_latency = training,
+                      subset = group))
+  expect_error(cureem(Surv(Time, Censor) ~ .,
+                      data = training, x_latency = training,
+                      penalty_factor_inc = penalty))
+  expect_error(cureem(Surv(Time, Censor) ~ .,
+                      data = training, x_latency = training, lambda_inc = -1))
+  expect_error(cureem(Surv(Time, Censor) ~ .,
+                      data = training, x_latency = training, lambda_lat = -1))
+  expect_error(cureem(Surv(Time, Censor) ~ ., penalty = "MCP",
+                      data = training, x_latency = training, gamma_inc = -1))
+  expect_error(cureem(Surv(Time, Censor) ~ ., penalty = "MCP",
+                      data = training, x_latency = training, gamma_lat = -1))
 })

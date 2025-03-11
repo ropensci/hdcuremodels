@@ -10,11 +10,11 @@ test_that("print works correctly", {
   )
   result <- print(fit)
   expect_true(is.list(result))
-  result %>% expect_length(14)
+  result %>% expect_length(15)
   expect_equal(names(result), c("b_path", "beta_path", "b0_path", "rate_path",
                              "logLik", "x_incidence", "x_latency", "y",
                              "model", "scale", "method", "call",
-                             "alpha_path", "cv" ))
+                             "alpha_path", "cv", "warning" ))
   expect_equal(round(mean(result$alpha_path), 6), 1.132515)
 
   expect_warning(curegmifs(Surv(Time, Censor) ~ .,

@@ -32,6 +32,9 @@ test_that("coef function works correctly", {
   expect_error(coef(fit, model_select = "ebic"))
   expect_setequal(names(output), c("rate", "shape", "b0", "beta_inc", "beta_lat"))
 
+  fit.lm <- lm(Time ~ Censor, data = training)
+  expect_error(coef.mixturecure(fit.lm), "Error: class of object must be mixturecure")
+
   expect_warning(curegmifs(Surv(Time, Censor) ~ .,
                    data = training, x_latency = training,
                    model = "exponential", thresh = 1e-4, maxit = 2000,

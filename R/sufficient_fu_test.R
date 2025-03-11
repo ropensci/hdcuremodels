@@ -18,7 +18,12 @@
 #' Long-Term Survivors}. John Wiley & Sons.
 #'
 #' @srrstats {G1.0} *Statistical Software should list at least one primary reference from published academic literature.*
-#'
+#' @srrstats {G1.4} *Software should use [`roxygen2`](https://roxygen2.r-lib.org/) to document all functions.*
+#' @srrstats {G2.0} *Implement assertions on lengths of inputs, particularly through asserting that inputs expected to be single- or multi-valued are indeed so.*
+#' @srrstats {G2.1} *Implement assertions on types of inputs (see the initial point on nomenclature above).*
+#' @srrstats {G5.2} *Appropriate error and warning behaviour of all functions should be explicitly demonstrated through tests. In particular,*
+#' @srrstats {G5.2a} *Every message produced within R code by `stop()`, `warning()`, `message()`, or equivalent should be unique*
+#' @srrstats {G5.5} *Correctness tests should be run with a fixed random seed*
 #' @seealso \code{\link{survfit}}, \code{\link{cure_estimate}},
 #' \code{\link{nonzerocure_test}}
 #' @import survival
@@ -33,7 +38,7 @@
 #' sufficient_fu_test(km_fit)
 sufficient_fu_test <- function(object) {
   if (!(c("survfit") %in% class(object))) {
-    stop("object must be a survfit object")
+    stop("Error: object must be a survfit object")
   }
   if (length(object$strata) > 1) {
     object$strata.group <- rep(names(object$strata), object$strata)

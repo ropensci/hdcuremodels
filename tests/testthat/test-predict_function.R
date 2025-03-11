@@ -32,4 +32,7 @@ test_that("predict function works correctly", {
   predict_train_cv$p_uncured %>% expect_type("double")
   predict_train_cv$linear_latency %>% expect_type("double")
   predict_train_cv$latency_risk %>% expect_type("character")
+
+  fit.lm <- lm(Time ~ Censor, data = training)
+  expect_error(predict.mixturecure(fit.lm), "Error: class of object must be mixturecure")
 })

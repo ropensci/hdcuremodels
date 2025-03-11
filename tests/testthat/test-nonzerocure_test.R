@@ -10,9 +10,6 @@ test_that("nonzerocure_test works", {
   output %>% expect_length(4)
   expect_equal(round(output$p_value, 3), 0.039)
 
-#  km_fit_group <- survfit(Surv(Time, Censor) ~ group, data = training)
-#  output <- nonzerocure_test(km_fit_group)
-#  output %>% expect_type("list")
-#  output %>% expect_length(4)
-
+  fit.lm <- lm(Time ~ Censor, data = training)
+  expect_error(nonzerocure_test(fit.lm), "Error: object must be a survfit object")
 })

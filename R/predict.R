@@ -38,6 +38,9 @@
 #' @keywords methods
 #' @method predict mixturecure
 #'
+#' @srrstats {G1.4} *Software should use [`roxygen2`](https://roxygen2.r-lib.org/) to document all functions.*
+#' @srrstats {G5.5} *Correctness tests should be run with a fixed random seed*
+#' @srrstats {RE4.9} *Modelled values of response variables.*
 #' @export
 #'
 #' @examples
@@ -56,7 +59,7 @@
 #' predict_test <- predict(fit, newdata = testing)
 predict.mixturecure <- function(object, newdata, model_select = "AIC", ...) {
   if (!("mixturecure" %in% class(object))) {
-    stop("class of object must be mixturecure")
+    stop("Error: class of object must be mixturecure")
   }
   no_data <- (missing(newdata) || is.null(newdata))
   if (no_data) {

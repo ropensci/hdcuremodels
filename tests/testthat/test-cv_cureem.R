@@ -266,4 +266,50 @@ test_that("cv_cureem function works correctly", {
   expect_error(cv_cureem(Censor ~ ., data = training,
                          x_latency = training, model = "cox", penalty = "SCAD"))
 
+  expect_error(cv_cureem(training$Time))
+  training$subset_group <- gl(2, 75)
+  training$penalty <- rnorm(dim(training)[1])
+  expect_error(cv_cureem(Surv(Time, Censor) ~ .,
+                      data = training, x_latency = training,
+                      subset = subset_group))
+  expect_error(cv_cureem(Surv(Time, Censor) ~ .,
+                      data = training, x_latency = testing))
+  expect_error(cv_cureem(Surv(Time, Censor) ~ .,
+                         data = training, x_latency = training,
+                         subset = subset_group))
+  expect_error(cv_cureem(Surv(Time, Censor) ~ .,
+                      data = training, x_latency = training,
+                      penalty_factor_inc = penalty))
+  expect_error(cv_cureem(Surv(Time, Censor) ~ .,
+                      data = training, x_latency = training,
+                      lambda_inc_list = -1))
+  expect_error(cv_cureem(Surv(Time, Censor) ~ .,
+                      data = training, x_latency = training,
+                      lambda_lat_list = -1))
+  expect_error(cv_cureem(Surv(Time, Censor) ~ ., penalty = "MCP",
+                      data = training, x_latency = training,
+                      gamma_inc = -1))
+  expect_error(cv_cureem(Surv(Time, Censor) ~ ., penalty = "MCP",
+                      data = training, x_latency = training,
+                      gamma_lat = -1))
+  expect_error(cv_cureem(Surv(Time, Censor) ~ .,
+                         data = training, x_latency = training,
+                         fdr.control = TRUE, fdr = 1.2))
+  expect_error(cv_cureem(Surv(Time, Censor) ~ .,
+                         data = training, x_latency = training,
+                         lambda_min_ratio_inc  = 1.3))
+  expect_error(cv_cureem(Surv(Time, Censor) ~ .,
+                         data = training, x_latency = training,
+                         lambda_min_ratio_lat = -0.2))
+
+  set.seed(26)
+  temp <- generate_cure_data(n = 200, j = 25, n_true = 5, a = 1.8)
+  training <- temp$training
+  fit.cv <- cv_cureem(Surv(Time, Censor) ~ .,
+                      data = training,
+                      x_latency = training, fdr_control = FALSE,
+                      grid_tuning = FALSE, nlambda_inc = 10, nlambda_lat = 10,
+                      n_folds = 2, seed = 23, verbose = FALSE
+  )
+  expect_equal(round(fit.cv$b0, 7), 0.2238618)
 })

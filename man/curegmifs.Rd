@@ -18,6 +18,7 @@ curegmifs(
   maxit = 10000,
   inits = NULL,
   verbose = TRUE,
+  suppress_warning = FALSE,
   ...
 )
 }
@@ -78,6 +79,11 @@ initialization is automatically provided by the function.}
 \item{verbose}{logical, if TRUE running information is printed to the
 console (default is FALSE).}
 
+\item{suppress_warning}{logical, if TRUE, suppresses echoing the warning that
+the maximum number of iterations was reached so that the algorithm may not
+have converged. Instead, warning is returned as part of the output with this
+message.}
+
 \item{...}{additional arguments.}
 }
 \value{
@@ -119,6 +125,9 @@ centered and scaled.}
 parameter for the Weibull density in the latency portion of the model.}
 
 \item{call}{the matched call.}
+
+\item{warning}{message indicating whether the maximum number of
+iterations was achieved which may indicate the model did not converge.}
 }
 \description{
 Fits a penalized Weibull or exponential mixture cure model using the

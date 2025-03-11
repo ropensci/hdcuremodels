@@ -32,6 +32,8 @@
 #'
 #' @importFrom utils head
 #'
+#' @srrstats {G1.4} *Software should use [`roxygen2`](https://roxygen2.r-lib.org/) to document all functions.*
+#' @srrstats {RE4.17} *Model objects returned by Regression Software should implement or appropriately extend a default `print` method which provides an on-screen summary of model (input) parameters and (output) coefficients.*
 #' @keywords methods
 #' @method print mixturecure
 #' @examples

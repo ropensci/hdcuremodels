@@ -33,7 +33,11 @@
 #' Statistics}, \bold{27}:6, 918--932.
 #'
 #' @srrstats {G1.0} *Statistical Software should list at least one primary reference from published academic literature.*
-#'
+#' @srrstats {G1.4} *Software should use [`roxygen2`](https://roxygen2.r-lib.org/) to document all functions.*
+#' @srrstats {G1.3} *All statistical terminology should be clarified and unambiguously defined.*
+#' @srrstats {G2.1} *Implement assertions on types of inputs (see the initial point on nomenclature above).*
+#' @srrstats {G5.2b} *Explicit tests should demonstrate conditions which trigger every one of those messages, and should compare the result with expected values.*
+#' @srrstats {G5.6a} *Parameter recovery tests should generally be expected to succeed within a defined tolerance rather than recovering exact values.*
 #' @seealso \code{\link{auc_mcm}}
 #'
 #' @keywords univar
@@ -53,7 +57,7 @@
 concordance_mcm <- function(object, newdata, cure_cutoff = 5,
   model_select = "AIC") {
   if (!("mixturecure" %in% class(object))) {
-    stop("class of object must be mixturecure")
+    stop("Error: class of object must be mixturecure")
   }
   no_data <- (missing(newdata) || is.null(newdata))
   if (no_data) {
