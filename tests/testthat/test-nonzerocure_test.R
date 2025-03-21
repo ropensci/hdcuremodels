@@ -6,7 +6,7 @@
 
 test_that("nonzerocure_test works", {
   library(survival)
-  set.seed(1234)
+  withr::local_seed(1234)
   temp <- generate_cure_data(n = 200, j = 10, n_true = 10, a = 1.8)
   training <- temp$training
   training$group <- gl(2, 75)

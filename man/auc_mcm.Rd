@@ -40,7 +40,7 @@ imputation (MSI) method proposed by Asano et al.
 }
 \examples{
 library(survival)
-set.seed(1234)
+withr::local_seed(1234)
 temp <- generate_cure_data(n = 100, j = 10, n_true = 10, a = 1.8)
 training <- temp$training
 testing <- temp$testing

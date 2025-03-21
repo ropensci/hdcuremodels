@@ -7,7 +7,7 @@
 
 test_that("cv_curegmifs function works correctly", {
   library(survival)
-  set.seed(123)
+  withr::local_seed(123)
   temp <- generate_cure_data(n = 100, j = 15, n_true = 3, a = 1.8, rho = 0.2)
   training <- temp$training
 
@@ -102,7 +102,7 @@ test_that("cv_curegmifs function works correctly", {
   fit.cv$max.auc %>% expect_length(1)
 
 
-  set.seed(4)
+  withr::local_seed(4)
   temp <- generate_cure_data(n = 200, j = 10, n_true = 10, a = 1.8)
   training <- temp$training
   expect_error(cv_curegmifs(training$Time))
@@ -126,7 +126,7 @@ test_that("cv_curegmifs function works correctly", {
                             data = training, x_latency = training,
                             fdr_control = TRUE, fdr = 1.2))
 
-  set.seed(16)
+  withr::local_seed(16)
   temp <- generate_cure_data(n = 100, j = 15, n_true = 3, a = 1.8, rho = 0.2)
   training <- temp$training
   fit.cv <- cv_curegmifs(Surv(Time, Censor) ~ .,

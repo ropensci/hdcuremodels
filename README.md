@@ -21,7 +21,7 @@ event.
 You can install the development version of hdcuremodels like so:
 
 ``` r
-install.packages("hdcuremodels")
+remotes::install_github("https://github.com/kelliejarcher/hdcuremodels")
 ```
 
 ## Example
@@ -61,6 +61,8 @@ zero using the `nonzerocure_test` function.
 
 ``` r
 nonzerocure_test(km_train)
+#> Warning in Surv(object$time, object$n.event): Invalid status value, converted
+#> to NA
 #> $proportion_susceptible
 #> [1] 0.7146919
 #> 
@@ -71,7 +73,7 @@ nonzerocure_test(km_train)
 #> [1] "< 0.001"
 #> 
 #> $time_95_percent_of_events
-#> [1] 5.294299
+#> [1] 5.553847
 ```
 
 Given the small p-value we reject the null hypothesis and conclude there

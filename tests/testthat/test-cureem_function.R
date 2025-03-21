@@ -8,7 +8,7 @@
 test_that("cureem works correctly", {
 # validate function output
   library(survival)
-  set.seed(1234)
+  withr::local_seed(1234)
   temp <- generate_cure_data(n = 80, j = 100, n_true = 10, a = 1.8)
   training <- temp$training
   fit <- cureem(Surv(Time, Censor) ~ .,

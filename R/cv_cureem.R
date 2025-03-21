@@ -211,7 +211,7 @@
 #'
 #' @examples
 #' library(survival)
-#' set.seed(1234)
+#' withr::local_seed(1234)
 #' temp <- generate_cure_data(n = 200, j = 25, n_true = 5, a = 1.8)
 #' training <- temp$training
 # Fit a penalized Cox MCM selecting parameters using 2-fold CV

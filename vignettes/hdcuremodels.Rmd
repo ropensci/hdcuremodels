@@ -40,7 +40,7 @@ The package includes two datasets: `amltrain` (Archer et al, 2024) and `amltest`
 We also included a function, `generate_cure_data`, that allows the user to generate time-to-event data that includes a cured fraction. Various parameters in this function will allow the user to explore the impact of sample size (`n`), number of variables (`j`), number of variables truly associated with the outcome (`n_true`), effect size or signal amplitude (`a`), and correlation among variables (`rho`) on variable selection and model fit.
 
 ```{r}
-set.seed(16)
+withr::local_seed(16)
 data <- generate_cure_data(n = 200, j = 50, n_true = 10, a = 1.8, rho = 0.2)
 training <- data$training
 testing <- data$testing

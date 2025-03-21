@@ -242,7 +242,7 @@ applied and indices of selected variables are returned.
 }
 \examples{
 library(survival)
-set.seed(1234)
+withr::local_seed(1234)
 temp <- generate_cure_data(n = 200, j = 25, n_true = 5, a = 1.8)
 training <- temp$training
 fit.cv <- cv_cureem(Surv(Time, Censor) ~ .,

@@ -52,7 +52,7 @@
 #'
 #' @examples
 #' library(survival)
-#' set.seed(1234)
+#' withr::local_seed(1234)
 #' data <- generate_cure_data(n = 200, j = 50, n_true = 10, a = 1.8, rho = 0.2)
 #' training <- data$training
 #' testing <- data$testing

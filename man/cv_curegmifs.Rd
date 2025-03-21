@@ -174,7 +174,7 @@ knockoffs method is applied and indices of selected variables are returned.
 }
 \examples{
 library(survival)
-set.seed(123)
+withr::local_seed(123)
 temp <- generate_cure_data(n = 100, j = 15, n_true = 3, a = 1.8, rho = 0.2)
 training <- temp$training
 

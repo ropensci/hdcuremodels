@@ -4,7 +4,6 @@
 #' @srrstats {G1.4a} *All internal (non-exported) functions should also be documented in standard [`roxygen2`](https://roxygen2.r-lib.org/) format, along with a final `@noRd` tag to suppress automatic generation of `.Rd` files.*
 #' @srrstats {G2.4} *Provide appropriate mechanisms to convert between different data types, potentially including:*
 #' @srrstats {G2.4b} *explicit conversion to continuous via `as.numeric()`*
-
 #' Optimization Function to Fit Cox LASSO Model Using the E-M Algorithm.
 #'
 #' @description
@@ -711,7 +710,7 @@ cv.em.fdr <-
             cure_cutoff = 5, parallel = FALSE, seed = NULL, verbose = TRUE)
   {
     if (!is.null(seed))
-      set.seed(seed)
+      withr::local_seed(seed)
     X_k <- knockoff::create.second_order(X_p, method = "asdp",
                                         shrink = T)
     W_k <- knockoff::create.second_order(W_p, method = "asdp",
@@ -851,7 +850,7 @@ cv.em.nofdr <-
             cure_cutoff = 5, parallel = FALSE, seed = NULL, verbose)
   {
     if (!is.null(seed))
-      set.seed(seed)
+      withr::local_seed(seed)
     if (!grid.tuning) {
       if ((!is.null(lambda.inc.list) & !is.null(lambda.lat.list) &
            !identical(lambda.inc.list, lambda.lat.list)) | (nlambda.inc !=
@@ -1076,7 +1075,7 @@ cv.gmifs.fdr <-
            fdr = 0.2, thresh = 1e-5, nIter = 1e4, epsilon = 0.001, inits = NULL,
            n_folds = 5, measure.inc = c("c", "auc"), one.se = FALSE,
            cure_cutoff = 5, parallel = FALSE, seed = NULL, verbose = TRUE) {
-    if (!is.null(seed)) set.seed(seed)
+    if (!is.null(seed)) withr::local_seed(seed)
     X_k <- knockoff::create.second_order(X_p, method = "asdp", shrink = T)
     W_k <- knockoff::create.second_order(W_p, method = "asdp", shrink = T)
     Xaug <- cbind(X_p, X_k)
@@ -1271,7 +1270,7 @@ cv.gmifs.nofdr <-
            thresh = 1e-5, nIter = 1e4, epsilon = 0.001, inits = NULL,
            n_folds = 5, measure.inc = c("c", "auc"), one.se = FALSE,
            cure_cutoff = 5, parallel = FALSE, seed = NULL, verbose) {
-    if (!is.null(seed)) set.seed(seed)
+    if (!is.null(seed)) withr::local_seed(seed)
     folds_i <- sample(rep(1:n_folds, length.out = length(time)))
     Cstat <- matrix(NA, nIter, n_folds)
     if (measure.inc == "auc") AUC <- matrix(NA, nIter, n_folds)
@@ -3539,7 +3538,7 @@ sim_cure <-
   function(n, mu = 1, censor_mu = 3, b = NULL, reps = 10000, seed = NULL) {
     susceptible_prop <- numeric(length = reps)
     if (!is.null(seed)) {
-      set.seed(seed)
+      withr::local_seed(seed)
     }
     for (i in 1:reps) {
       surv <- rexp(n, 1 / mu)

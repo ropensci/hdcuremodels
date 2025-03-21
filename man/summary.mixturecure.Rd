@@ -28,7 +28,7 @@ the log-likelihood; the step and value that minimizes the AIC, modified AIC
 }
 \examples{
 library(survival)
-set.seed(1234)
+withr::local_seed(1234)
 temp <- generate_cure_data(n = 100, j = 10, n_true = 10, a = 1.8)
 training <- temp$training
 fit <- curegmifs(Surv(Time, Censor) ~ .,
