@@ -1,4 +1,4 @@
-#' Non-parametric pest for a non-zero cured fraction
+#' Non-parametric test for a non-zero cured fraction
 #'
 #' @description
 #' Tests the null hypothesis that the proportion of observations susceptible to
