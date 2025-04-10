@@ -34,13 +34,13 @@
 #' @param epsilon small numeric value reflecting the incremental value used to
 #' update a coefficient at a given step (default is 0.001).
 #' @param thresh small numeric value. The iterative process stops when the
-#' differences between successive expected penalized complete-data
+#' differences between successive expected penalized
 #' log-likelihoods for both incidence and latency components are less than this
 #' specified level of tolerance (default is 10^-5).
 #' @param scale logical, if TRUE the predictors are centered and scaled.
 #' @param maxit integer specifying the maximum number of steps to run in the
 #' iterative algorithm (default is 10^4).
-#' @param inits an optional list specifiying the initial value for the incidence
+#' @param inits an optional list specifying the initial value for the incidence
 #' intercept (\code{itct}), a numeric vector for the unpenalized incidence
 #' coefficients (\code{b_u}), and a numeric vector for unpenalized latency
 #' coefficients (\code{beta_u}), a numeric value for the rate parameter
@@ -232,11 +232,11 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
     penalty_factor_lat <- rep(1, ncol(x_lat))
   }
   if (any(!c(class(penalty_factor_inc), class(penalty_factor_lat)) %in% "numeric")) {
-    stop("Error: Penalty factors specified in penalty_factor_inc and penalty_factor_inc
+    stop("Error: Penalty factors specified in penalty_factor_inc and penalty_factor_lat
          must be numeric vectors comprised of 0 or 1")
   }
-  if (any(!c(penalty_factor_inc, penalty_factor_inc) %in% c(0, 1))) {
-    stop("Error: Penalty factors specified in penalty_factor_inc and penalty_factor_inc
+  if (any(!c(penalty_factor_inc, penalty_factor_lat) %in% c(0, 1))) {
+    stop("Error: Penalty factors specified in penalty_factor_inc and penalty_factor_lat
          can only include 0 or 1")
   }
   if (!is.null(inits)) {

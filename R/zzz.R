@@ -852,10 +852,10 @@ cv.em.nofdr <-
     if (!is.null(seed))
       withr::local_seed(seed)
     if (!grid.tuning) {
-      if ((!is.null(lambda.inc.list) & !is.null(lambda.lat.list) &
-           !identical(lambda.inc.list, lambda.lat.list)) | (nlambda.inc !=
-                                                            nlambda.lat) | (lambda.min.ratio.inc != lambda.min.ratio.lat))
-        warning("Warning: Grid tuning is off. Same lambda sequence for incidence and latency was used.")
+      #if ((!is.null(lambda.inc.list) & !is.null(lambda.lat.list) &
+      #     !identical(lambda.inc.list, lambda.lat.list)) | (nlambda.inc !=
+      #                                                      nlambda.lat) | (lambda.min.ratio.inc != lambda.min.ratio.lat))
+      #  warning("Warning: Grid tuning is off. Same lambda sequence for incidence and latency was used.")
       if (length(lambda.inc.list) > length(lambda.lat.list))
         lambda.lat.list <- lambda.inc.list
       else lambda.inc.list <- lambda.lat.list

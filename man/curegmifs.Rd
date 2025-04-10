@@ -59,7 +59,7 @@ implies shrinkage. If not supplied, 1 is applied to all latency variables.}
 update a coefficient at a given step (default is 0.001).}
 
 \item{thresh}{small numeric value. The iterative process stops when the
-differences between successive expected penalized complete-data
+differences between successive expected penalized
 log-likelihoods for both incidence and latency components are less than this
 specified level of tolerance (default is 10^-5).}
 
@@ -68,7 +68,7 @@ specified level of tolerance (default is 10^-5).}
 \item{maxit}{integer specifying the maximum number of steps to run in the
 iterative algorithm (default is 10^4).}
 
-\item{inits}{an optional list specifiying the initial value for the incidence
+\item{inits}{an optional list specifying the initial value for the incidence
 intercept (\code{itct}), a numeric vector for the unpenalized incidence
 coefficients (\code{b_u}), and a numeric vector for unpenalized latency
 coefficients (\code{beta_u}), a numeric value for the rate parameter

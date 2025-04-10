@@ -2,7 +2,7 @@
 % Please edit documentation in R/nonzerocure_test.R
 \name{nonzerocure_test}
 \alias{nonzerocure_test}
-\title{Non-parametric pest for a non-zero cured fraction}
+\title{Non-parametric test for a non-zero cured fraction}
 \usage{
 nonzerocure_test(object, reps = 1000, seed = NULL, plot = FALSE, b = NULL)
 }
