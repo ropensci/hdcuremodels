@@ -36,7 +36,7 @@ Maller, R. A. and Zhou, X. (1996) \emph{Survival Analysis with
 Long-Term Survivors}. John Wiley & Sons.
 }
 \seealso{
-\code{\link{survfit}}, \code{\link{cure_estimate}},
+\code{\link[survival]{survfit}}, \code{\link{cure_estimate}},
 \code{\link{nonzerocure_test}}
 }
 \keyword{htest}

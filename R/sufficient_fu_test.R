@@ -24,7 +24,7 @@
 #' @srrstats {G5.2} *Appropriate error and warning behaviour of all functions should be explicitly demonstrated through tests. In particular,*
 #' @srrstats {G5.2a} *Every message produced within R code by `stop()`, `warning()`, `message()`, or equivalent should be unique*
 #' @srrstats {G5.5} *Correctness tests should be run with a fixed random seed*
-#' @seealso \code{\link{survfit}}, \code{\link{cure_estimate}},
+#' @seealso \code{\link[survival]{survfit}}, \code{\link{cure_estimate}},
 #' \code{\link{nonzerocure_test}}
 #' @import survival
 #' @import stats

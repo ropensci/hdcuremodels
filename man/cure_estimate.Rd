@@ -24,7 +24,7 @@ km_fit <- survfit(Surv(Time, Censor) ~ 1, data = training)
 cure_estimate(km_fit)
 }
 \seealso{
-\code{\link{survfit}}, \code{\link{sufficient_fu_test}},
+\code{\link[survival]{survfit}}, \code{\link{sufficient_fu_test}},
 \code{\link{nonzerocure_test}}
 }
 \keyword{univar}
