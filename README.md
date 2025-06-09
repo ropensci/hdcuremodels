@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+\[![Status at rOpenSci Software Peer
+Review](https://badges.ropensci.org/692_status.svg)\]
 [![R-CMD-check](https://github.com/kelliejarcher/hdcuremodels/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kelliejarcher/hdcuremodels/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
