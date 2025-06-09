@@ -72,7 +72,7 @@ nonzerocure_test(km_train)
 #> [1] 0.2853081
 #> 
 #> $p_value
-#> [1] "< 0.001"
+#> [1] 0.001
 #> 
 #> $time_95_percent_of_events
 #> [1] 5.553847
