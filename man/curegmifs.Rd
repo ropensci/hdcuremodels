@@ -68,12 +68,18 @@ specified level of tolerance (default is 10^-5).}
 \item{maxit}{integer specifying the maximum number of steps to run in the
 iterative algorithm (default is 10^4).}
 
-\item{inits}{an optional list specifying the initial value for the incidence
-intercept (\code{itct}), a numeric vector for the unpenalized incidence
-coefficients (\code{b_u}), and a numeric vector for unpenalized latency
-coefficients (\code{beta_u}), a numeric value for the rate parameter
-(\code{lambda}), and a numeric value for the shape parameter (\code{alpha})
-when \code{model = "weibull"}. If not supplied or improperly supplied,
+\item{inits}{an optional list specifying the initial values as follows:
+\itemize{
+\item \code{itct} a numeric value for the unpenalized incidence
+intercept.
+\item \code{b_u} a numeric vector for the unpenalized incidence coefficients.
+\item \code{beta_u} a numeric vector for unpenalized latency
+coefficients.
+\item \code{lambda} a numeric value for the rate parameter.
+\item \code{alpha} a numeric value for the shape parameter
+when \code{model = "weibull"}.
+}
+If not supplied or improperly supplied,
 initialization is automatically provided by the function.}
 
 \item{verbose}{logical, if TRUE running information is printed to the

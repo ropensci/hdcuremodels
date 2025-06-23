@@ -59,15 +59,32 @@ density.}
 have the same signs.}
 
 \item{model}{type of regression model to use for the latency portion of
-mixture cure model. Can be "weibull", "GG", "Gompertz", "nonparametric", or
-"GG_baseline".}
+mixture cure model. Can be one of the following:
+\itemize{
+\item \code{"weibull"} to generate times from a Weibull distribution.
+\item \code{"GG"} to generate times from a generalized gamma distribution.
+\item \code{"Gompertz"} to generate times from a Gomertz distribution.
+\item \code{"nonparametric"} to generate times non-parametrically.
+\item  \code{"GG_baseline"} to generate times from a generalized gamma
+baseline distribution.
+}}
 }
 \value{
 \item{training}{training data.frame which includes Time, Censor, and
-covariates.}
+covariates. Variables prefixed with \code{"U"} indicates unpenalized
+covariates and is equal to the value
+passed to \code{nonp} (default is 2). Variables prefixed with \code{"X"}
+indicates penalized covariates and is equal to the value passed to
+\code{j}.
+}
 
 \item{testing}{testing data.frame which includes Time, Censor, and
-covariates.}
+covariates. Variables prefixed with \code{"U"} indicates unpenalized
+covariates and is equal to the value
+passed to \code{nonp} (default is 2). Variables prefixed with \code{"X"}
+indicates penalized covariates and is equal to the value passed to
+\code{j}.
+}
 
 \item{parameters}{a list including: the indices of true incidence
 signals (\code{nonzero_b}), indices of true latency signals

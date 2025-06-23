@@ -17,18 +17,25 @@ training data are used.}
 \item{cure_cutoff}{cutoff value for cure, used to produce a proxy for the
 unobserved cure status; default is 5.}
 
-\item{model_select}{a case-sensitive parameter for models fit using
-\code{curegmifs} or \code{cureem}
-any step along the solution path can be selected. The default is
-\code{model_select = "AIC"} which calculates the predicted values using the
-coefficients from the model having the lowest AIC. Other options are
-\code{model_select = "mAIC"} for the modified AIC,
-\code{model_select = "cAIC"} for the corrected AIC,
-\code{model_select = "BIC"}, \code{model_select = "mBIC"} for the modified
-BIC, \code{model_select = "EBIC"} for the extended BIC,
-\code{model_select = "logLik"} for the step that maximizes the
-log-likelihood, or any numeric value from the solution path. This option has
-no effect for objects fit using \code{cv_curegmifs} or \code{cv_cureem}.}
+\item{model_select}{either a case-sensitive parameter for models fit using
+\code{curegmifs} or \code{cureem} or any numeric step along the solution path
+can be selected. The default is \code{model_select = "AIC"} which calculates
+the predicted values using the coefficients from the model having the lowest
+AIC. The complete list of options are:
+\itemize{
+\item \code{"AIC"} for the minimum AIC (default).
+\item \code{"mAIC"} for the minimum modified AIC.
+\item \code{"cAIC"} for the minimum corrected AIC.
+\item \code{"BIC"}, for the minimum BIC.
+\item \code{"mBIC"} for the minimum modified BIC.
+\item \code{"EBIC"} for the minimum extended BIC.
+\item \code{"logLik"} for the step that maximizes the
+log-likelihood.
+\item \code{model_select = n} where n is any numeric value from the
+solution path.
+}
+This option has no effect for objects fit using \code{cv_curegmifs} or
+\code{cv_cureem}.}
 }
 \value{
 value of C-statistic for the cure models.

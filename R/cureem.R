@@ -44,17 +44,23 @@
 #' for each lambda. If not specified, 100 is applied when
 #' \code{penalty = "lasso"} and 1000 is applied when \code{penalty = "MCP"} or
 #' \code{penalty = "SCAD"}.
-#' @param inits an optional list specifiying the initial value for the
-#' incidence intercept (\code{itct}), a numeric vector for the unpenalized
-#' incidence coefficients (\code{b_u}), and a numeric vector for unpenalized
-#' latency coefficients (\code{beta_u}).  For parametric models, it should also
-#' include a numeric value for the rate parameter (\code{lambda}) when
-#' \code{model = "weibull"} or \code{model = "exponential"}, and a numeric
-#' value for the shape parameter (\code{alpha}) when \code{model = "weibull"}.
-#' When \code{model = "cox"}, it should also include a numeric vector for the
-#' latency survival probabilities \eqn{S_u(t_i|w_i)} for i=1,...,N
-#' (\code{survprob}). Penalized coefficients are initialized to zero.
-#' If \code{inits} is not specified or improperly specified, initialization is
+#' @param inits an optional list specifiying the initial values. This includes:
+#' \itemize{
+#' \item \code{itct} the incidence intercept.
+#' \item \code{b_u} a numeric vector for the unpenalized
+#' incidence coefficients for the incidence portion of the model.
+#' \item \code{beta_u} a numeric vector for unpenalized
+#' latency coefficients in the incidence portion of the model.
+#' \item \code{lambda} a numeric value for the rate parameter when fitting
+#' either a Weibull or exponential MCM using \code{model = "weibull"} or
+#' \code{model = "exponential"}.
+#' \item \code{alpha} a numeric value for the shape parameter when fitting a
+#' Weibull MCM using \code{model = "weibull"}.
+#' \item \code{survprob} a numeric vector for the
+#' latency survival probabilities \eqn{S_u(t_i|w_i)} for i=1,...,N when fitting
+#' a Cox MCM \code{model = "cox"}.
+#' }
+#' Penalized coefficients are initialized to zero. If \code{inits} is not specified or improperly specified, initialization is
 #' automatically provided by the function.
 #' @param lambda_inc numeric value for the penalization parameter \eqn{\lambda}
 #' for variables in the incidence portion of the model.

@@ -26,13 +26,29 @@
 #' @param same_signs logical, if TRUE the incidence and latency coefficients
 #' have the same signs.
 #' @param model type of regression model to use for the latency portion of
-#' mixture cure model. Can be "weibull", "GG", "Gompertz", "nonparametric", or
-#' "GG_baseline".
-#'
+#' mixture cure model. Can be one of the following:
+#' \itemize{
+#' \item \code{"weibull"} to generate times from a Weibull distribution.
+#' \item \code{"GG"} to generate times from a generalized gamma distribution.
+#' \item \code{"Gompertz"} to generate times from a Gomertz distribution.
+#' \item \code{"nonparametric"} to generate times non-parametrically.
+#' \item  \code{"GG_baseline"} to generate times from a generalized gamma
+#' baseline distribution.
+#' }
 #' @return \item{training}{training data.frame which includes Time, Censor, and
-#' covariates.}
+#' covariates. Variables prefixed with \code{"U"} indicates unpenalized
+#' covariates and is equal to the value
+#' passed to \code{nonp} (default is 2). Variables prefixed with \code{"X"}
+#' indicates penalized covariates and is equal to the value passed to
+#' \code{j}.
+#' }
 #' @return \item{testing}{testing data.frame which includes Time, Censor, and
-#' covariates.}
+#' covariates. Variables prefixed with \code{"U"} indicates unpenalized
+#' covariates and is equal to the value
+#' passed to \code{nonp} (default is 2). Variables prefixed with \code{"X"}
+#' indicates penalized covariates and is equal to the value passed to
+#' \code{j}.
+#' }
 #' @return \item{parameters}{a list including: the indices of true incidence
 #' signals (\code{nonzero_b}), indices of true latency signals
 #' (\code{nonzero_beta}), unpenalized incidence parameter values (\code{b_u}),
@@ -74,14 +90,26 @@ generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
   ## covariance matrices
   sd <- 0.5
   block_sz <- round(j / n_true)
+
   corr_x_p <- matrix(0, j, j)
   for (i in 1:n_true) {
-    corr_x_p[(block_sz * (i - 1) + 1):(block_sz * i), (block_sz * (i - 1) + 1):
-    (block_sz * i)] <- rho^abs(outer(1:block_sz, 1:block_sz, "-"))
-  }
+    if (j %% n_true == 0) {
+      corr_x_p[(block_sz * (i - 1) + 1):(block_sz * i), (block_sz * (i - 1) + 1):
+      (block_sz * i)] <- rho^abs(outer(1:block_sz, 1:block_sz, "-"))
+    } else {
+      corr_x_p[(block_sz * (i - 1) + 1):(block_sz * i), (block_sz * (i - 1) + 1):
+            (block_sz * i)] <- rho^abs(outer(1:block_sz, 1:block_sz, "-"))
+      if (i == n_true) {
+        modulus <- j - block_sz * n_true
+        corr_x_p[(block_sz * (i) + 1):(block_sz * i + modulus), (block_sz * (i) + 1):
+                   (block_sz * i + modulus)] <- rho^abs(outer(1:modulus, 1:modulus, "-"))
+      }
+    }
+    }
   sigma_x_p <- sd^2 * corr_x_p
   x_p <- mvnfast::rmvn(n, mu = rep(0, j), sigma = sigma_x_p)
   x_u <- matrix(rnorm(n * nonp, sd = sd), ncol = nonp)
+  colnames(x_u) <- paste0("U",1:dim(x_u)[2])
   w_p <- x_p
   w_u <- x_u
 
@@ -153,6 +181,8 @@ generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
   time[y == 0] <- u[y == 0]
 
   ## training and test
+#  colnames(x_u) <- paste0("Uinc",1:dim(x_u))
+#  colnames(w_u) <- paste0("Ulat",1:dim(w_u))
   tr_data <- list(
     x_u = x_u[tr_i, ], x_p = x_p[tr_i, ], w_u = w_u[tr_i, ],
     w_p = w_p[tr_i, ], time = time[tr_i], y = y[tr_i],

@@ -8,15 +8,30 @@
 #'
 #' @param x a \code{mixturecure} object resulting from \code{curegmifs} or
 #' \code{cureem}, \code{cv_curegmifs} or \code{cv_cureem}.
-#' @param type a case-sensitive parameter with default \code{"trace"} which plots the coefficient path for
-#' the fitted object. Also available are \code{"AIC"}, \code{"cAIC"},
-#' \code{"mAIC"}, \code{"BIC"}, \code{"mBIC"}, \code{"EBIC"}, and
-#' \code{"logLik"}. This option has no effect for objects fit using
+#' @param type a case-sensitive parameter indicating what to plot on the y-axis.
+#' The complete list of options are:
+#' \itemize{
+#'     \item \code{"trace"} plots the coefficient path for the fitted object
+#'     (default).
+#'     \item \code{"AIC"} plots the AIC against step of model fit.
+#'     \item \code{"mAIC"} plots the modified AIC against step of model fit.
+#'     \item \code{"cAIC"} plots the corrected AIC against step of model fit.
+#'     \item \code{"BIC"}, plots the BIC against step of model fit.
+#'     \item \code{"mBIC"} plots the modified BIC against step of model fit.
+#'     \item \code{"EBIC"} plots the extended BIC against step of model fit.
+#'     \item \code{"logLik"} plots the log-likelihood against step of model fit.
+#'   }
+#' This option has no effect for objects fit using
 #' \code{cv_curegmifs} or \code{cv_cureem}.
 #' @param xlab  a default x-axis label will be used which can be changed by
 #' specifying a user-defined x-axis label.
 #' @param ylab a default y-axis label will be used which can be changed by
 #' specifying a user-defined y-axis label.
+#' @param label logical. If TRUE the variable names will appear in a legend.
+#' Applicable only when \code{type = "trace"}. Be reminded that this works well
+#' only for small to moderate numbers of variables. For many predictors, the
+#' plot will be cluttered. The variables may be more easily identified using
+#' the \code{coef} function indicating the step of interest.
 #' @param main a default main title will be used which can be changed by
 #' specifying a user-defined main title. This option is not used for
 #' \code{cv_curegmifs} or \code{cv_cureem} fitted objects.
@@ -52,7 +67,8 @@
 plot.mixturecure <-
   function(x, type = c(
              "trace", "AIC", "BIC", "logLik", "cAIC", "mAIC",
-             "mBIC", "EBIC"), xlab = NULL, ylab = NULL, main = NULL, ...) {
+             "mBIC", "EBIC"), xlab = NULL, ylab = NULL,
+              label = FALSE, main = NULL, ...) {
     type <- match.arg(type)
     if (!x$cv) {
       if (is.null(xlab)) {
@@ -63,13 +79,20 @@ plot.mixturecure <-
           ylab <- expression(hat(beta))
         }
         if (!is.null(x$x_latency) && !is.null(x$x_incidence)) {
+          colnames(x$b_path) <- paste0("I_", colnames(x$b_path))
+          colnames(x$beta_path) <- paste0("L_", colnames(x$beta_path))
           coef <- cbind(b = x$b_path, beta = x$beta_path)
         } else if (is.null(x$x_latency) && !is.null(x$x_incidence)) {
+          colnames(x$b_path) <- paste0("I_", colnames(x$b_path))
           coef <- x$b_path
         } else if (!is.null(x$x_latency) && is.null(x$x_incidence)) {
+          colnames(x$beta_path) <- paste0("L_", colnames(x$beta_path))
           coef <- x$beta_path
         }
         graphics::matplot(coef, ylab = ylab, xlab = xlab, type = "l")
+        if (label == TRUE)
+          legend("topright", legend = colnames(coef), col = 1:ncol(coef),
+                 lty = 1, cex = 0.6)
       } else {
         select <- select_model(x, type)
         if (type == "AIC") {

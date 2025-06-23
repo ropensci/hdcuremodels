@@ -83,26 +83,33 @@ specified level of tolerance (default is 10^-5).}
 \item{maxit}{integer specifying the maximum number of steps to run in the
 iterative algorithm (default is 10^4).}
 
-\item{inits}{an optional list specifiying the initial value for the incidence
-intercept (\code{itct}), a numeric vector for the unpenalized incidence
-coefficients (\code{b_u}), and a numeric vector for unpenalized latency
-coefficients (\code{beta_u}), a numeric value for the rate parameter
-(\code{lambda}), and a numeric value for the shape parameter (\code{alpha})
-when \code{model = "weibull"}. If not supplied or improperly supplied,
-initialization is automatically provided by the function.}
+\item{inits}{an optional list specifying the initial values as follows:
+\itemize{
+\item \code{itct} a numeric value for the unpenalized incidence
+intercept.
+\item \code{b_u} a numeric vector for the unpenalized incidence coefficients.
+\item \code{beta_u} a numeric vector for unpenalized latency
+coefficients.
+\item \code{lambda} a numeric value for the rate parameter.
+\item \code{alpha} a numeric value for the shape parameter
+when \code{model = "weibull"}.
+}
+If not supplied or improperly supplied,}
 
 \item{n_folds}{an integer specifying the number of folds for the k-fold
 cross-valiation procedure (default is 5).}
 
 \item{measure_inc}{character string specifying the evaluation criterion used
-in selecting the optimal \eqn{\lambda_b}. Can be "c" or "auc"; default is
-"c". If \code{measure_inc="c"}, the C-statistic using the cure status
-weighting (CSW) method proposed by Asano and Hirakawa (2017) is used to
-select both \eqn{\lambda_b} and \eqn{\lambda_{\beta}}. If
-\code{measure_inc="auc"}, the AUC for cure prediction using the mean score
-imputation (MSI) method proposed by Asano et al. (2014) is used to select
+in selecting the optimal \eqn{\lambda_b} which can be either
+\itemize{
+\item \code{"c"} specifying to use the C-statistic for cure status
+weighting (CSW) method proposed by Asano and Hirakawa (2017) to
+select both \eqn{\lambda_b} and \eqn{\lambda_{\beta}}
+\item \code{"auc"} specifying to use the AUC for cure prediction using the
+mean score imputation (MSI) method proposed by Asano et al. (2014) to select
 \eqn{\lambda_b} while the C-statistic with CSW is used for
-\eqn{\lambda_{\beta}}.}
+\eqn{\lambda_{\beta}}.
+}}
 
 \item{one_se}{logical, if TRUE then the one standard error rule is applied
 for selecting the optimal parameters. The one standard error rule selects the

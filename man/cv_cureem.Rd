@@ -101,17 +101,24 @@ specified level of tolerance (default is 10^-3).}
 specified, 100 is applied when \code{penalty = "lasso"} and 1000 is applied
 when \code{penalty = "MCP"} or \code{penalty = "SCAD"}.}
 
-\item{inits}{an optional list specifiying the initial value for the incidence
-intercept (\code{itct}), a numeric vector for the unpenalized incidence
-coefficients (\code{b_u}), and a numeric vector for unpenalized latency
-coefficients (\code{beta_u}).  For parametric models, it should also include
-a numeric value for the rate parameter (\code{lambda}) when
-\code{model = "weibull"} or \code{model = "exponential"}, and a numeric
-value for the shape parameter (\code{alpha}) when \code{model = "weibull"}.
-When \code{model = "cox"}, it should also include a numeric vector for the
-latency survival probabilities \eqn{S_u(t_i|w_i)} for i=1,...,N
-(\code{survprob}). Penalized coefficients are initialized to zero. If
-\code{inits} is not specified or improperly specified, initialization is
+\item{inits}{an optional list specifiying the initial values to be used for
+model fitting as follows:
+\itemize{
+\item \code{itct} the incidence intercept.
+\item \code{b_u} a numeric vector for the unpenalized.
+incidence coefficients for the incidence portion of the model.
+\item \code{beta_u} a numeric vector for unpenalized
+latency coefficients in the incidence portion of the model.
+\item \code{lambda} a numeric value for the rate parameter when fitting
+either a Weibull or exponential MCM using \code{model = "weibull"} or
+\code{model = "exponential"}.
+\item \code{alpha} a numeric value for the shape parameter when fitting a
+Weibull MCM using \code{model = "weibull"}.
+\item \code{survprob} a numeric vector for the
+latency survival probabilities \eqn{S_u(t_i|w_i)} for i=1,...,N when fitting
+a Cox MCM \code{model = "cox"}.
+}
+Penalized coefficients are initialized to zero. If \code{inits} is not specified or improperly specified, initialization is
 automatically provided by the function.}
 
 \item{lambda_inc_list}{a numeric vector used to search for the optimal
@@ -158,14 +165,16 @@ latency portion of the model have a coefficient estimate of 0 (default is
 cross-valiation procedure (default is 5).}
 
 \item{measure_inc}{character string specifying the evaluation criterion used
-in selecting the optimal \eqn{\lambda_b}. Can be "c" or "auc"; default is
-"c". If \code{measure_inc="c"}, the C-statistic using the cure status
-weighting (CSW) method proposed by Asano and Hirakawa (2017) is used to
-select both \eqn{\lambda_b} and \eqn{\lambda_{\beta}}. If
-\code{measure_inc="auc"}, the AUC for cure prediction using the mean score
-imputation (MSI) method proposed by Asano et al. (2014) is used to select
+in selecting the optimal \eqn{\lambda_b} which can be either
+\itemize{
+\item \code{"c"} specifying to use the C-statistic for cure status
+weighting (CSW) method proposed by Asano and Hirakawa (2017) to
+select both \eqn{\lambda_b} and \eqn{\lambda_{\beta}}
+\item \code{"auc"} specifying to use the AUC for cure prediction using the
+mean score imputation (MSI) method proposed by Asano et al. (2014) to select
 \eqn{\lambda_b} while the C-statistic with CSW is used for
-\eqn{\lambda_{\beta}}.}
+\eqn{\lambda_{\beta}}.
+}}
 
 \item{one_se}{logical, if TRUE then the one standard error rule is applied
 for selecting the optimal parameters. The one standard error rule selects the

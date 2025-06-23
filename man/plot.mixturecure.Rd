@@ -9,6 +9,7 @@
   type = c("trace", "AIC", "BIC", "logLik", "cAIC", "mAIC", "mBIC", "EBIC"),
   xlab = NULL,
   ylab = NULL,
+  label = FALSE,
   main = NULL,
   ...
 )
@@ -17,10 +18,20 @@
 \item{x}{a \code{mixturecure} object resulting from \code{curegmifs} or
 \code{cureem}, \code{cv_curegmifs} or \code{cv_cureem}.}
 
-\item{type}{a case-sensitive parameter with default \code{"trace"} which plots the coefficient path for
-the fitted object. Also available are \code{"AIC"}, \code{"cAIC"},
-\code{"mAIC"}, \code{"BIC"}, \code{"mBIC"}, \code{"EBIC"}, and
-\code{"logLik"}. This option has no effect for objects fit using
+\item{type}{a case-sensitive parameter indicating what to plot on the y-axis.
+The complete list of options are:
+\itemize{
+\item \code{"trace"} plots the coefficient path for the fitted object
+(default).
+\item \code{"AIC"} plots the AIC against step of model fit.
+\item \code{"mAIC"} plots the modified AIC against step of model fit.
+\item \code{"cAIC"} plots the corrected AIC against step of model fit.
+\item \code{"BIC"}, plots the BIC against step of model fit.
+\item \code{"mBIC"} plots the modified BIC against step of model fit.
+\item \code{"EBIC"} plots the extended BIC against step of model fit.
+\item \code{"logLik"} plots the log-likelihood against step of model fit.
+}
+This option has no effect for objects fit using
 \code{cv_curegmifs} or \code{cv_cureem}.}
 
 \item{xlab}{a default x-axis label will be used which can be changed by
@@ -28,6 +39,12 @@ specifying a user-defined x-axis label.}
 
 \item{ylab}{a default y-axis label will be used which can be changed by
 specifying a user-defined y-axis label.}
+
+\item{label}{logical. If TRUE the variable names will appear in a legend.
+Applicable only when \code{type = "trace"}. Be reminded that this works well
+only for small to moderate numbers of variables. For many predictors, the
+plot will be cluttered. The variables may be more easily identified using
+the \code{coef} function indicating the step of interest.}
 
 \item{main}{a default main title will be used which can be changed by
 specifying a user-defined main title. This option is not used for
