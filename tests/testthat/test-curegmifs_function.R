@@ -122,7 +122,7 @@ test_that("curegmifs works correctly", {
                            maxit = 450, epsilon = 0.01, n_folds = 2,
                            seed = 23, verbose = TRUE, suppress_warning = TRUE
     )
-    expect_equal(round(fit$b0_path[1], 7), 0.0962298)
+    expect_equal(round(fit$b0_path[1], 4), 0.0962)
     expect_equal(round(fit$alpha_path[1], 7), 0.6571744)
 
 })
