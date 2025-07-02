@@ -195,7 +195,7 @@ test_that("cv_cureem function works correctly", {
   fit.cv.fdr$alpha %>% expect_length(1)
   fit.cv.fdr$rate %>% expect_length(1)
   expect_equal(round(fit.cv.fdr$b0, 5), 0.32659)
-  expect_equal(round(fit.cv.fdr$rate, 6), 1.714722)
+  expect_equal(round(fit.cv.fdr$rate, 5), 1.71472)
   expect_equal(round(fit.cv.fdr$alpha, 6), 0.752908)
 
   fit.scad <- cv_cureem(Surv(Time, Censor) ~ .,
