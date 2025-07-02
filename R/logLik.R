@@ -52,13 +52,18 @@ logLik.mixturecure <- function(object, model_select = "AIC", ...) {
   if (!("mixturecure" %in% class(object))) {
     stop("Error: class of object must be mixturecure")
   }
-  if (is.null(object$logLik)) {
-    logLik <- NULL
+  if (object$cv) {
+    if (object$method == "GMIFS") {
+      logLik <- object$logLik
+    } else {
+    logLik <- object$logLik.inc + object$logLik.lat
+    }
   } else {
     if (is.numeric(model_select) && model_select > length(object$logLik))
       stop("Error: model_select step must be less than or equal to ", length(object$logLik))
     if (!is.numeric(model_select))
       model_select <- select_model(object, model_select)$select
+    logLik <- object$logLik[model_select]
   }
-  object$logLik[model_select]
+  logLik
 }
