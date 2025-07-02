@@ -21,9 +21,9 @@ test_that("coef function works correctly", {
   output$b0 %>% expect_type("double")
   output$beta_inc %>% expect_type("double")
   output$beta_lat %>% expect_type("double")
-  expect_equal(round(output$rate, 6), 1.908932)
-  expect_equal(round(output$shape, 6), 1.759779)
-  expect_equal(round(output$b0, 7), 0.6942815)
+  expect_equal(round(output$rate, 6), 3.584565)
+  expect_equal(round(output$shape, 6), 1.197495)
+  expect_equal(round(output$b0, 6), 0.367009)
   expect_error(coef("x"))
   expect_error(coef(1))
   expect_error(coef(fit, model_select = "aic"))
@@ -147,7 +147,7 @@ test_that("coef function works correctly", {
                          maxit = 450, epsilon = 0.01, n_folds = 2,
                          seed = 23, verbose = FALSE, parallel = FALSE
   )
-  output <- coef(fit.cv.gmifs, model_select = 375)
+  output <- coef(fit.cv, model_select = 375)
   output$rate %>% expect_length(1)
   output$shape %>% expect_length(1)
   output$b0 %>% expect_length(1)

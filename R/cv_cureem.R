@@ -15,7 +15,9 @@
 #' function while the variables on the right side of the formula are the
 #' covariates that are included in the incidence portion of the model.
 #' @param data a data.frame in which to interpret the variables named in
-#' the \code{formula} or in the \code{subset} argument.
+#' the \code{formula} or in the \code{subset} argument. Rows with missing data are
+#' omitted (only \code{na.action = na.omit} is operational) therefore users may
+#' want to impute missing data prior to calling this function.
 #' @param subset an optional expression indicating which subset of observations
 #' to be used in the fitting process, either a numeric or factor variable
 #' should be used in subset, not a character variable. All observations are
@@ -136,6 +138,8 @@
 #' seed fosters reproducibility of the results.
 #' @param verbose logical, if TRUE running information is printed to the console
 #' (default is FALSE).
+#' @param na.action this function requires complete data so \code{"na.omit"} is
+#' invoked. Users can impute missing data as an alternative prior to model fitting.
 #' @param ... additional arguments.
 #'
 #' @return \item{b0}{Estimated intercept for the incidence portion of the
@@ -195,6 +199,7 @@
 #' @srrstats {G2.4} *Provide appropriate mechanisms to convert between different data types, potentially including:*
 #' @srrstats {G2.4e} *explicit conversion from factor via `as...()` functions*
 #' @srrstats {G2.10} *Software should ensure that extraction or filtering of single columns from tabular inputs should not presume any particular default behaviour, and should ensure all column-extraction operations behave consistently regardless of the class of tabular data used as input.*
+#' @srrstats {G2.13} *Statistical Software should implement appropriate checks for missing data as part of initial pre-processing prior to passing data to analytic algorithms.*
 #' @srrstats {G5.2} *Appropriate error and warning behaviour of all functions should be explicitly demonstrated through tests. In particular,*
 #' @srrstats {G5.2a} *Every message produced within R code by `stop()`, `warning()`, `message()`, or equivalent should be unique*
 #' @srrstats {G5.5} *Correctness tests should be run with a fixed random seed*
@@ -235,8 +240,7 @@
 #'   data = training,
 #'   x_latency = training, model = "weibull", penalty = "lasso",
 #'   fdr_control = TRUE, grid_tuning = FALSE, nlambda_inc = 10,
-#'   nlambda_lat = 10, n_folds = 2, seed = 23, verbose = TRUE
-#' )
+#'   nlambda_lat = 10, n_folds = 2, seed = 23, verbose = TRUE)
 cv_cureem <- function(formula, data, subset, x_latency = NULL,
                       model = c("cox", "weibull", "exponential"),
                       penalty = c("lasso", "MCP", "SCAD"),
@@ -249,10 +253,10 @@ cv_cureem <- function(formula, data, subset, x_latency = NULL,
                       lambda_min_ratio_inc = 0.1, lambda_min_ratio_lat = 0.1,
                       n_folds = 5, measure_inc = c("c", "auc"), one_se = FALSE,
                       cure_cutoff = 5, parallel = FALSE, seed = NULL,
-                      verbose = TRUE, ...) {
+                      verbose = TRUE, na.action = na.omit, ...) {
   mf <- match.call(expand.dots = FALSE)
   cl <- match.call()
-  m <- match(c("formula", "data", "subset"), names(mf), 0L)
+  m <- match(c("formula", "data", "subset", "na.action"), names(mf), 0L)
   if (m[1] == 0) stop("Error: A \"formula\" argument is required")
   mf <- mf[c(1L, m)]
   mf[[1L]] <- as.name("model.frame")
@@ -264,6 +268,7 @@ cv_cureem <- function(formula, data, subset, x_latency = NULL,
   }
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
+  omitted <- attr(mf, "na.action")
   model <- match.arg(model)
   penalty <- match.arg(penalty)
   measure_inc <- match.arg(measure_inc)
@@ -273,7 +278,8 @@ cv_cureem <- function(formula, data, subset, x_latency = NULL,
   x <- model.matrix(mt, mf)
   if (!is.null(x_latency)) {
     if (missing(subset)) {
-      r <- TRUE
+      r <- rep(TRUE, dim(data)[1])
+      r[omitted] <- FALSE
     } else {
       e <- substitute(subset)
       r <- eval(e, data)
@@ -281,6 +287,7 @@ cv_cureem <- function(formula, data, subset, x_latency = NULL,
         stop("Error: 'subset' must evaluate to logical")
       }
       r <- r & !is.na(r)
+      r[omitted] <- FALSE
     }
     if ("character" %in% is(x_latency) || "numeric" %in% is(x_latency)) {
       nl <- as.list(seq_len(ncol(data)))

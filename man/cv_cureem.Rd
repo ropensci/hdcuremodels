@@ -36,6 +36,7 @@ cv_cureem(
   parallel = FALSE,
   seed = NULL,
   verbose = TRUE,
+  na.action = na.omit,
   ...
 )
 }
@@ -47,7 +48,9 @@ function while the variables on the right side of the formula are the
 covariates that are included in the incidence portion of the model.}
 
 \item{data}{a data.frame in which to interpret the variables named in
-the \code{formula} or in the \code{subset} argument.}
+the \code{formula} or in the \code{subset} argument. Rows with missing data are
+omitted (only \code{na.action = na.omit} is operational) therefore users may
+want to impute missing data prior to calling this function.}
 
 \item{subset}{an optional expression indicating which subset of observations
 to be used in the fitting process, either a numeric or factor variable
@@ -197,6 +200,9 @@ seed fosters reproducibility of the results.}
 \item{verbose}{logical, if TRUE running information is printed to the console
 (default is FALSE).}
 
+\item{na.action}{this function requires complete data so \code{"na.omit"} is
+invoked. Users can impute missing data as an alternative prior to model fitting.}
+
 \item{...}{additional arguments.}
 }
 \value{
@@ -264,8 +270,7 @@ fit.cv.fdr <- cv_cureem(Surv(Time, Censor) ~ .,
   data = training,
   x_latency = training, model = "weibull", penalty = "lasso",
   fdr_control = TRUE, grid_tuning = FALSE, nlambda_inc = 10,
-  nlambda_lat = 10, n_folds = 2, seed = 23, verbose = TRUE
-)
+  nlambda_lat = 10, n_folds = 2, seed = 23, verbose = TRUE)
 }
 \references{
 Archer, K. J., Fu, H., Mrozek, K., Nicolet, D., Mims, A. S.,

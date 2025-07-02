@@ -3,17 +3,17 @@
 #' @param n an integer denoting the total sample size.
 #' @param j an integer denoting the number of penalized predictors which is the
 #' same for both the incidence and latency portions of the model.
-#' @param nonp an integer less than j denoting the number of unpenalized
+#' @param nonp an integer denoting the number of unpenalized
 #' predictors (which is the same for both the incidence and latency portions of
 #' the model.
-#' @param train_prop a numeric value in 0, 1 representing the fraction of n to
+#' @param train_prop a numeric value in [0, 1) representing the fraction of n to
 #' be used in forming the training dataset.
-#' @param n_true an integer denoting the number of variables truly associated
+#' @param n_true an integer less than j denoting the number of variables truly associated
 #' with the outcome (i.e., the number of covariates with nonzero parameter
 #' values) among the penalized predictors.
-#' @param a a numeric value denoting the effect size which is the same for both
+#' @param a a numeric value denoting the effect size (signal amplitude) which is the same for both
 #' the incidence and latency portions of the model.
-#' @param rho a numeric value in 0, 1 representing the correlation between
+#' @param rho a numeric value in [0, 1) representing the correlation between
 #' adjacent covariates in the same block. See details below.
 #' @param itct_mean a numeric value representing the expectation of the
 #' incidence intercept which controls the cure rate.
@@ -69,21 +69,24 @@
 #' @examples
 #' library(survival)
 #' withr::local_seed(1234)
-#' data <- generate_cure_data(n = 200, j = 50, n_true = 10, a = 1.8, rho = 0.2)
+#' data <- generate_cure_data(n = 1000, j = 5, n_true = 2, nonp = 1, a = 2)
 #' training <- data$training
 #' testing <- data$testing
-#' fit <- cureem(Surv(Time, Censor) ~ .,
-#'   data = training,
-#'   x_latency = training, model = "cox", penalty = "lasso",
-#'   lambda_inc = 0.05, lambda_lat = 0.05,
-#'   gamma_inc = 6, gamma_lat = 10
-#' )
+#' names(training)[grep("^X", names(training))][data$parameters$nonzero_b]
+#' names(training)[grep("^X", names(training))][data$parameters$nonzero_beta]
+#' fitem <- cureem(Surv(Time, Censor) ~ ., data = training,
+#'   x_latency = training)
+#' coef(fitem)
+#' plot(fitem, label = TRUE)
 generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
                                n_true = 10, a = 1, rho = 0.5, itct_mean = 0.5,
                                cens_ub = 20, alpha = 1, lambda = 2,
                                same_signs = FALSE, model = "weibull") {
   # j: number of penalized covariates
   # nonp: number of non-penalized covariates
+  if (n_true > j) {
+    stop("Error: \"n_true\" must be less than or equal to j")
+  }
   tr_i <- 1:round(train_prop * n) # training index
   te_i <- (round(train_prop * n) + 1):n # testing index  ##corrected Mar30
 
@@ -92,49 +95,58 @@ generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
   block_sz <- round(j / n_true)
 
   corr_x_p <- matrix(0, j, j)
-  for (i in 1:n_true) {
+  for (i in 1:min(ceiling(n_true/block_sz+1), n_true)) {
     if (j %% n_true == 0) {
       corr_x_p[(block_sz * (i - 1) + 1):(block_sz * i), (block_sz * (i - 1) + 1):
-      (block_sz * i)] <- rho^abs(outer(1:block_sz, 1:block_sz, "-"))
+                 (block_sz * i)] <- rho^abs(outer(1:block_sz, 1:block_sz, "-"))
     } else {
-      corr_x_p[(block_sz * (i - 1) + 1):(block_sz * i), (block_sz * (i - 1) + 1):
-            (block_sz * i)] <- rho^abs(outer(1:block_sz, 1:block_sz, "-"))
-      if (i == n_true) {
-        modulus <- j - block_sz * n_true
-        corr_x_p[(block_sz * (i) + 1):(block_sz * i + modulus), (block_sz * (i) + 1):
-                   (block_sz * i + modulus)] <- rho^abs(outer(1:modulus, 1:modulus, "-"))
-      }
+        if (j - block_sz*i > 0) {
+          corr_x_p[(block_sz * (i - 1) + 1):(block_sz * i), (block_sz * (i - 1) + 1):
+                 (block_sz * i)] <- rho^abs(outer(1:block_sz, 1:block_sz, "-"))
+        }
     }
+    diag(corr_x_p) <- 1
     }
   sigma_x_p <- sd^2 * corr_x_p
   x_p <- mvnfast::rmvn(n, mu = rep(0, j), sigma = sigma_x_p)
-  x_u <- matrix(rnorm(n * nonp, sd = sd), ncol = nonp)
-  colnames(x_u) <- paste0("U",1:dim(x_u)[2])
+  ## unpenalized
+  if (nonp > 0) {
+    x_u <- matrix(rnorm(n * nonp, sd = sd), ncol = nonp)
+    colnames(x_u) <- paste0("U",1:dim(x_u)[2])
+    w_u <- x_u
+    if (!same_signs) { # true signals from two parts are randomly generated
+      b_u <- rnorm(nonp, mean = 0.3, sd = 0.1)
+      b_u <- b_u * sample(c(1, -1), length(b_u), replace = TRUE)
+      beta_u <- rnorm(nonp, mean = 0.3, sd = 0.1)
+      beta_u <- beta_u * sample(c(1, -1), length(beta_u), replace = TRUE)
+    } else { # true signals from two parts have same signs
+      sign_u <- sample(c(1, -1), nonp, replace = TRUE)
+      b_u <- abs(rnorm(nonp, mean = 0.3, sd = 0.1)) * sign_u
+      beta_u <- abs(rnorm(nonp, mean = 0.3, sd = 0.1)) * sign_u
+    }
+  }
   w_p <- x_p
-  w_u <- x_u
-
+  ## penalized
   if (!same_signs) { # true signals from two parts are randomly generated
-    ## unpenalized
-    b_u <- rnorm(nonp, mean = 0.3, sd = 0.1)
-    b_u <- b_u * sample(c(1, -1), length(b_u), replace = TRUE)
-    beta_u <- rnorm(nonp, mean = 0.3, sd = 0.1)
-    beta_u <- beta_u * sample(c(1, -1), length(beta_u), replace = TRUE)
-
-    ## penalized
     nonzero_b <- nonzero_beta <- rep(NA, n_true)
     for (i in 1:n_true) {
-      nonzero_b[i] <- sample((block_sz * (i - 1) + 1):(block_sz * i), 1)
-      nonzero_beta[i] <- sample((block_sz * (i - 1) + 1):(block_sz * i), 1)
+      if (i == n_true) {
+        if (length(((n_true-1)*block_sz+1):j) == 1) {
+          nonzero_b[i] <- j
+          nonzero_beta[i] <- j
+        } else {
+          nonzero_b[i] <- sample(x=((n_true-1)*block_sz+1):j, size=1)
+          nonzero_beta[i] <- sample(x=((n_true-1)*block_sz+1):j, size=1)
+        }
+      } else {
+        nonzero_b[i] <- sample((block_sz * (i - 1) + 1):(block_sz * i), 1)
+        nonzero_beta[i] <- sample((block_sz * (i - 1) + 1):(block_sz * i), 1)
+      }
     }
     b_p <- beta_p <- rep(0, j)
     b_p[nonzero_b] <- a * sample(c(1, -1), n_true, replace = TRUE)
     beta_p[nonzero_beta] <- a * sample(c(1, -1), n_true, replace = TRUE)
   } else { # true signals from two parts have same signs
-    ## unpenalized
-    sign_u <- sample(c(1, -1), nonp, replace = TRUE)
-    b_u <- abs(rnorm(nonp, mean = 0.3, sd = 0.1)) * sign_u
-    beta_u <- abs(rnorm(nonp, mean = 0.3, sd = 0.1)) * sign_u
-    ## penalized
     nonzero_b <- rep(NA, n_true)
     for (i in 1:n_true) {
       nonzero_b[i] <- sample((block_sz * (i - 1) + 1):
@@ -145,15 +157,22 @@ generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
     beta_p <- b_p
     nonzero_beta <- nonzero_b
   }
-
   ## cure or not
   itct <- rnorm(1, mean = itct_mean, sd = 0.1)
-  bx <- itct + x_u %*% b_u + x_p %*% b_p
+  if (nonp > 0) {
+    bx <- itct + x_u %*% b_u + x_p %*% b_p
+  } else {
+    bx <- itct + x_p %*% b_p
+  }
   p <- 1 / (1 + exp(-bx))
   y <- rbinom(n, 1, p)
 
   ## survival
-  beta_w <- w_u %*% beta_u + w_p %*% beta_p
+  if (nonp > 0) {
+    beta_w <- w_u %*% beta_u + w_p %*% beta_p
+  } else {
+    beta_w <- w_p %*% beta_p
+  }
   if (model == "weibull") {
     t <- rweibull(n, shape = alpha, scale = 1 / lambda * exp(-beta_w / alpha))
   } else if (model == "GG") {
@@ -179,32 +198,59 @@ generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
   delta <- ifelse(t > u | y == 0, 0, 1)
   time <- pmin(t, u)
   time[y == 0] <- u[y == 0]
-
+  colnames(x_u) <- paste0("U",1:dim(x_u)[2])
+  colnames(w_u) <- paste0("U",1:dim(w_u)[2])
   ## training and test
-#  colnames(x_u) <- paste0("Uinc",1:dim(x_u))
-#  colnames(w_u) <- paste0("Ulat",1:dim(w_u))
-  tr_data <- list(
-    x_u = x_u[tr_i, ], x_p = x_p[tr_i, ], w_u = w_u[tr_i, ],
-    w_p = w_p[tr_i, ], time = time[tr_i], y = y[tr_i],
-    delta = delta[tr_i]
-  )
-  te_data <- list(
-    x_u = x_u[te_i, ], x_p = x_p[te_i, ], w_u = w_u[te_i, ],
-    w_p = w_p[te_i, ], time = time[te_i], y = y[te_i],
-    delta = delta[te_i]
-  )
-  training <- data.frame(
-    Time = tr_data$time, Censor = tr_data$delta,
-    tr_data$x_u, tr_data$x_p
-  )
-  testing <- data.frame(
-    Time = te_data$time, Censor = te_data$delta,
-    te_data$x_u, te_data$x_p
-  )
-  parameters <- list(
-    nonzero_b = nonzero_b, nonzero_beta = nonzero_beta,
-    b_u = b_u, beta_u = beta_u, b_p_nz = b_p[nonzero_b],
-    beta_p_nz = beta_p[nonzero_beta], itct = itct
-  )
+  if (nonp > 0) {
+    tr_data <- list(
+      x_u = x_u[tr_i, , drop=FALSE], x_p = x_p[tr_i, , drop = FALSE],
+      w_u = w_u[tr_i, , drop = FALSE],
+      w_p = w_p[tr_i, , drop = FALSE], time = time[tr_i], y = y[tr_i],
+      delta = delta[tr_i]
+    )
+    te_data <- list(
+     x_u = x_u[te_i, , drop = FALSE], x_p = x_p[te_i, , drop = FALSE],
+     w_u = w_u[te_i, , drop = FALSE],
+      w_p = w_p[te_i, , drop = FALSE], time = time[te_i], y = y[te_i],
+      delta = delta[te_i]
+    )
+   training <- data.frame(
+      Time = tr_data$time, Censor = tr_data$delta,
+      tr_data$x_u, tr_data$x_p
+    )
+   testing <- data.frame(
+      Time = te_data$time, Censor = te_data$delta,
+      te_data$x_u, te_data$x_p
+    )
+    parameters <- list(
+      nonzero_b = nonzero_b, nonzero_beta = nonzero_beta,
+      b_u = b_u, beta_u = beta_u, b_p_nz = b_p[nonzero_b],
+      beta_p_nz = beta_p[nonzero_beta], itct = itct
+    )
+  } else {
+    tr_data <- list(
+      x_p = x_p[tr_i, , drop = FALSE],
+      w_p = w_p[tr_i, , drop = FALSE ], time = time[tr_i], y = y[tr_i],
+      delta = delta[tr_i]
+    )
+    te_data <- list(
+      x_p = x_p[te_i, , drop = FALSE],
+      w_p = w_p[te_i, , drop = FALSE], time = time[te_i], y = y[te_i],
+      delta = delta[te_i]
+    )
+    training <- data.frame(
+      Time = tr_data$time, Censor = tr_data$delta,
+      tr_data$x_p
+    )
+    testing <- data.frame(
+      Time = te_data$time, Censor = te_data$delta,
+      te_data$x_p
+    )
+    parameters <- list(
+      nonzero_b = nonzero_b, nonzero_beta = nonzero_beta,
+      b_p_nz = b_p[nonzero_b],
+      beta_p_nz = beta_p[nonzero_beta], itct = itct
+    )
+  }
   return(list(training = training, testing = testing, parameters = parameters))
 }

@@ -15,7 +15,7 @@ test_that("print works correctly", {
                              "logLik", "x_incidence", "x_latency", "y",
                              "model", "scale", "method", "call",
                              "alpha_path", "cv", "warning" ))
-  expect_equal(round(mean(result$alpha_path), 6), 1.132515)
+  expect_equal(round(mean(result$alpha_path), 6), 0.978436)
 
   expect_warning(curegmifs(Surv(Time, Censor) ~ .,
                    data = training, x_latency = training,

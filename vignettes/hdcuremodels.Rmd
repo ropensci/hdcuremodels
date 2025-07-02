@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 Recent medical advances have led to long-term overall or disease-free survival for at least a subset of treated subjects for various diseases, such that some patients' overall survival is consistent with their population expected survival. Conventionally, we call the subset of subjects who are immune to the event of interest **cured** while all other subjects are **susceptible** to the event. When performing a time-to-event analysis to data that includes a subset of subjects who are cured, mixture cure models (MCMs) are a useful alternative to the Cox proportional hazards (PH) model. This is because the Cox PH model assumes a constant hazard applies to all subjects throughout the observed follow-up time which is violated when some subjects in the dataset are cured (Goldman 1991). Additionally, when cured subjects comprise a portion of the dataset, the survival function is improper. 
 
-To introduce notation for the MCM, consider that $f(t)$ represents the probability density function for the overall population which is comprised of $K$ independent subgroups. Considering finite mixture models generally, the overall probability density can be decomposed $f(t)=\sum_{k=1}^Kp_k f_k (t)$. For MCMs, $K = 2$ because one subgroup includes those immune to the event of interest (i.e., cured) and the other subgroup consists of those susceptible to the event of interest (i.e., uncured). For subjects $i=1,\ldots, N$, let $Y_i=0$ represent those cured (c) and $Y_i=1$ represent those who are susceptible or uncured (u), the finite mixture model for survival is $S(t)=p_c S_c (t)+p_u S_u (t)$. Letting $p$ represent the $p_u$ such that $1 – p = p_c$ and recognizing $S_c (t)=1$, this MCM model simplifies to $ S(t)=(1-p)+pS_u (t)$. Therefore, this model consists of two components: the incidence component which models susceptible versus cured and the latency component which models time-to-event for those susceptible. The latency or time-to-event function for susceptibles, $S_u (t)$, can be modeled in different ways, using for example a parametric, non-parametric, or semi-parametric survival model, whereas the incidence component is typically modelled using logistic regression. 
+To introduce notation for the MCM, consider that $f(t)$ represents the probability density function for the overall population which is comprised of $K$ independent subgroups. Considering finite mixture models generally, the overall probability density can be decomposed $f(t)=\sum_{k=1}^Kp_k f_k (t)$. For MCMs, $K = 2$ because one subgroup includes those immune to the event of interest (i.e., cured) and the other subgroup consists of those susceptible to the event of interest (i.e., uncured). For subjects $i=1,\ldots, N$, let $Y_i=0$ represent those cured (c) and $Y_i=1$ represent those who are susceptible or uncured (u), the finite mixture model for survival is $S(t)=p_c S_c (t)+p_u S_u (t)$. Letting $p$ represent the $p_u$ such that $1 – p = p_c$ and recognizing $S_c (t)=1$, this MCM model simplifies to $S(t)=(1-p)+pS_u (t)$. Therefore, this model consists of two components: the incidence component which models susceptible versus cured and the latency component which models time-to-event for those susceptible. The latency or time-to-event function for susceptibles, $S_u (t)$, can be modeled in different ways, using for example a parametric, non-parametric, or semi-parametric survival model, whereas the incidence component is typically modelled using logistic regression. 
 
 Often, we want to estimate the effect of covariates on overall outcome and because different covariates may affect incidence versus latency portions of the MCM, we let $\mathbf{x}_i$ represent the $P$ incidence covariates and  $\mathbf{w}_i$ represent the $Q$ latency covariates, where $\mathbf{x}_i$ and $\mathbf{w}_i$ may or may not differ.  The mixture cure survival function is given by 
 $$S(t| \mathbf{x, w}) = (1-p(\mathbf{x})) + p(\mathbf{x})S_u(t,\mathbf{w}|Y=1).$$
@@ -39,13 +39,32 @@ library(survival)
 
 The package includes two datasets: `amltrain` (Archer et al, 2024) and `amltest` (Archer et al, 2024; Bamopoulos et al 2020). Both datasets include patients diagnosed with acute myeloid leukemia (AML) who were cytogenetically normal at diagnosis along with the same variables: `cryr` is the duration of complete response (in years), `relapse.death` is a censoring variable where 1 indicates the patient relapsed or died and 0 indicates the patient was alive at last follow-up, and expression for 320 transcripts measured using RNA-sequencing. The restriction to 320 transcripts was to reduce run time. Therefore, results obtained with these data will not precisely recapitulate those in the original publication (Archer et al, 2024). `amltrain` includes the 306 subjects that were used for training the penalized MCM while `amltest` includes the 40 subjects that were used to test the penalized MCM.   
 
-We also included a function, `generate_cure_data`, that allows the user to generate time-to-event data that includes a cured fraction. Various parameters in this function will allow the user to explore the impact of sample size (`n`), number of variables (`j`), number of variables truly associated with the outcome (`n_true`), effect size (referred to as the signal amplitude) (`a`), and correlation among variables (`rho`) on variable selection and model fit. When `a = 0` there is no relationship between the `j` variables and the outcome. When `rho = 0` the `j` variables generated are uncorrelated while as `rho` approaches 1 the variables generated are highly correlated. Note that `rho` cannot be set equal to 1.
+We also included a function, `generate_cure_data`, that allows the user to generate time-to-event data that includes a cured fraction. Various parameters in this function will allow the user to explore the impact of sample size (`n`), number of penalized variables in the model (`j`), number of penalized variables truly associated with the outcome (`n_true`), effect size (referred to as the signal amplitude) of the penalized variables (`a`), correlation among penalized variables (`rho`), `same_signs` which if `TRUE` indicates that the penalized incidence and latency coefficients should have the same signs, number of unpenalized variables to coerce into the model (`nonp`), `itct_mean` the incidence intercept which controls the cure fraction, `cens_ub` the upper bound for the Uniform[0, `cens_ub`] distribution for generating censoring times, `model` which specifies the type of regression model to use for generating event times, `alpha` and `lambda` the numeric shape and rate parameter values to specify when `model = "weibull"`. When `a = 0` there is no relationship between the `j` variables and the outcome. When `rho = 0` the `j` variables generated are uncorrelated while as `rho` approaches 1 the variables generated are highly correlated. Note that `rho` cannot be set equal to 1.
 
 ```{r}
-withr::local_seed(16)
-data <- generate_cure_data(n = 200, j = 50, n_true = 10, a = 1.8, rho = 0.2)
+withr::local_seed(23)
+data <- generate_cure_data(n = 200, j = 10, n_true = 5, a = 1.8, rho = 0.2)
 training <- data$training
 testing <- data$testing
+head(training)
+```
+
+The training and testing data.frames have the same structure which includes Time, Censor, and covariates. Covariates prefixed with "U" are the unpenalized covariates and is equal to the value passed to `nonp` (default is 2). Variables prefixed with "X" are the penalized covariates and is equal to the value passed to `j`. To identify which penalized covariates are truly related to the incidence and latency portions of the model, the user can inspect the indices returned by `nonzero_b` and `nonzero_beta` in the `parameters` component of the list.
+
+```{r}
+data$parameters
+```
+
+In this example, the 2nd, 3rd, 6th, 8th, and 10th penalized covariates, corresponding to
+
+```{r}
+names(training)[grep("^X", names(training))][data$parameters$nonzero_b]
+```
+
+are truly associated with incidence while the 1st, 3rd, 6th, 8th, and 10th penalized covariates are truly associated with latency.
+
+```{r}
+names(training)[grep("^X", names(training))][data$parameters$nonzero_beta]
 ```
 
 ## Assessing model assumptions for fitting a mixture cure model
@@ -90,7 +109,7 @@ The primary function for fitting parametric models using the GMIFS algorithm in 
 args(curegmifs)
 ```
 
-The `curegmifs` function accepts a model formula that specifies the time-to-event outcome on the left-hand side of the equation as a `Surv` object and any incidence predictor variable(s) on the right-hand side of the equation. Note that at least some incidence predictor variables must be included in order to fit a penalized mixture cure model, otherwise, the `survival` package functions should be used to fit time-to-event models that lack an incidence component. The `data` parameter specifies the name of the data.frame and the optional `subset` parameter can be used to limit model fitting to a subset of observations in the data. The `x_latency` parameter specifies the variables to be included in the latency portion of the model and can be either a matrix of predictors, a model formula with the right hand side specifying the latency variables, or the same data.frame passed to the `data` parameter. Note that when using the model formula syntax for `x_latency` it cannot handle `x_latency = ~ .`. The `curegmifs` function can fit either a either `"weibull"` or `"exponential"` model, which is specified using the `model` parameter. Other  parameters include `penalty_factor_inc` which is an optional numeric vector with length equal to the number of incidence variables, where 1 indicates that variable should be penalized and 0 indicates that variable is unpenalized (default is that all variables are penalized). Likewise `penalty_factor_lat` is an optional numeric vector with length equal to the number of latency variables, where 1 indicates that variable should be penalized and 0 indicates that variable is unpenalized (default is that all variables are penalized). Unpenalized predictors are those that we want to coerce into the model (e.g., age) so that no penalty is applied. By default the variables are centered and scaled (`scale = TRUE`). The parameter `epsilon` is the size of the coefficient update at each step (default = 0.001). The GMIFS algorithm stops when either the difference between successive log-likelihoods  is less than `thresh` (default 1e-05) or the algorithm has exceeded the maximum number of iterations (`maxit`). Initialization is automatically provided by the function though `inits` can be used to provide initial values for the incidence intercept, unpenalized incidence and latency coefficients, rate parameter, and shape parameter if fitting a Weibull mixture cure model. By default `verbose = TRUE` so that running information is echoed to the R console.
+The `curegmifs` function accepts a model formula that specifies the time-to-event outcome on the left-hand side of the equation as a `Surv` object and any incidence predictor variable(s) on the right-hand side of the equation. Note that at least some incidence predictor variables must be included in order to fit a penalized mixture cure model, otherwise, the `survival` package functions should be used to fit time-to-event models that lack an incidence component. The `data` parameter specifies the name of the data.frame. Users should note that rows with missing data are omitted (that is, only `na.action = na.omit` is operational) therefore users may want to impute missing data prior to calling this function. The optional `subset` parameter can be used to limit model fitting to a subset of observations in the data. The `x_latency` parameter specifies the variables to be included in the latency portion of the model and can be either a matrix of predictors, a model formula with the right hand side specifying the latency variables, or the same data.frame passed to the `data` parameter. Note that when using the model formula syntax for `x_latency` it cannot handle `x_latency = ~ .`. The `curegmifs` function can fit either a either `"weibull"` or `"exponential"` model, which is specified using the `model` parameter. Other  parameters include `penalty_factor_inc` which is an optional numeric vector with length equal to the number of incidence variables, where 1 indicates that variable should be penalized and 0 indicates that variable is unpenalized (default is that all variables are penalized). Likewise `penalty_factor_lat` is an optional numeric vector with length equal to the number of latency variables, where 1 indicates that variable should be penalized and 0 indicates that variable is unpenalized (default is that all variables are penalized). Unpenalized predictors are those that we want to coerce into the model (e.g., age) so that no penalty is applied. By default the variables are centered and scaled (`scale = TRUE`). The parameter `epsilon` is the size of the coefficient update at each step (default = 0.001). The GMIFS algorithm stops when either the difference between successive log-likelihoods  is less than `thresh` (default 1e-05) or the algorithm has exceeded the maximum number of iterations (`maxit`). Initialization is automatically provided by the function though `inits` can be used to provide initial values for the incidence intercept, unpenalized incidence and latency coefficients, rate parameter, and shape parameter if fitting a Weibull mixture cure model. By default `verbose = TRUE` so that running information is echoed to the R console.
 
 ```{r, eval=FALSE}
 fitgmifs <- curegmifs(Surv(cryr, relapse.death) ~ .,
@@ -184,7 +203,7 @@ The `cv_curegmifs` function accepts a model formula that specifies the time-to-e
 ## Other Package Functions
 The four modeling functions `cureem`, `curegmifs`, `cv_cureem`, and `cv_curegmifs` all result in an object of class `mixturecure`. Generic functions for resulting `mixturecure` objects are available for extracting meaningful results. The `print` function prints the first several incidence and latency coefficients and the rate (exponential and Weibull) and alpha (Weibull) when fitting a parametric MCM and returns the fitted object invisible to the user.
 
-```{r print}
+```{r print, eval = FALSE}
 print(fitem)
 ```
 
@@ -200,7 +219,7 @@ The `summary` function prints the following output for a model fit using either 
 * the step and value that minimizes the modified BIC (mBIC); 
 * the step and value that minimizes the extended BIC (EBIC). 
 
-```{r}
+```{r summary}
 summary(fitem)
 ```
 
@@ -210,7 +229,7 @@ The `summary` function prints the following output for a model fit using either 
 * the number of non-zero coefficients in the latency portions of the fitted mixture cure model 
 
 
-```{r}
+```{r cv}
 summary(fit_cv)
 ```
 
@@ -229,25 +248,25 @@ plot(fitem)
 plot(fitem, type = "cAIC")
 ```
 
-```{r}
+```{r cv2}
 plot(fit_cv)
 ```
 
 Coefficient estimates can be extracted from the fitted model using the `coef` for any of these model criteria ("logLik", "AIC", "cAIC", "mAIC", "BIC", "mBIC", "EBIC") or by specifying the step at which the model is desired by specifying the `model.select` parameter. For example,
 
-```{r}
+```{r cAIC}
 coef_cAIC <- coef(fitem, model_select = "cAIC")
 ```
 
 is equivalent to
 
-```{r}
+```{r m12}
 coef_12 <- coef(fitem, model_select = 12)
 ```
 
 as demonstrated by comparing the results in each object:
 
-```{r}
+```{r compareAIC}
 names(coef_cAIC)
 all.equal(coef_cAIC$rate, coef_12$rate)
 all.equal(coef_cAIC$alpha, coef_12$alpha)
@@ -266,28 +285,29 @@ train_predict <- predict(fitem, model_select = "cAIC")
 
 This returns three objects: `p_uncured` is the estimated probability of being susceptible ($\hat{p}(\mathbf{x})$), `linear_latency` is $\hat{\boldsymbol{\beta}}\mathbf{w}$, while `latency_risk` applies high risk and low risk labels using zero as the cutpoint from the `linear_latency` vector. Perhaps we want to apply the 0.5 threshold to `p_uncured` to create Cured and Susceptible labels.
 
-```{r}
+```{r group}
 p_group <- ifelse(train_predict$p_uncured < 0.50, "Cured", "Susceptible")
 ```
 
 Then we can assess how well our MCM identified patients likely to be cured from those likely to be susceptible visually by examining the Kaplan-Meier curves.
 
-```{r}
+```{r km}
 km_cured <- survfit(Surv(cryr, relapse.death) ~ p_group, data = amltrain)
 ```
 
-```{r, echo = FALSE, fig = TRUE}
+```{r plotkm, echo = FALSE, fig = TRUE}
 plot(km_cured, mark.time = TRUE, lty = c(1, 2), xlab = "Time (years)", ylab = "Relapse-free survival")
 legend(c(.9, .1), legend = c("Cured", "Susceptible"), lty = c(1, 2), bty = "n")
 ```
 
 We can assess how well our MCM identified higher versus lower risk patients among those predicted to be susceptible visually by examining the Kaplan-Meier curves.
 
-```{r}
-km_suscept <- survfit(Surv(cryr, relapse.death) ~ train_predict$latency_risk, data = amltrain, subset = (p_group == "Susceptible"))
+```{r suscept}
+km_suscept <- survfit(Surv(cryr, relapse.death) ~ train_predict$latency_risk, data = amltrain, 
+                      subset = (p_group == "Susceptible"))
 ```
 
-```{r, echo = FALSE, fig = TRUE}
+```{r plotsusc, echo = FALSE, fig = TRUE}
 plot(km_suscept, mark.time = TRUE, lty = c(1, 2), xlab = "Time (years)", ylab = "Relapse-free survival")
 legend(c(.9, .1), legend = c("Higher risk", "Lower risk"), lty = c(1, 2), bty = "n")
 ```
@@ -300,23 +320,24 @@ test_predict <- predict(fitem, newdata = amltest, model_select = "cAIC")
 
 Again we will apply the 0.5 threshold to `p_uncured` to create Cured and Susceptible labels.
 
-```{r}
+```{r pgroup}
 test_p_group <- ifelse(test_predict$p_uncured < 0.50, "Cured", "Susceptible")
 ```
 
 Then we can assess how well our MCM identified patients likely to be cured from those likely to be susceptible visually by examining the Kaplan-Meier curves.
 
-```{r}
+```{r kmtest}
 km_cured_test <- survfit(Surv(cryr, relapse.death) ~ test_p_group, data = amltest)
 ```
 
-```{r, echo = FALSE, fig = TRUE}
+```{r plottest, echo = FALSE, fig = TRUE}
 plot(km_cured_test, mark.time = TRUE, lty = c(1, 2), xlab = "Time (years)", ylab = "Relapse-free survival")
 legend(c(.4, .1), legend = c("Cured", "Susceptible"), lty = c(1, 2), bty = "n")
 ```
 
 ```{r}
-km_suscept_test <- survfit(Surv(cryr, relapse.death) ~ test_predict$latency_risk, data = amltest, subset = (test_p_group == "Susceptible"))
+km_suscept_test <- survfit(Surv(cryr, relapse.death) ~ test_predict$latency_risk, 
+                          data = amltest, subset = (test_p_group == "Susceptible"))
 ```
 
 ```{r, echo = FALSE, fig = TRUE}
@@ -340,6 +361,8 @@ auc_mcm(fitem, newdata = amltest, model_select = "cAIC")
 concordance_mcm(fitem, model_select = "cAIC")
 concordance_mcm(fitem, newdata = amltest, model_select = "cAIC")
 ```
+
+Other generic functions return the number of observations for the training data `nobs`, the log-likehood at the selected step `logLik`, the family of the mixture cure model `family`, and the model formula and data used for training the incidence and latency components `formula`.
 
 # Comparison to other mixture cure modeling packages
 

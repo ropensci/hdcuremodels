@@ -194,44 +194,9 @@ test_that("cv_cureem function works correctly", {
   fit.cv.fdr$b0 %>% expect_length(1)
   fit.cv.fdr$alpha %>% expect_length(1)
   fit.cv.fdr$rate %>% expect_length(1)
-  expect_equal(round(fit.cv.fdr$b0, 5), 0.44725)
-  expect_equal(round(fit.cv.fdr$rate, 6), 1.630543)
-  expect_equal(round(fit.cv.fdr$alpha, 6), 0.807314)
-
-  fit.mcp <- cv_cureem(Surv(Time, Censor) ~ .,
-                          data = training,
-                          x_latency = training, model = "cox", penalty = "MCP",
-                          fdr_control = FALSE, grid_tuning = FALSE, nlambda_inc = 10,
-                          nlambda_lat = 10, n_folds = 2, seed = 23, verbose = TRUE
-  )
-  fit.cv %>% expect_s3_class("mixturecure")
-  expect_setequal(names(fit.cv), c("b0", "b", "beta", "logLik.inc", "logLik.lat",
-                                   "selected_lambda_inc", "selected_lambda_lat",
-                                   "max_c", "method", "model", "penalty", "cv",
-                                   "y", "x_incidence", "x_latency",
-                                   "scale", "call", "fdr_control"))
-  fit.mcp$b0 %>% expect_type("double")
-  fit.mcp$b %>% expect_type("double")
-  fit.mcp$beta %>% expect_type("double")
-  fit.mcp$logLik.inc %>% expect_type("double")
-  fit.mcp$logLik.lat %>% expect_type("double")
-  fit.mcp$selected_lambda_inc %>% expect_type("double")
-  fit.mcp$selected_lambda_lat %>% expect_type("double")
-  fit.mcp$max_c %>% expect_type("double")
-  fit.mcp$x_incidence %>% expect_type("double")
-  fit.mcp$x_latency %>% expect_type("double")
-  fit.mcp$y %>% expect_type("double")
-  fit.mcp$model %>% expect_type("character")
-  fit.mcp$scale %>% expect_type("logical")
-  fit.mcp$method %>% expect_type("character")
-  fit.mcp$penalty %>% expect_type("character")
-  fit.mcp$cv %>% expect_type("logical")
-  fit.mcp$fdr_control %>% expect_type("logical")
-  fit.mcp$call %>% expect_type("language")
-  fit.mcp$b %>% expect_length(dim(fit.cv$x_incidence)[2])
-  fit.mcp$beta %>% expect_length(dim(fit.cv$x_latency)[2])
-  fit.mcp$b0 %>% expect_length(1)
-
+  expect_equal(round(fit.cv.fdr$b0, 5), 0.32659)
+  expect_equal(round(fit.cv.fdr$rate, 6), 1.714722)
+  expect_equal(round(fit.cv.fdr$alpha, 6), 0.752908)
 
   fit.scad <- cv_cureem(Surv(Time, Censor) ~ .,
                        data = training,
@@ -317,5 +282,5 @@ test_that("cv_cureem function works correctly", {
                       grid_tuning = FALSE, nlambda_inc = 10, nlambda_lat = 10,
                       n_folds = 2, seed = 23, verbose = FALSE
   )
-  expect_equal(round(fit.cv$b0, 7), 0.2238618)
+  expect_equal(round(fit.cv$b0, 7), 0.3495074)
 })

@@ -19,6 +19,7 @@ curegmifs(
   inits = NULL,
   verbose = TRUE,
   suppress_warning = FALSE,
+  na.action = na.omit,
   ...
 )
 }
@@ -30,7 +31,9 @@ while the variables on the right side of the formula are the covariates that
 are included in the incidence portion of the model.}
 
 \item{data}{a data.frame in which to interpret the variables named in the
-\code{formula} or in the \code{subset} argument.}
+\code{formula} or in the \code{subset} argument. Rows with missing data are
+omitted (only \code{na.action = na.omit} is operational) therefore users may
+want to impute missing data prior to calling this function.}
 
 \item{subset}{an optional expression indicating which subset of observations
 to be used in the fitting process, either a numeric or factor variable should
@@ -89,6 +92,9 @@ console (default is FALSE).}
 the maximum number of iterations was reached so that the algorithm may not
 have converged. Instead, warning is returned as part of the output with this
 message.}
+
+\item{na.action}{this function requires complete data so \code{"na.omit"} is
+invoked. Users can impute missing data as an alternative prior to model fitting.}
 
 \item{...}{additional arguments.}
 }

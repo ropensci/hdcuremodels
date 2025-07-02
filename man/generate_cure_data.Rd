@@ -26,21 +26,21 @@ generate_cure_data(
 \item{j}{an integer denoting the number of penalized predictors which is the
 same for both the incidence and latency portions of the model.}
 
-\item{nonp}{an integer less than j denoting the number of unpenalized
+\item{nonp}{an integer denoting the number of unpenalized
 predictors (which is the same for both the incidence and latency portions of
 the model.}
 
-\item{train_prop}{a numeric value in 0, 1 representing the fraction of n to
+\item{train_prop}{a numeric value in [0, 1) representing the fraction of n to
 be used in forming the training dataset.}
 
-\item{n_true}{an integer denoting the number of variables truly associated
+\item{n_true}{an integer less than j denoting the number of variables truly associated
 with the outcome (i.e., the number of covariates with nonzero parameter
 values) among the penalized predictors.}
 
-\item{a}{a numeric value denoting the effect size which is the same for both
+\item{a}{a numeric value denoting the effect size (signal amplitude) which is the same for both
 the incidence and latency portions of the model.}
 
-\item{rho}{a numeric value in 0, 1 representing the correlation between
+\item{rho}{a numeric value in [0, 1) representing the correlation between
 adjacent covariates in the same block. See details below.}
 
 \item{itct_mean}{a numeric value representing the expectation of the
@@ -101,13 +101,13 @@ Simulate data under a mixture cure model
 \examples{
 library(survival)
 withr::local_seed(1234)
-data <- generate_cure_data(n = 200, j = 50, n_true = 10, a = 1.8, rho = 0.2)
+data <- generate_cure_data(n = 1000, j = 5, n_true = 2, nonp = 1, a = 2)
 training <- data$training
 testing <- data$testing
-fit <- cureem(Surv(Time, Censor) ~ .,
-  data = training,
-  x_latency = training, model = "cox", penalty = "lasso",
-  lambda_inc = 0.05, lambda_lat = 0.05,
-  gamma_inc = 6, gamma_lat = 10
-)
+names(training)[grep("^X", names(training))][data$parameters$nonzero_b]
+names(training)[grep("^X", names(training))][data$parameters$nonzero_beta]
+fitem <- cureem(Surv(Time, Censor) ~ ., data = training,
+  x_latency = training)
+coef(fitem)
+plot(fitem, label = TRUE)
 }

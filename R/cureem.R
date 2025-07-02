@@ -12,7 +12,9 @@
 #' function while the variables on the right side of the formula are the
 #' covariates that are included in the incidence portion of the model.
 #' @param data a data.frame in which to interpret the variables named in the
-#' \code{formula} or in the \code{subset} argument.
+#' \code{formula} or in the \code{subset} argument. Rows with missing data are
+#' omitted (only \code{na.action = na.omit} is operational) therefore users may
+#' want to impute missing data prior to calling this function.
 #' @param subset an optional expression indicating which subset of observations
 #' to be used in the fitting process, either a numeric or factor variable
 #' should be used in subset, not a character variable. All observations are
@@ -72,6 +74,8 @@
 #' @param gamma_lat numeric value for the penalization parameter \eqn{\gamma}
 #' for variables in the latency portion of the model when \code{penalty = "MCP"}
 #' or \code{penalty = "SCAD"} (default is 3).
+#' @param na.action this function requires complete data so \code{"na.omit"} is
+#' invoked. Users can impute missing data as an alternative prior to model fitting.
 #' @param ... additional arguments.
 #'
 #' @return \item{b_path}{Matrix representing the solution path of the
@@ -139,6 +143,7 @@
 #' @srrstats {G2.4} *Provide appropriate mechanisms to convert between different data types, potentially including:*
 #' @srrstats {G2.4e} *explicit conversion from factor via `as...()` functions*
 #' @srrstats {G2.10} *Software should ensure that extraction or filtering of single columns from tabular inputs should not presume any particular default behaviour, and should ensure all column-extraction operations behave consistently regardless of the class of tabular data used as input.*
+#' @srrstats {G2.13} *Statistical Software should implement appropriate checks for missing data as part of initial pre-processing prior to passing data to analytic algorithms.*
 #' @srrstats {G5.2} *Appropriate error and warning behaviour of all functions should be explicitly demonstrated through tests. In particular,*
 #' @srrstats {G5.2a} *Every message produced within R code by `stop()`, `warning()`, `message()`, or equivalent should be unique*
 #' @srrstats {G5.2b} *Explicit tests should demonstrate conditions which trigger every one of those messages, and should compare the result with expected values.*
@@ -179,10 +184,10 @@ cureem <- function(formula, data, subset, x_latency = NULL,
                    penalty_factor_inc = NULL, penalty_factor_lat = NULL,
                    thresh = 1e-03, scale = TRUE, maxit = NULL, inits = NULL,
                    lambda_inc = 0.1, lambda_lat = 0.1, gamma_inc = 3,
-                   gamma_lat = 3, ...) {
+                   gamma_lat = 3, na.action = na.omit, ...) {
   mf <- match.call(expand.dots = FALSE)
   cl <- match.call()
-  m <- match(c("formula", "data", "subset"), names(mf), 0L)
+  m <- match(c("formula", "data", "subset", "na.action"), names(mf), 0L) #KJA 06-23
   if (m[1] == 0) stop("Error: A \"formula\" argument is required")
   mf <- mf[c(1L, m)]
   mf[[1L]] <- as.name("model.frame")
@@ -194,6 +199,7 @@ cureem <- function(formula, data, subset, x_latency = NULL,
   }
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
+  omitted <- attr(mf, "na.action")
   model <- tolower(model)
   model <- match.arg(model)
   penalty <- match.arg(penalty)
@@ -203,7 +209,8 @@ cureem <- function(formula, data, subset, x_latency = NULL,
   x <- model.matrix(mt, mf)
   if (!is.null(x_latency)) {
     if (missing(subset)) {
-      r <- TRUE
+      r <- rep(TRUE, dim(data)[1])
+      r[omitted] <- FALSE
     } else {
       e <- substitute(subset)
       r <- eval(e, data)
@@ -211,6 +218,7 @@ cureem <- function(formula, data, subset, x_latency = NULL,
         stop("Error: 'subset' must evaluate to logical")
       }
       r <- r & !is.na(r)
+      r[omitted] <- FALSE
     }
     if ("character" %in% is(x_latency) || "numeric" %in% is(x_latency)) {
       nl <- as.list(seq_len(ncol(data)))

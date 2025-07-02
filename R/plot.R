@@ -89,10 +89,13 @@ plot.mixturecure <-
           colnames(x$beta_path) <- paste0("L_", colnames(x$beta_path))
           coef <- x$beta_path
         }
-        graphics::matplot(coef, ylab = ylab, xlab = xlab, type = "l")
+        graphics::matplot(coef, ylab = ylab, xlab = xlab, type = "l",
+                    lty = rep(c(1,2), c(dim(x$b_pat)[2], dim(x$beta_path)[2])),
+                    col = rep(1:(dim(x$b_path)[2]+dim(x$beta_path)[2])))
         if (label == TRUE)
-          legend("topright", legend = colnames(coef), col = 1:ncol(coef),
-                 lty = 1, cex = 0.6)
+          legend("topright", legend = colnames(coef),
+                 lty = rep(c(1,2), c(dim(x$b_pat)[2], dim(x$beta_path)[2])),
+                 cex = 0.6, col = rep(1:(dim(x$b_path)[2]+dim(x$beta_path)[2])))
       } else {
         select <- select_model(x, type)
         if (type == "AIC") {

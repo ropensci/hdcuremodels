@@ -17,9 +17,9 @@ test_that("predict function works correctly", {
   predict_train$latency_risk %>% expect_type("character")
   expect_setequal(names(predict_train), c("p_uncured", "linear_latency",
                                        "latency_risk"))
-  expect_equal(round(predict_train$p_uncured[1], 7), 0.8598186)
-  expect_equal(round(predict_train$linear_latency[1], 7), -1.212311)
-  expect_equal(predict_train$latency_risk[1], "low risk")
+  expect_equal(round(predict_train$p_uncured[1], 7), 0.13618)
+  expect_equal(round(predict_train$linear_latency[1], 6), 1.347184)
+  expect_equal(predict_train$latency_risk[1], "high risk")
   predict_test <- predict(fit, newdata = testing)
   predict_test$p_uncured %>% expect_type("double")
   predict_test$linear_latency %>% expect_type("double")

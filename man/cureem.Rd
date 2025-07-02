@@ -21,6 +21,7 @@ cureem(
   lambda_lat = 0.1,
   gamma_inc = 3,
   gamma_lat = 3,
+  na.action = na.omit,
   ...
 )
 }
@@ -32,7 +33,9 @@ function while the variables on the right side of the formula are the
 covariates that are included in the incidence portion of the model.}
 
 \item{data}{a data.frame in which to interpret the variables named in the
-\code{formula} or in the \code{subset} argument.}
+\code{formula} or in the \code{subset} argument. Rows with missing data are
+omitted (only \code{na.action = na.omit} is operational) therefore users may
+want to impute missing data prior to calling this function.}
 
 \item{subset}{an optional expression indicating which subset of observations
 to be used in the fitting process, either a numeric or factor variable
@@ -106,6 +109,9 @@ for variables in the incidence portion of the model when
 \item{gamma_lat}{numeric value for the penalization parameter \eqn{\gamma}
 for variables in the latency portion of the model when \code{penalty = "MCP"}
 or \code{penalty = "SCAD"} (default is 3).}
+
+\item{na.action}{this function requires complete data so \code{"na.omit"} is
+invoked. Users can impute missing data as an alternative prior to model fitting.}
 
 \item{...}{additional arguments.}
 }

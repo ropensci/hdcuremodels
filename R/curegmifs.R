@@ -12,7 +12,9 @@
 #' while the variables on the right side of the formula are the covariates that
 #' are included in the incidence portion of the model.
 #' @param data a data.frame in which to interpret the variables named in the
-#' \code{formula} or in the \code{subset} argument.
+#' \code{formula} or in the \code{subset} argument. Rows with missing data are
+#' omitted (only \code{na.action = na.omit} is operational) therefore users may
+#' want to impute missing data prior to calling this function.
 #' @param subset an optional expression indicating which subset of observations
 #' to be used in the fitting process, either a numeric or factor variable should
 #' be used in subset, not a character variable. All observations are included by
@@ -59,6 +61,8 @@
 #' the maximum number of iterations was reached so that the algorithm may not
 #' have converged. Instead, warning is returned as part of the output with this
 #' message.
+#' @param na.action this function requires complete data so \code{"na.omit"} is
+#' invoked. Users can impute missing data as an alternative prior to model fitting.
 #' @param ... additional arguments.
 #'
 #' @return \item{b_path}{Matrix representing the solution path of the
@@ -111,6 +115,7 @@
 #' @srrstats {G2.4} *Provide appropriate mechanisms to convert between different data types, potentially including:*
 #' @srrstats {G2.4e} *explicit conversion from factor via `as...()` functions*
 #' @srrstats {G2.10} *Software should ensure that extraction or filtering of single columns from tabular inputs should not presume any particular default behaviour, and should ensure all column-extraction operations behave consistently regardless of the class of tabular data used as input.*
+#' @srrstats {G2.13} *Statistical Software should implement appropriate checks for missing data as part of initial pre-processing prior to passing data to analytic algorithms.*
 #' @srrstats {G5.2} *Appropriate error and warning behaviour of all functions should be explicitly demonstrated through tests. In particular,*
 #' @srrstats {G5.2a} *Every message produced within R code by `stop()`, `warning()`, `message()`, or equivalent should be unique*
 #' @srrstats {G5.5} *Correctness tests should be run with a fixed random seed*
@@ -157,10 +162,10 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
                       penalty_factor_inc = NULL, penalty_factor_lat = NULL,
                       epsilon = 0.001, thresh = 1e-5, scale = TRUE, maxit = 1e4,
                       inits = NULL, verbose = TRUE, suppress_warning = FALSE,
-                      ...) {
+                      na.action = na.omit, ...) {
   mf <- match.call(expand.dots = FALSE)
   cl <- match.call()
-  m <- match(c("formula", "data", "subset"), names(mf), 0L)
+  m <- match(c("formula", "data", "subset", "na.action"), names(mf), 0L)
   if (m[1] == 0) stop("Error: A \"formula\" argument is required")
   mf <- mf[c(1L, m)]
   mf[[1L]] <- as.name("model.frame")
@@ -178,6 +183,7 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
   }
   mf <- eval(mf, parent.frame())
   mt <- attr(mf, "terms")
+  omitted <- attr(mf, "na.action")
   model <- tolower(model)
   model <- match.arg(model)
   y <- model.response(mf)
@@ -186,7 +192,8 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
   x <- model.matrix(mt, mf)
   if (!is.null(x_latency)) {
     if (missing(subset)) {
-      r <- TRUE
+      r <- rep(TRUE, dim(data)[1])
+      r[omitted] <- FALSE
     } else {
       e <- substitute(subset)
       r <- eval(e, data)
@@ -194,6 +201,7 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
         stop("Error: 'subset' must evaluate to logical")
       }
       r <- r & !is.na(r)
+      r[omitted] <- FALSE
     }
     if ("character" %in% is(x_latency) || "numeric" %in% is(x_latency)) {
       nl <- as.list(seq_len(ncol(data)))
@@ -207,7 +215,7 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
       time_name <- substr(survnames[[2]][1], 6, nchar(survnames[[2]][1]))
       censor_name <- trimws(strsplit(survnames[[2]][2], ")")[[1]][1])
       x_latency <- x_latency[r, !(colnames(x_latency) %in%
-        c(time_name, censor_name)), drop = FALSE]
+                                    c(time_name, censor_name)), drop = FALSE]
       x_latency <- as.matrix(x_latency)
     } else if ("formula" %in% is(x_latency)) {
       x_latency <- model.matrix(update.formula(x_latency, new = ~ . - 1), data)
@@ -220,7 +228,7 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
   }
   x_lat <- x_latency
   if (nrow(x_inc) != nrow(x_lat) || nrow(x_lat) != length(time) ||
-    length(time) != length(event)) {
+      length(time) != length(event)) {
     stop("Error: Input dimension mismatch")
   }
   if (class(x_inc)[1] == "data.frame" || class(x_lat)[1] == "data.frame") {
@@ -247,8 +255,8 @@ curegmifs <- function(formula, data, subset, x_latency = NULL,
   }
   if (!is.null(inits)) {
     inits <- inits_check(model,
-      N = length(time), penalty_factor_inc,
-      penalty_factor_lat, inits
+                         N = length(time), penalty_factor_inc,
+                         penalty_factor_lat, inits
     )
   }
   x_u <- self_scale(x_inc[, penalty_factor_inc == 0, drop = FALSE], scale)

@@ -3717,3 +3717,9 @@ extract_rhs_values <- function(model) {
   return(rhs_values)
 }
 
+
+identify_missing <- function(formula, data) {
+  mf <- model.frame(formula = formula, data = data, na.action = na.omit)
+  omitted <- attr(mf, "na.action")
+  as.numeric(omitted)
+}

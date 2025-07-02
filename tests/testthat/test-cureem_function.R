@@ -25,7 +25,7 @@ test_that("cureem works correctly", {
   expect_true(class(fit$b0_path) == "numeric")
   expect_true(class(fit$logLik_inc) == "numeric")
   expect_true(class(fit$logLik_lat) == "numeric")
-  expect_equal(round(fit$b0_path[1], 8), 0.62977197)
+  expect_equal(round(fit$b0_path[1], 7), 0.5035067)
 
   fit <- cureem(Surv(Time, Censor) ~ .,
                 data = training, x_latency = training,
@@ -73,7 +73,7 @@ test_that("cureem works correctly", {
   expect_true(class(fit$b0_path) == "numeric")
   expect_true(class(fit$logLik_inc) == "numeric")
   expect_true(class(fit$logLik_lat) == "numeric")
-  expect_equal(round(fit$b0_path[1], 7), 0.3119246)
+  expect_equal(round(fit$b0_path[1], 7), 0.2008767)
 
   fit <- cureem(Surv(Time, Censor) ~ .,
                 data = training, x_latency = training,

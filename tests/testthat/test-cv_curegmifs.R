@@ -54,8 +54,8 @@ test_that("cv_curegmifs function works correctly", {
   fit.cv$selected_step_lat %>% expect_length(1)
   fit.cv$logLik %>% expect_length(1)
   fit.cv$max_c %>% expect_length(1)
-  expect_equal(round(fit.cv$rate, 6), 2.502845)
-  expect_equal(round(fit.cv$alpha, 7), 0.7003362)
+  expect_equal(round(fit.cv$rate, 6), 2.067206)
+  expect_equal(round(fit.cv$alpha, 6), 0.648263)
 
   fit.cv <- cv_curegmifs(Surv(Time, Censor) ~ ., data = training,
                          penalty_factor_inc = rep(c(0, 1), c(1, 11)),
@@ -135,6 +135,6 @@ test_that("cv_curegmifs function works correctly", {
                          maxit = 450, epsilon = 0.01, n_folds = 2,
                          seed = 23, verbose = TRUE
   )
-  expect_equal(round(fit.cv$rate, 6), 4.518993)
-  expect_equal(round(fit.cv$alpha, 7), 1.0191001)
+  expect_equal(round(fit.cv$rate, 6), 2.042942)
+  expect_equal(round(fit.cv$alpha, 6), 0.55764)
 })

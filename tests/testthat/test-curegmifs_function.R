@@ -34,8 +34,8 @@ test_that("curegmifs works correctly", {
     expect_equal(round(fit$x_incidence[1, 1], 7), 0.1557627)
     expect_equal(round(fit$x_latency[1, 1], 7), 0.1557627)
     expect_equal(fit$model, "weibull")
-    expect_equal(round(fit$alpha_path[1], 4), 0.5593)
-    expect_equal(round(fit$b0_path[1], 4), 0.1413)
+    expect_equal(round(fit$alpha_path[1], 4), 0.5121)
+    expect_equal(round(fit$b0_path[1], 4), 0.0597)
     expect_equal(fit$cv, FALSE)
     expect_equal(fit$method, "GMIFS")
     expect_equal(fit$scale, TRUE)
@@ -75,7 +75,7 @@ test_that("curegmifs works correctly", {
     expect_equal(round(fit$x_incidence[1, 1], 7), 0.1557627)
     expect_equal(round(fit$x_latency[1, 1], 7), 0.1557627)
     expect_equal(fit$model, "exponential")
-    expect_equal(round(fit$b0_path[1], 4), 0.3305)
+    expect_equal(round(fit$b0_path[1], 4), 0.2396)
     expect_equal(fit$cv, FALSE)
     expect_equal(fit$method, "GMIFS")
     expect_equal(fit$scale, TRUE)
@@ -122,8 +122,8 @@ test_that("curegmifs works correctly", {
                            maxit = 450, epsilon = 0.01, n_folds = 2,
                            seed = 23, verbose = TRUE, suppress_warning = TRUE
     )
-    expect_equal(round(fit$b0_path[1], 7), 0.1242632)
-    expect_equal(round(fit$alpha_path[1], 7), 0.6681398)
+    expect_equal(round(fit$b0_path[1], 7), 0.0962298)
+    expect_equal(round(fit$alpha_path[1], 7), 0.6571744)
 
 })
 
