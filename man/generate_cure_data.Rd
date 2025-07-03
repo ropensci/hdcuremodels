@@ -101,13 +101,26 @@ Simulate data under a mixture cure model
 \examples{
 library(survival)
 withr::local_seed(1234)
+# This dataset has 2 penalized features associated with the outcome,
+# 3 penalized features not associated with the outcome (noise features), and 1
+# unpenalized noise feature.
 data <- generate_cure_data(n = 1000, j = 5, n_true = 2, nonp = 1, a = 2)
+# Extract the training data
 training <- data$training
+# Extract the testing data
 testing <- data$testing
+# To identify the features truly associated with incidence
 names(training)[grep("^X", names(training))][data$parameters$nonzero_b]
+# To identify the features truly associated with latency
 names(training)[grep("^X", names(training))][data$parameters$nonzero_beta]
+# Fit the model to the training data
 fitem <- cureem(Surv(Time, Censor) ~ ., data = training,
   x_latency = training)
+# Examine the estimated coefficients at the (default) minimum AIC
 coef(fitem)
+# As the penalty increases, the coefficients for the noise variables shrink
+# to or remain at zero, while the truly associated features have coefficient
+# paths that depart from zero. This shows the model's ability to distinguish
+# signal from noise.
 plot(fitem, label = TRUE)
 }

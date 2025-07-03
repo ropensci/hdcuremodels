@@ -63,11 +63,15 @@ print.mixturecure <- function(x, max = 6, ...)  {
     }
   } else {
     cat("$b_path\n")
-    print.default(x$b_path[1 : max,])
-    cat(dim(x$b_path)[1] - max, "more rows\n\n")
-    cat("$b_path\n")
-    print.default(x$b_path[1 : max,])
-    cat(dim(x$beta_path)[1] - max, "more rows\n\n")
+    print.default(x$b_path[1 : max, 1 : max])
+    cat(dim(x$b_path)[1] - max, "more rows\n")
+    if (dim(x$b_path)[2] - max > 0)
+      cat(dim(x$b_path)[2] - max, "more columns\n\n")
+    cat("$beta_path\n")
+    print.default(x$beta_path[1 : max, 1 : max])
+    cat(dim(x$beta_path)[1] - max, "more rows\n")
+    if (dim(x$beta_path)[2] - max > 0)
+      cat(dim(x$beta_path)[2] - max, "more columns\n\n")
     if (x$model %in% c("exponential", "weibull")) {
       cat("$rate\n", head(x$rate, n = max), "\n")
       cat(length(x$rate) - max, "more elements\n\n")
