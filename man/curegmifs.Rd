@@ -143,9 +143,9 @@ iterations was achieved which may indicate the model did not converge.}
 }
 \description{
 Fits a penalized Weibull or exponential mixture cure model using the
-generalized monotone incremental forward stagewise (GMIFS) algorithm and
-yields solution paths for parameters in the incidence and latency portions of
-the model.
+generalized monotone incremental forward stagewise (GMIFS) algorithm (Hastie
+et al 2007) and yields solution paths for parameters in the incidence and
+latency portions of the model.
 }
 \examples{
 library(survival)
@@ -164,6 +164,10 @@ Fu, H., Nicolet, D., Mrozek, K., Stone, R. M., Eisfeld, A. K.,
 Byrd, J. C., Archer, K. J. (2022) Controlled variable selection in Weibull
 mixture cure models for high-dimensional data. \emph{Statistics in Medicine},
 \bold{41}(22), 4340--4366.
+
+Hastie, T., Taylor J., Tibshirani R., Walther G. (2007) Forward
+stagewise regression and the monotone lasso. \emph{Electron J Stat},
+\bold{1}:1--29.
 }
 \seealso{
 \code{\link{cv_curegmifs}}

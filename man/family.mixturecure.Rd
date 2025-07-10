@@ -2,7 +2,7 @@
 % Please edit documentation in R/family.R
 \name{family.mixturecure}
 \alias{family.mixturecure}
-\title{Return Model Family and Fitting Algorithm for Mixture Cure Model Fits}
+\title{Return model family and fitting algorithm for mixturecure model fits}
 \usage{
 \method{family}{mixturecure}(object, ...)
 }
@@ -16,7 +16,8 @@ the parametric or semi-parametric model fit and the fitting
 algorithm.
 }
 \description{
-Return Model Family and Fitting Algorithm for Mixture Cure Model Fits
+Return model family and fitting algorithm for\code{mixturecure}
+model fits.
 }
 \examples{
 library(survival)

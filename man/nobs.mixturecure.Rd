@@ -2,7 +2,7 @@
 % Please edit documentation in R/nobs.R
 \name{nobs.mixturecure}
 \alias{nobs.mixturecure}
-\title{Number of observations for mixturecure objects}
+\title{Number of observations in mixturecure object}
 \usage{
 \method{nobs}{mixturecure}(object, ...)
 }
@@ -15,7 +15,7 @@
 number of subjects in the dataset.
 }
 \description{
-Number of observations for mixturecure objects
+Number of observations in fitted \code{mixturecure} object.
 }
 \examples{
 library(survival)

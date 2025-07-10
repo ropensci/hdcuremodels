@@ -1,24 +1,27 @@
 #' Simulate data under a mixture cure model
 #'
+#' @description
+#' Simulate data under a mixture cure model.
+#'
 #' @param n an integer denoting the total sample size.
 #' @param j an integer denoting the number of penalized predictors which is the
 #' same for both the incidence and latency portions of the model.
 #' @param nonp an integer denoting the number of unpenalized
 #' predictors (which is the same for both the incidence and latency portions of
-#' the model.
-#' @param train_prop a numeric value in [0, 1) representing the fraction of n to
-#' be used in forming the training dataset.
-#' @param n_true an integer less than j denoting the number of variables truly associated
-#' with the outcome (i.e., the number of covariates with nonzero parameter
-#' values) among the penalized predictors.
-#' @param a a numeric value denoting the effect size (signal amplitude) which is the same for both
-#' the incidence and latency portions of the model.
+#' the model).
+#' @param train_prop a numeric value in [0, 1) representing the fraction of `n`
+#' to be used in forming the training dataset.
+#' @param n_true an integer less than `j` denoting the number of variables truly
+#' associated with the outcome (i.e., the number of covariates with nonzero
+#' parameter values) among the penalized predictors.
+#' @param a a numeric value denoting the effect size (signal amplitude) which is
+#' the same for both the incidence and latency portions of the model.
 #' @param rho a numeric value in [0, 1) representing the correlation between
-#' adjacent covariates in the same block. See details below.
+#' adjacent covariates in the same block.
 #' @param itct_mean a numeric value representing the expectation of the
 #' incidence intercept which controls the cure rate.
 #' @param cens_ub a numeric value representing the upper bound on the censoring
-#' time distribition which follows a uniform distribution on 0, \code{cens_ub}.
+#' time distribution which follows a uniform distribution on (0, \code{cens_ub}].
 #' @param alpha a numeric value representing the shape parameter in the Weibull
 #' density.
 #' @param lambda a numeric value representing the rate parameter in the Weibull

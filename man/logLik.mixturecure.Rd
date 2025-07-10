@@ -13,8 +13,8 @@
 \item{model_select}{either a case-sensitive parameter for models fit using
 \code{curegmifs} or \code{cureem} or any numeric step along the solution path
 can be selected. The default is \code{model_select = "AIC"} which calculates
-the predicted values using the coefficients from the model having the lowest
-AIC. The complete list of options are:
+the predicted values using the coefficients from the model achieving the
+minimum AIC. The complete list of options are:
 \itemize{
 \item \code{"AIC"} for the minimum AIC (default).
 \item \code{"mAIC"} for the minimum modified AIC.

@@ -85,7 +85,7 @@ FDR-controlled variable selection and indices of selected variables are
 returned (default is FALSE).}
 
 \item{fdr}{numeric value in (0, 1) range specifying the target FDR level to
-use for variable selection when \code{fdr_control=TRUE} (default is 0.2).}
+use for variable selection when \code{fdr_control = TRUE} (default is 0.2).}
 
 \item{grid_tuning}{logical, if TRUE a 2-D grid tuning approach is used to
 select the optimal pair of \eqn{\lambda_b} and \eqn{\lambda_{\beta}} penalty
@@ -127,22 +127,22 @@ automatically provided by the function.}
 \item{lambda_inc_list}{a numeric vector used to search for the optimal
 \eqn{\lambda_b} tuning parameter. If not supplied, the function computes a
 \eqn{\lambda_b} sequence based on \code{nlambda_inc} and
-\code{lambda_min_ratio_inc}. If \code{grid_tuning=FALSE}, the same sequence
+\code{lambda_min_ratio_inc}. If \code{grid_tuning = FALSE}, the same sequence
 should be used for both \eqn{\lambda_b} and \eqn{\lambda_{\beta}}.}
 
 \item{lambda_lat_list}{a numeric vector used to search for the optimal
 \eqn{\lambda_{\beta}} tuning parameter. If not supplied, the function
 computes a \eqn{\lambda_{\beta}} sequence based on \code{nlambda_lat} and
-\code{lambda_min_ratio_lat}. If \code{grid_tuning=FALSE}, the same sequence
+\code{lambda_min_ratio_lat}. If \code{grid_tuning = FALSE}, the same sequence
 should be used for both \eqn{\lambda_b} and \eqn{\lambda_{\beta}}.}
 
 \item{nlambda_inc}{an integer specifying the number of values to search for
 the optimal \eqn{\lambda_b} tuning parameter; default is 10 if
-\code{grid_tuning=TRUE} and 50 otherwise.}
+\code{grid_tuning = TRUE} and 50 otherwise.}
 
 \item{nlambda_lat}{an integer specifying the number of values to search
 for the optimal \eqn{\lambda_{\beta}} tuning parameter; default is 10 if
-\code{grid_tuning=TRUE} and 50 otherwise.}
+\code{grid_tuning = TRUE} and 50 otherwise.}
 
 \item{gamma_inc}{numeric value for the penalization parameter \eqn{\gamma}
 for variables in the incidence portion of the model when
@@ -248,7 +248,7 @@ are selected, \code{int(0)} will be returned.}
 \item{call}{the matched call.}
 }
 \description{
-Fits a penalized parametric and semi-parametric mixture cure model (MCM)
+Fits penalized parametric and semi-parametric mixture cure models (MCM)
 using the E-M algorithm with with k-fold cross-validation for parameter
 tuning. The lasso (L1), MCP and SCAD penalty are supported for the Cox MCM
 while only lasso is currently supported for parametric MCMs. When FDR

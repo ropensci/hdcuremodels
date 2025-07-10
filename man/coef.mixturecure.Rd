@@ -3,7 +3,7 @@
 \name{coef.mixturecure}
 \alias{coef.mixturecure}
 \alias{coefficients}
-\title{Extract model coefficients from a fitted mixture cure object}
+\title{Extract model coefficients from a fitted mixturecure object}
 \usage{
 \method{coef}{mixturecure}(object, model_select = "AIC", ...)
 }
@@ -14,8 +14,8 @@
 \item{model_select}{either a case-sensitive parameter for models fit using
 \code{curegmifs} or \code{cureem} or any numeric step along the solution path
 can be selected. The default is \code{model_select = "AIC"} which calculates
-the predicted values using the coefficients from the model having the lowest
-AIC. The complete list of options are:
+the predicted values using the coefficients from the model achieving the
+minimum AIC. The complete list of options are:
 \itemize{
 \item \code{"AIC"} for the minimum AIC (default).
 \item \code{"mAIC"} for the minimum modified AIC.
@@ -34,12 +34,27 @@ This option has no effect for objects fit using \code{cv_curegmifs} or
 \item{...}{other arguments.}
 }
 \value{
-a list of estimated parameters extracted from the model object using
-the model selection criterion
+\item{rate}{ estimated rate parameter when fitting a Weibull or
+exponential mixture cure model.}
+
+\item{shape}{ estimated shape parameter when fitting a Weibull
+mixture cure model.}
+
+\item{b0}{ estimated intercept for the incidence portion of the
+mixture cure model.}
+
+\item{beta_inc}{ the vector of coefficient estimates for the
+incidence portion of the mixture cure model.}
+
+\item{beta_lat}{ the vector of coefficient estimates for the
+latency portion of the mixture cure model.}
+
+\item{p_uncured}{ a vector of probabilities from the incidence
+portion of the fitted model representing the P(uncured).}
 }
 \description{
 \code{coef.mixturecure} is a generic function which extracts the model
-coefficients from a fitted mixture cure model object fit using
+coefficients from a fitted \code{mixturecure} model object fit using
 \code{curegmifs}, \code{cureem}, \code{cv_curegmifs}, or \code{cv_cureem}.
 }
 \examples{

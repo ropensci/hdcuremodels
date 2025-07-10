@@ -1,9 +1,10 @@
 #' Print the contents of a mixture cure fitted object
 #'
 #' @description
-#' This function prints the first several incidence and latency coefficients and
-#' the rate (exponential and Weibull) and alpha (Weibull) when fitting a
-#' parametric MCM and returns the fitted object invisible to the user.
+#' This function prints the first several incidence and latency coefficients,
+#' the rate (when fitting an exponential or Weibull mixture cure model), and
+#' alpha (when fitting a Weibull mixture cure model). This function returns
+#' the fitted object invisible to the user.
 #'
 #' @param x a \code{mixturecure} object resulting from \code{curegmifs},
 #' \code{cureem}, \code{cv_cureem}, or \code{cv_curegmifs}.
@@ -25,9 +26,9 @@
 #'
 #' @return prints coefficient estimates for the incidence portion of the model
 #' and if included, prints the coefficient estimates for the latency portion of
-#' the model. Also prints rate for exponential and Weibull models and alpha for
-#' the Weibull mixture cure model. Returns all objects fit using \code{cureem},
-#' \code{curegmifs}, \code{cv_cureem}, or \code{cv_curegmifs}.
+#' the model. Also prints rate for exponential and Weibull models and scale
+#' (alpha) for the Weibull mixture cure model. Returns all objects fit using
+#' \code{cureem}, \code{curegmifs}, \code{cv_cureem}, or \code{cv_curegmifs}.
 #' @export
 #'
 #' @importFrom utils head

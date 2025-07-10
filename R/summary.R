@@ -1,4 +1,4 @@
-#' Summarize a Fitted Mixture Cure Object.
+#' Summarize a fitted mixture cure object
 #'
 #' @description
 #' \code{summary} method for a mixturecure object fit using \code{curegmifs},
@@ -15,7 +15,8 @@
 #' with the following model selection methods: the step and value that maximizes
 #' the log-likelihood; the step and value that minimizes the AIC, modified AIC
 #' (mAIC), corrected AIC (cAIC), BIC, modified BIC (mBIC), and extended BIC
-#' (EBIC).
+#' (EBIC). This information can be used to guide the user in the selection of
+#' a final model from the solution path.
 #'
 #' @export
 #'

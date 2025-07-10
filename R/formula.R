@@ -1,5 +1,6 @@
-#' Extract Model Formula for mixturecure Object
+#' Extract model formula for mixturecure object
 #'
+#' @description Extract the model formula for `mixturecure` object
 #' @param x an object from class `mixturecure`.
 #' @param ... other arguments.
 #'

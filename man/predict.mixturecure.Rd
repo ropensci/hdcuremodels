@@ -9,7 +9,7 @@ risk class for latency for mixture cure fit}
 }
 \arguments{
 \item{object}{a \code{mixturecure} object resulting from \code{curegmifs},
-\code{cureem}, \code{cv_curegmifs}, \code{cv_cureem}.}
+\code{cureem}, \code{cv_curegmifs}, or \code{cv_cureem}.}
 
 \item{newdata}{an optional data.frame that minimally includes the incidence
 and/or latency variables to use for predicting the response. If omitted, the
@@ -18,8 +18,8 @@ training data are used.}
 \item{model_select}{either a case-sensitive parameter for models fit using
 \code{curegmifs} or \code{cureem} or any numeric step along the solution path
 can be selected. The default is \code{model_select = "AIC"} which calculates
-the predicted values using the coefficients from the model having the lowest
-AIC. The complete list of options are:
+the predicted values using the coefficients from the model achieving the
+minimum AIC. The complete list of options are:
 \itemize{
 \item \code{"AIC"} for the minimum AIC (default).
 \item \code{"mAIC"} for the minimum modified AIC.
@@ -48,7 +48,7 @@ latency portion of the model.}
 median) versus high risk for the latency portion of the model.}
 }
 \description{
-This function returns a list the includes the predicted probabilities for
+This function returns a list that includes the predicted probabilities for
 susceptibles as well as the linear predictor for the latency distribution
 and a dichotomous risk for latency for a \code{curegmifs}, \code{cureem},
 \code{cv_curegmifs} or \code{cv_cureem} fitted object.

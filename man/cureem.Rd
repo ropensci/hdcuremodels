@@ -151,7 +151,7 @@ model used for the latency portion of mixture cure model ("weibull" or
 \item{scale}{Logical value indicating whether the predictors were
 centered and scaled.}
 
-\item{method}{Character string indicating the EM alogoritm was used
+\item{method}{Character string indicating the EM algorithm was used
 in fitting the mixture cure model.}
 
 \item{rate_path}{Vector representing the solution path of the rate
@@ -164,9 +164,9 @@ parameter for the Weibull density in the latency portion of the model.}
 \item{call}{the matched call.}
 }
 \description{
-Fits a penalized parametric and semi-parametric mixture cure model (MCM)
+Fits penalized parametric and semi-parametric mixture cure models (MCM)
 using the E-M algorithm with user-specified penalty parameters. The lasso
-(L1), MCP, and SCAD penalty is supported for the Cox MCM while only lasso is
+(L1), MCP, and SCAD penalty are supported for the Cox MCM while only lasso is
 currently supported for parametric MCMs.
 }
 \examples{

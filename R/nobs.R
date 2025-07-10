@@ -1,5 +1,6 @@
-#' Number of observations for mixturecure objects
+#' Number of observations in mixturecure object
 #'
+#' @description Number of observations in fitted `mixturecure` object.
 #' @param object An object of class `mixturecure`.
 #' @param ... other arguments.
 #'

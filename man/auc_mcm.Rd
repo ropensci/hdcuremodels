@@ -8,20 +8,22 @@ auc_mcm(object, newdata, cure_cutoff = 5, model_select = "AIC")
 }
 \arguments{
 \item{object}{a \code{mixturecure} object resulting from \code{curegmifs},
-\code{cureem}, \code{cv_curegmifs}, \code{cv_cureem}.}
+\code{cureem}, \code{cv_curegmifs}, or \code{cv_cureem}.}
 
 \item{newdata}{an optional data.frame that minimally includes the incidence
 and/or latency variables to use for predicting the response. If omitted, the
 training data are used.}
 
 \item{cure_cutoff}{cutoff value for cure, used to produce a proxy for the
-unobserved cure status; default is 5.}
+unobserved cure status (default is 5 representing 5 years). Users
+should be careful to note the time scale of their data and adjust this
+according to the time scale and clinical application.}
 
 \item{model_select}{either a case-sensitive parameter for models fit using
 \code{curegmifs} or \code{cureem} or any numeric step along the solution path
 can be selected. The default is \code{model_select = "AIC"} which calculates
-the predicted values using the coefficients from the model having the lowest
-AIC. The complete list of options are:
+the predicted values using the coefficients from the model achieving the
+minimum AIC. The complete list of options are:
 \itemize{
 \item \code{"AIC"} for the minimum AIC (default).
 \item \code{"mAIC"} for the minimum modified AIC.
@@ -43,7 +45,7 @@ imputation (MSI) method.
 }
 \description{
 This function calculates the AUC for cure prediction using the mean score
-imputation (MSI) method proposed by Asano et al.
+imputation (MSI) method proposed by Asano et al (2014).
 }
 \examples{
 library(survival)

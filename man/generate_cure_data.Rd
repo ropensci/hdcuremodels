@@ -28,26 +28,26 @@ same for both the incidence and latency portions of the model.}
 
 \item{nonp}{an integer denoting the number of unpenalized
 predictors (which is the same for both the incidence and latency portions of
-the model.}
+the model).}
 
-\item{train_prop}{a numeric value in [0, 1) representing the fraction of n to
-be used in forming the training dataset.}
+\item{train_prop}{a numeric value in [0, 1) representing the fraction of \code{n}
+to be used in forming the training dataset.}
 
-\item{n_true}{an integer less than j denoting the number of variables truly associated
-with the outcome (i.e., the number of covariates with nonzero parameter
-values) among the penalized predictors.}
+\item{n_true}{an integer less than \code{j} denoting the number of variables truly
+associated with the outcome (i.e., the number of covariates with nonzero
+parameter values) among the penalized predictors.}
 
-\item{a}{a numeric value denoting the effect size (signal amplitude) which is the same for both
-the incidence and latency portions of the model.}
+\item{a}{a numeric value denoting the effect size (signal amplitude) which is
+the same for both the incidence and latency portions of the model.}
 
 \item{rho}{a numeric value in [0, 1) representing the correlation between
-adjacent covariates in the same block. See details below.}
+adjacent covariates in the same block.}
 
 \item{itct_mean}{a numeric value representing the expectation of the
 incidence intercept which controls the cure rate.}
 
 \item{cens_ub}{a numeric value representing the upper bound on the censoring
-time distribition which follows a uniform distribution on 0, \code{cens_ub}.}
+time distribution which follows a uniform distribution on (0, \code{cens_ub}].}
 
 \item{alpha}{a numeric value representing the shape parameter in the Weibull
 density.}
@@ -96,7 +96,7 @@ parameter values for the true latency signals among penalized covariates
 (\code{itct})}
 }
 \description{
-Simulate data under a mixture cure model
+Simulate data under a mixture cure model.
 }
 \examples{
 library(survival)

@@ -1,4 +1,5 @@
-#' Fit a penalized parametric mixture cure model using the GMIFS algorithm with
+#' Fit a penalized parametric mixture cure model using the generalized monotone
+#' incremental forward stagewise (GMIFS) algorithm (Hastie et al 2007) with
 #' cross-validation for model selection
 #'
 #' @description
@@ -39,7 +40,7 @@
 #' FDR-controlled variable selection and indices of selected variables are
 #' returned (default is FALSE).
 #' @param fdr numeric value in (0, 1) range specifying the target FDR level to
-#' use for variable selection when \code{fdr_control=TRUE} (default is 0.2).
+#' use for variable selection when \code{fdr_control = TRUE} (default is 0.2).
 #' @param epsilon small numeric value reflecting incremental value used to
 #' update a coefficient at a given step (default is 0.001).
 #' @param thresh small numeric value. The iterative process stops when the
@@ -60,9 +61,10 @@
 #' \item \code{alpha} a numeric value for the shape parameter
 #' when \code{model = "weibull"}.
 #' }
-#' If not supplied or improperly supplied,
+#' If \code{inits} is not specified or improperly supplied, initialization is
+#' automatically provided by the function.
 #' @param n_folds an integer specifying the number of folds for the k-fold
-#' cross-valiation procedure (default is 5).
+#' cross-validation procedure (default is 5).
 #' @param measure_inc character string specifying the evaluation criterion used
 #' in selecting the optimal \eqn{\lambda_b} which can be either
 #' \itemize{
@@ -104,18 +106,18 @@
 #' @return \item{rate }{Estimated rate parameter if the Weibull or exponential
 #' model is fit.}
 #' @return \item{logLik }{Log-likelihood value.}
-#' @return \item{selected.step.inc }{Iteration step selected for the incidence
+#' @return \item{selected_step_inc }{Iteration step selected for the incidence
 #' portion of the model using cross-validation. NULL when fdr_control is TRUE.}
-#' @return \item{selected.step.lat }{Iteration step selected for the latency
+#' @return \item{selected_step_lat }{Iteration step selected for the latency
 #' portion of the model using cross-validation. NULL when fdr_control is TRUE.}
-#' @return \item{max.c }{Maximum C-statistic achieved}
-#' @return \item{max.auc }{Maximum AUC for cure prediction achieved; only output
-#' when \code{measure_inc="auc"}.}
+#' @return \item{max_c }{Maximum C-statistic achieved}
+#' @return \item{max_auc }{Maximum AUC for cure prediction achieved; only output
+#' when \code{measure_inc = "auc"}.}
 #' @return \item{selected_index_inc }{Indices of selected variables for the
-#' incidence portion of the model when \code{fdr_control=TRUE}. If none
+#' incidence portion of the model when \code{fdr_control = TRUE}. If none
 #' selected, \code{int(0)} will be returned.}
 #' @return \item{selected_index_lat }{Indices of selected variables for the
-#' latency portion of the model when \code{fdr_control=TRUE}. If none selected,
+#' latency portion of the model when \code{fdr_control = TRUE}. If none selected,
 #' \code{int(0)} will be returned.}
 #' @return \item{call}{the matched call.}
 #'
@@ -139,6 +141,9 @@
 #' Byrd, J. C., Archer, K. J. (2022) Controlled variable selection in Weibull
 #' mixture cure models for high-dimensional data. \emph{Statistics in Medicine},
 #' \bold{41}(22), 4340--4366.
+#' @references Hastie, T., Taylor J., Tibshirani R., Walther G. (2007) Forward
+#' stagewise regression and the monotone lasso. \emph{Electron J Stat},
+#' \bold{1}:1--29.
 #'
 #' @srrstats {G1.0} *Statistical Software should list at least one primary reference from published academic literature.*
 #' @srrstats {G1.1} *Statistical Software should document whether the algorithm(s) it implements are: The first implementation of a novel algorithm *
@@ -171,7 +176,6 @@
 #' @srrstats {RE4.0} *Regression Software should return some form of "model" object, generally through using or modifying existing class structures for model objects (such as `lm`, `glm`, or model objects from other packages), or creating a new class of model objects.*
 #' @srrstats {RE4.4} *The specification of the model, generally as a formula (via `formula()`)*
 #' @srrstats {RE4.8} *Response variables, and associated "metadata" where applicable.*
-#' @seealso \code{\link{curegmifs}}
 #'
 #' @examples
 #' library(survival)

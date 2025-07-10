@@ -1,5 +1,6 @@
 #' Dimension method for mixturecure objects
 #'
+#' @description Dimension method for \code{mixturecure} objects.
 #' @param x An object of class `mixturecure`.
 #'
 #' @return \item{nobs}{ number of subjects in the dataset.}

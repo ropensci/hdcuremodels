@@ -1,5 +1,7 @@
-#' Return Model Family and Fitting Algorithm for Mixture Cure Model Fits
+#' Return model family and fitting algorithm for mixturecure model fits
 #'
+#' @description Return model family and fitting algorithm for\code{mixturecure}
+#' model fits.
 #' @param object an object of class \code{mixturecure}
 #' @param  ... other arguments.
 #'

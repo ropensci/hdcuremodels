@@ -2,7 +2,7 @@
 % Please edit documentation in R/formula.R
 \name{formula.mixturecure}
 \alias{formula.mixturecure}
-\title{Extract Model Formula for mixturecure Object}
+\title{Extract model formula for mixturecure object}
 \usage{
 \method{formula}{mixturecure}(x, ...)
 }
@@ -16,7 +16,7 @@ a formula representing the incidence and variables for the latency
 portion of the model
 }
 \description{
-Extract Model Formula for mixturecure Object
+Extract the model formula for \code{mixturecure} object
 }
 \examples{
 library(survival)

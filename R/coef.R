@@ -1,8 +1,8 @@
-#' Extract model coefficients from a fitted mixture cure object
+#' Extract model coefficients from a fitted mixturecure object
 #'
 #' @description
 #' \code{coef.mixturecure} is a generic function which extracts the model
-#' coefficients from a fitted mixture cure model object fit using
+#' coefficients from a fitted \code{mixturecure} model object fit using
 #' \code{curegmifs}, \code{cureem}, \code{cv_curegmifs}, or \code{cv_cureem}.
 #'
 #' @aliases coefficients
@@ -12,8 +12,8 @@
 #' @param model_select either a case-sensitive parameter for models fit using
 #' \code{curegmifs} or \code{cureem} or any numeric step along the solution path
 #' can be selected. The default is \code{model_select = "AIC"} which calculates
-#' the predicted values using the coefficients from the model having the lowest
-#' AIC. The complete list of options are:
+#' the predicted values using the coefficients from the model achieving the
+#' minimum AIC. The complete list of options are:
 #' \itemize{
 #'     \item \code{"AIC"} for the minimum AIC (default).
 #'     \item \code{"mAIC"} for the minimum modified AIC.
@@ -30,8 +30,18 @@
 #' \code{cv_cureem}.
 #' @param ... other arguments.
 #'
-#' @return a list of estimated parameters extracted from the model object using
-#' the model selection criterion
+#' @return \item{rate}{ estimated rate parameter when fitting a Weibull or
+#' exponential mixture cure model.}
+#' @return \item{shape}{ estimated shape parameter when fitting a Weibull
+#' mixture cure model.}
+#' @return \item{b0}{ estimated intercept for the incidence portion of the
+#' mixture cure model.}
+#' @return \item{beta_inc}{ the vector of coefficient estimates for the
+#' incidence portion of the mixture cure model.}
+#' @return \item{beta_lat}{ the vector of coefficient estimates for the
+#' latency portion of the mixture cure model.}
+#' @return \item{p_uncured}{ a vector of probabilities from the incidence
+#' portion of the fitted model representing the P(uncured).}
 #'
 #' @srrstats {G1.4} *Software should use [`roxygen2`](https://roxygen2.r-lib.org/) to document all functions.*
 #' @srrstats {G5.2b} *Explicit tests should demonstrate conditions which trigger every one of those messages, and should compare the result with expected values.*

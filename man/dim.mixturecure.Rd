@@ -17,7 +17,7 @@
 \item{p_latency}{ number of variables in the latency portion of the model.}
 }
 \description{
-Dimension method for mixturecure objects
+Dimension method for \code{mixturecure} objects.
 }
 \examples{
 library(survival)

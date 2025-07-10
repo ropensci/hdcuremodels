@@ -2,9 +2,9 @@
 #'
 #' @description
 #' Fits a penalized Weibull or exponential mixture cure model using the
-#' generalized monotone incremental forward stagewise (GMIFS) algorithm and
-#' yields solution paths for parameters in the incidence and latency portions of
-#' the model.
+#' generalized monotone incremental forward stagewise (GMIFS) algorithm (Hastie
+#' et al 2007) and yields solution paths for parameters in the incidence and
+#' latency portions of the model.
 #'
 #' @param formula an object of class "\code{formula}" (or one that can be
 #' coerced to that class): a symbolic description of the model to be fitted. The
@@ -99,6 +99,9 @@
 #' Byrd, J. C., Archer, K. J. (2022) Controlled variable selection in Weibull
 #' mixture cure models for high-dimensional data. \emph{Statistics in Medicine},
 #' \bold{41}(22), 4340--4366.
+#' @references Hastie, T., Taylor J., Tibshirani R., Walther G. (2007) Forward
+#' stagewise regression and the monotone lasso. \emph{Electron J Stat},
+#' \bold{1}:1--29.
 #'
 #' @srrstats {G1.0} *Statistical Software should list at least one primary reference from published academic literature.*
 #' @srrstats {G1.1} *Statistical Software should document whether the algorithm(s) it implements are: The first implementation of a novel algorithm *

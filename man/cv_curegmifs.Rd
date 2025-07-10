@@ -2,7 +2,8 @@
 % Please edit documentation in R/cv_curegmifs.R
 \name{cv_curegmifs}
 \alias{cv_curegmifs}
-\title{Fit a penalized parametric mixture cure model using the GMIFS algorithm with
+\title{Fit a penalized parametric mixture cure model using the generalized monotone
+incremental forward stagewise (GMIFS) algorithm (Hastie et al 2007) with
 cross-validation for model selection}
 \usage{
 cv_curegmifs(
@@ -71,7 +72,7 @@ FDR-controlled variable selection and indices of selected variables are
 returned (default is FALSE).}
 
 \item{fdr}{numeric value in (0, 1) range specifying the target FDR level to
-use for variable selection when \code{fdr_control=TRUE} (default is 0.2).}
+use for variable selection when \code{fdr_control = TRUE} (default is 0.2).}
 
 \item{epsilon}{small numeric value reflecting incremental value used to
 update a coefficient at a given step (default is 0.001).}
@@ -97,10 +98,11 @@ coefficients.
 \item \code{alpha} a numeric value for the shape parameter
 when \code{model = "weibull"}.
 }
-If not supplied or improperly supplied,}
+If \code{inits} is not specified or improperly supplied, initialization is
+automatically provided by the function.}
 
 \item{n_folds}{an integer specifying the number of folds for the k-fold
-cross-valiation procedure (default is 5).}
+cross-validation procedure (default is 5).}
 
 \item{measure_inc}{character string specifying the evaluation criterion used
 in selecting the optimal \eqn{\lambda_b} which can be either
@@ -157,23 +159,23 @@ model is fit.}
 
 \item{logLik }{Log-likelihood value.}
 
-\item{selected.step.inc }{Iteration step selected for the incidence
+\item{selected_step_inc }{Iteration step selected for the incidence
 portion of the model using cross-validation. NULL when fdr_control is TRUE.}
 
-\item{selected.step.lat }{Iteration step selected for the latency
+\item{selected_step_lat }{Iteration step selected for the latency
 portion of the model using cross-validation. NULL when fdr_control is TRUE.}
 
-\item{max.c }{Maximum C-statistic achieved}
+\item{max_c }{Maximum C-statistic achieved}
 
-\item{max.auc }{Maximum AUC for cure prediction achieved; only output
-when \code{measure_inc="auc"}.}
+\item{max_auc }{Maximum AUC for cure prediction achieved; only output
+when \code{measure_inc = "auc"}.}
 
 \item{selected_index_inc }{Indices of selected variables for the
-incidence portion of the model when \code{fdr_control=TRUE}. If none
+incidence portion of the model when \code{fdr_control = TRUE}. If none
 selected, \code{int(0)} will be returned.}
 
 \item{selected_index_lat }{Indices of selected variables for the
-latency portion of the model when \code{fdr_control=TRUE}. If none selected,
+latency portion of the model when \code{fdr_control = TRUE}. If none selected,
 \code{int(0)} will be returned.}
 
 \item{call}{the matched call.}
@@ -203,10 +205,12 @@ Fu, H., Nicolet, D., Mrozek, K., Stone, R. M., Eisfeld, A. K.,
 Byrd, J. C., Archer, K. J. (2022) Controlled variable selection in Weibull
 mixture cure models for high-dimensional data. \emph{Statistics in Medicine},
 \bold{41}(22), 4340--4366.
+
+Hastie, T., Taylor J., Tibshirani R., Walther G. (2007) Forward
+stagewise regression and the monotone lasso. \emph{Electron J Stat},
+\bold{1}:1--29.
 }
 \seealso{
-\code{\link{curegmifs}}
-
 \code{\link{curegmifs}}
 }
 \keyword{models}

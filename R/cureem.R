@@ -1,9 +1,9 @@
 #' Fit penalized mixture cure model using the E-M algorithm
 #'
 #' @description
-#' Fits a penalized parametric and semi-parametric mixture cure model (MCM)
+#' Fits penalized parametric and semi-parametric mixture cure models (MCM)
 #' using the E-M algorithm with user-specified penalty parameters. The lasso
-#' (L1), MCP, and SCAD penalty is supported for the Cox MCM while only lasso is
+#' (L1), MCP, and SCAD penalty are supported for the Cox MCM while only lasso is
 #' currently supported for parametric MCMs.
 #'
 #' @param formula an object of class "\code{formula}" (or one that can be
@@ -103,7 +103,7 @@
 #' "exponential").}
 #' @return \item{scale}{Logical value indicating whether the predictors were
 #' centered and scaled.}
-#' @return \item{method}{Character string indicating the EM alogoritm was used
+#' @return \item{method}{Character string indicating the EM algorithm was used
 #' in fitting the mixture cure model.}
 #' @return \item{rate_path}{Vector representing the solution path of the rate
 #' parameter for the Weibull or exponential density in the latency portion of
