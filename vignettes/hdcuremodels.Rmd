@@ -1,5 +1,5 @@
 ---
-title: "hdcuremodels-vignette"
+title: "Estimating Cure Models in High Dimensions: A Guide with hdcuremodels"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{hdcuremodels-vignette}

@@ -26,7 +26,8 @@ family.mixturecure <- function(object, ...) {
   if (!("mixturecure" %in% class(object))) {
     stop("Error: class of object must be mixturecure")
   }
+  model <- paste0(toupper(substr(object$model, 1, 1)), substr(object$model, 2, nchar(object$model)))
   cat("\n")
-  cat("Family: ", object$model, "\n")
-  cat("Algorithm: ", object$method, "\n\n")
+  cat("Family:", model, "\n")
+  cat("Algorithm:", object$method, "\n\n")
 }

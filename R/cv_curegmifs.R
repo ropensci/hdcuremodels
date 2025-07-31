@@ -266,7 +266,7 @@ cv_curegmifs <- function(formula, data, subset, x_latency = NULL,
     length(time) != length(event)) {
     stop("Error: Input dimension mismatch")
   }
-  if (class(x_inc)[1] == "data.frame" || class(x_lat)[1] == "data.frame") {
+  if (is.data.frame(x_inc) || is.data.frame(x_lat)) {
     x_inc <- as.matrix(x_inc)
     x_lat <- as.matrix(x_lat)
   }

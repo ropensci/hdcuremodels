@@ -16,15 +16,14 @@ test_that("cureem works correctly", {
                 model = "cox", penalty = "lasso", lambda_inc = 0.1,
                 lambda_lat = 0.1, gamma_inc = 6, gamma_lat = 10
   )
-  expect_equal(names(fit), c("b_path", "beta_path", "b0_path", "logLik_inc",
-                             "logLik_lat", "x_incidence", "x_latency", "y",
+  expect_equal(names(fit), c("b_path", "beta_path", "b0_path", "logLik",
+                             "x_incidence", "x_latency", "y",
                              "model", "scale", "method", "call", "cv" ))
   expect_true(class(fit) == "mixturecure")
   expect_true(class(fit$b_path)[1] == "matrix")
   expect_true(class(fit$beta_path)[1] == "matrix")
   expect_true(class(fit$b0_path) == "numeric")
-  expect_true(class(fit$logLik_inc) == "numeric")
-  expect_true(class(fit$logLik_lat) == "numeric")
+  expect_true(class(fit$logLik) == "numeric")
   expect_equal(round(fit$b0_path[1], 7), 0.5035067)
 
   fit <- cureem(Surv(Time, Censor) ~ .,
@@ -32,30 +31,28 @@ test_that("cureem works correctly", {
                 model = "cox", penalty = "MCP", lambda_inc = 0.1,
                 lambda_lat = 0.1, gamma_inc = 6, gamma_lat = 10
   )
-  expect_equal(names(fit), c("b_path", "beta_path", "b0_path", "logLik_inc",
-                             "logLik_lat", "x_incidence", "x_latency", "y",
+  expect_equal(names(fit), c("b_path", "beta_path", "b0_path", "logLik",
+                             "x_incidence", "x_latency", "y",
                              "model", "scale", "method", "call", "cv" ))
   expect_true(class(fit) == "mixturecure")
   expect_true(class(fit$b_path)[1] == "matrix")
   expect_true(class(fit$beta_path)[1] == "matrix")
   expect_true(class(fit$b0_path) == "numeric")
-  expect_true(class(fit$logLik_inc) == "numeric")
-  expect_true(class(fit$logLik_lat) == "numeric")
+  expect_true(class(fit$logLik) == "numeric")
 
   fit <- cureem(Surv(Time, Censor) ~ .,
                 data = training, x_latency = training,
                 model = "cox", penalty = "SCAD", lambda_inc = 0.1,
                 lambda_lat = 0.1, gamma_inc = 6, gamma_lat = 10
   )
-  expect_equal(names(fit), c("b_path", "beta_path", "b0_path", "logLik_inc",
-                             "logLik_lat", "x_incidence", "x_latency", "y",
+  expect_equal(names(fit), c("b_path", "beta_path", "b0_path", "logLik",
+                             "x_incidence", "x_latency", "y",
                              "model", "scale", "method", "call", "cv" ))
   expect_true(class(fit) == "mixturecure")
   expect_true(class(fit$b_path)[1] == "matrix")
   expect_true(class(fit$beta_path)[1] == "matrix")
   expect_true(class(fit$b0_path) == "numeric")
-  expect_true(class(fit$logLik_inc) == "numeric")
-  expect_true(class(fit$logLik_lat) == "numeric")
+  expect_true(class(fit$logLik) == "numeric")
 
 
   fit <- cureem(Surv(Time, Censor) ~ .,
@@ -63,16 +60,15 @@ test_that("cureem works correctly", {
                 model = "weibull", penalty = "lasso", lambda_inc = 0.1,
                 lambda_lat = 0.1, gamma_inc = 6, gamma_lat = 10
   )
-  expect_equal(names(fit), c("b_path", "beta_path", "b0_path", "logLik_inc",
-                             "logLik_lat", "x_incidence", "x_latency", "y",
-                             "model", "scale", "method", "call", "rate",
-                             "alpha", "cv" ))
+  expect_equal(names(fit), c("b_path", "beta_path", "b0_path", "logLik",
+                             "x_incidence", "x_latency", "y",
+                             "model", "scale", "method", "call", "rate_path",
+                             "alpha_path", "cv" ))
   expect_true(class(fit) == "mixturecure")
   expect_true(class(fit$b_path)[1] == "matrix")
   expect_true(class(fit$beta_path)[1] == "matrix")
   expect_true(class(fit$b0_path) == "numeric")
-  expect_true(class(fit$logLik_inc) == "numeric")
-  expect_true(class(fit$logLik_lat) == "numeric")
+  expect_true(class(fit$logLik) == "numeric")
   expect_equal(round(fit$b0_path[1], 7), 0.2008767)
 
   fit <- cureem(Surv(Time, Censor) ~ .,
@@ -80,16 +76,15 @@ test_that("cureem works correctly", {
                 model = "exponential", penalty = "lasso", lambda_inc = 0.1,
                 lambda_lat = 0.1, gamma_inc = 6, gamma_lat = 10
   )
-  expect_equal(names(fit), c("b_path", "beta_path", "b0_path", "logLik_inc",
-                             "logLik_lat", "x_incidence", "x_latency", "y",
-                             "model", "scale", "method", "call", "rate",
+  expect_equal(names(fit), c("b_path", "beta_path", "b0_path", "logLik",
+                             "x_incidence", "x_latency", "y",
+                             "model", "scale", "method", "call", "rate_path",
                               "cv" ))
   expect_true(class(fit) == "mixturecure")
   expect_true(class(fit$b_path)[1] == "matrix")
   expect_true(class(fit$beta_path)[1] == "matrix")
   expect_true(class(fit$b0_path) == "numeric")
-  expect_true(class(fit$logLik_inc) == "numeric")
-  expect_true(class(fit$logLik_lat) == "numeric")
+  expect_true(class(fit$logLik) == "numeric")
 
   expect_error(cureem(training$Time))
   training$group <- gl(2, 30)

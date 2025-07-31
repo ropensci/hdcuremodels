@@ -29,9 +29,6 @@ formula.mixturecure <- function(x, ...) {
   if (is.null(x$call))
     form <- NULL
   else
-    form <- formula(x$call)
-  latency <- as.list(x$call)$x_latency
-  incidence <- list(formula = form, data = as.list(x$call)$data)
-  latency <- list(formula = form, data = as.list(x$call)$x_latency)
-  list(incidence = incidence, latency = latency)
+    form <- getCall(x)
+  form
 }

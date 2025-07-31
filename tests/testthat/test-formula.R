@@ -8,6 +8,5 @@ test_that("formula function works correctly", {
                 model = "cox", penalty = "lasso", lambda_inc = 0.1,
                 lambda_lat = 0.1, gamma_inc = 6, gamma_lat = 10
   )
-  expect_type(formula(fit)$incidence$formula, "language")
-  expect_type(formula(fit)$latency$formula, "language")
+  expect(is.call(formula(fit)))
 })

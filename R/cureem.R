@@ -252,7 +252,7 @@ cureem <- function(formula, data, subset, x_latency = NULL,
   if (nrow(x_inc) != nrow(x_lat) || nrow(x_lat) != length(time) || length(time) != length(event)) {
     stop("Error: Input dimension mismatch")
   }
-  if (class(x_inc)[1] == "data.frame" || class(x_lat)[1] == "data.frame") {
+  if (is.data.frame(x_inc) || is.data.frame(x_lat)) { #
     x_inc <- as.matrix(x_inc)
     x_lat <- as.matrix(x_lat)
   }
@@ -316,18 +316,19 @@ cureem <- function(formula, data, subset, x_latency = NULL,
   b0_path <- fit$itct_path
   logLik_inc <- fit$lik_inc
   logLik_lat <- fit$lik_lat
+  logLik <- logLik_inc + logLik_lat
   output <- list(
     b_path = b_path, beta_path = beta_path,
-    b0_path = b0_path, logLik_inc = logLik_inc,
-    logLik_lat = logLik_lat, x_incidence = x_inc,
+    b0_path = b0_path, logLik = logLik,
+    x_incidence = x_inc,
     x_latency = x_lat, y = y, model = model, scale = scale,
     method = "EM", call = cl
   )
   if (model %in% c("exponential", "weibull")) {
-    output$rate <- fit$lambda_path
+    output$rate_path <- fit$lambda_path
   }
   if (model == "weibull") {
-    output$alpha <- fit$alpha_path
+    output$alpha_path <- fit$alpha_path
   }
   output$cv <- FALSE
   class(output) <- "mixturecure"

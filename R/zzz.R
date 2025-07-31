@@ -443,8 +443,7 @@ cure.em <-
     if (nrow(x.inc) != nrow(x.lat) | nrow(x.lat) != length(time) |
         length(time) != length(event))
       stop("Error: Input dimension mismatch")
-    if (class(x.inc)[1] == "data.frame" | class(x.lat)[1] ==
-        "data.frame") {
+    if (is.data.frame(x.inc) | is.data.frame(x.lat)) {
       x.inc <- as.matrix(x.inc)
       x.lat <- as.matrix(x.lat)
     }
@@ -2465,11 +2464,7 @@ select_model <- function(object, model_select) {
   } else if (object$model == "cox") {
     df <- vars_inc + vars_lat + 1
   }
-  if (object$method == "EM") {
-    logLik <- object$logLik_inc + object$logLik_lat
-  } else {
-    logLik <- object$logLik
-  }
+  logLik <- object$logLik
   p <- dim(object$x_incidence)[2] + dim(object$x_latency)[2]
   AIC <- 2 * df - 2 * logLik
   cAIC <- AIC + (2 * df * (df + 1)) / (length(object$y) - df - 1)
@@ -3722,4 +3717,46 @@ identify_missing <- function(formula, data) {
   mf <- model.frame(formula = formula, data = data, na.action = na.omit)
   omitted <- attr(mf, "na.action")
   as.numeric(omitted)
+}
+
+#' Number of parameters in fitted mixture cure model
+#'
+#' @description
+#' This function returns the number of parameters in a user-specified model
+#' criterion or step for a \code{curegmifs}, \code{cureem},
+#' \code{cv_curegmifs} or \code{cv_cureem} fitted object.
+#'
+#' @param object a \code{mixturecure} object resulting from \code{curegmifs},
+#' \code{cureem}, \code{cv_curegmifs}, \code{cv_cureem}.
+#' @param model_select either a case-sensitive parameter for models fit using
+#' \code{curegmifs} or \code{cureem} or any numeric step along the solution path
+#' can be selected. The default is \code{model_select = "AIC"} which calculates
+#' the predicted values using the coefficients from the model achieving the
+#' minimum AIC. The complete list of options are:
+#' \itemize{
+#'     \item \code{"AIC"} for the minimum AIC (default).
+#'     \item \code{"mAIC"} for the minimum modified AIC.
+#'     \item \code{"cAIC"} for the minimum corrected AIC.
+#'     \item \code{"BIC"}, for the minimum BIC.
+#'     \item \code{"mBIC"} for the minimum modified BIC.
+#'     \item \code{"EBIC"} for the minimum extended BIC.
+#'     \item \code{"logLik"} for the step that maximizes the
+#' log-likelihood.
+#'     \item \code{n} where n is any numeric value from the
+#'     solution path.
+#'   }
+#' This option has no effect for objects fit using \code{cv_curegmifs} or
+#' \code{cv_cureem}.
+#'
+#' @return number of paramaters of the fitted mixture cure model using the
+#' specified criteria.
+#'
+#'
+#' @srrstats {G1.4} *Software should use [`roxygen2`](https://roxygen2.r-lib.org/) to document all functions.*
+npar_mixturecure <- function (object, model_select = "AIC")
+{
+  coef <- coef(object, model_select = model_select)
+  n <- length(coef$rate) + length(coef$shape) + length(coef$b0) +
+    sum(coef$beta_inc != 0) + sum(coef$beta_lat != 0)
+  return(n)
 }

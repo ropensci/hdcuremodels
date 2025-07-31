@@ -49,7 +49,8 @@
 #' )
 #' print(fit)
 print.mixturecure <- function(x, max = 6, ...)  {
-  cat("mixturecure object fit using ", x$model, x$method, "algorithm\n")
+  model <- paste0(toupper(substr(x$model, 1, 1)), substr(x$model, 2, nchar(x$model)))
+  cat("mixturecure object fit using", model, x$method, "algorithm\n")
   cat("\n")
   if (x$cv) {
     cat("$b\n", head(x$b, n = max), "\n")

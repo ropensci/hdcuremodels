@@ -49,14 +49,11 @@
 #' )
 #' logLik(fit, model_select = "AIC")
 logLik.mixturecure <- function(object, model_select = "AIC", ...) {
-  if (!("mixturecure" %in% class(object))) {
-    stop("Error: class of object must be mixturecure")
-  }
   if (object$cv) {
     if (object$method == "GMIFS") {
       logLik <- object$logLik
     } else {
-    logLik <- object$logLik.inc + object$logLik.lat
+      logLik <- object$logLik.inc + object$logLik.lat
     }
   } else {
     if (is.numeric(model_select) && model_select > length(object$logLik))
@@ -65,5 +62,6 @@ logLik.mixturecure <- function(object, model_select = "AIC", ...) {
       model_select <- select_model(object, model_select)$select
     logLik <- object$logLik[model_select]
   }
-  logLik
+  structure(logLik, df = npar_mixturecure(object, model_select),
+            class = "logLik")
 }

@@ -128,7 +128,7 @@ generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
   ## unpenalized
   if (nonp > 0) {
     x_u <- matrix(rnorm(n * nonp, sd = sd), ncol = nonp)
-    colnames(x_u) <- paste0("U",1:dim(x_u)[2])
+    colnames(x_u) <- paste0("U", 1:dim(x_u)[2])
     w_u <- x_u
     if (!same_signs) { # true signals from two parts are randomly generated
       b_u <- rnorm(nonp, mean = 0.3, sd = 0.1)
@@ -214,10 +214,10 @@ generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
   delta <- ifelse(t > u | y == 0, 0, 1)
   time <- pmin(t, u)
   time[y == 0] <- u[y == 0]
-  colnames(x_u) <- paste0("U",1:dim(x_u)[2])
-  colnames(w_u) <- paste0("U",1:dim(w_u)[2])
   ## training and test
   if (nonp > 0) {
+    colnames(x_u) <- paste0("U",1:dim(x_u)[2])
+    colnames(w_u) <- paste0("U",1:dim(w_u)[2])
     tr_data <- list(
       x_u = x_u[tr_i, , drop=FALSE], x_p = x_p[tr_i, , drop = FALSE],
       w_u = w_u[tr_i, , drop = FALSE],
