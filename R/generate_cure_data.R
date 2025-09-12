@@ -45,13 +45,18 @@
 #' indicates penalized covariates and is equal to the value passed to
 #' \code{j}.
 #' }
-#' @return \item{testing}{testing data.frame which includes Time, Censor, and
+#' @return \item{training_y}{the true status for the training set: uncured = 1;
+#' cured = 0}
+#' @return \item{testing}{testing data.frame which includes Time, Censor,  Y
+#' (the true uncured = 1; cured = 0 status), and
 #' covariates. Variables prefixed with \code{"U"} indicates unpenalized
 #' covariates and is equal to the value
 #' passed to \code{nonp} (default is 2). Variables prefixed with \code{"X"}
 #' indicates penalized covariates and is equal to the value passed to
 #' \code{j}.
 #' }
+#' @return \item{testing_y}{the true status for the testing set: uncured = 1;
+#' cured = 0}
 #' @return \item{parameters}{a list including: the indices of true incidence
 #' signals (\code{nonzero_b}), indices of true latency signals
 #' (\code{nonzero_beta}), unpenalized incidence parameter values (\code{b_u}),
@@ -222,22 +227,26 @@ generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
       x_u = x_u[tr_i, , drop=FALSE], x_p = x_p[tr_i, , drop = FALSE],
       w_u = w_u[tr_i, , drop = FALSE],
       w_p = w_p[tr_i, , drop = FALSE], time = time[tr_i], y = y[tr_i],
-      delta = delta[tr_i]
+      delta = delta[tr_i],
+      y = y[tr_i]
     )
     te_data <- list(
      x_u = x_u[te_i, , drop = FALSE], x_p = x_p[te_i, , drop = FALSE],
      w_u = w_u[te_i, , drop = FALSE],
-      w_p = w_p[te_i, , drop = FALSE], time = time[te_i], y = y[te_i],
-      delta = delta[te_i]
+     w_p = w_p[te_i, , drop = FALSE], time = time[te_i], y = y[te_i],
+     delta = delta[te_i],
+     y = y[tr_i]
     )
    training <- data.frame(
       Time = tr_data$time, Censor = tr_data$delta,
       tr_data$x_u, tr_data$x_p
     )
+   training_y <- tr_data$y
    testing <- data.frame(
       Time = te_data$time, Censor = te_data$delta,
       te_data$x_u, te_data$x_p
     )
+   testing_y <- te_data$y
     parameters <- list(
       nonzero_b = nonzero_b, nonzero_beta = nonzero_beta,
       b_u = b_u, beta_u = beta_u, b_p_nz = b_p[nonzero_b],
@@ -247,26 +256,29 @@ generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
     tr_data <- list(
       x_p = x_p[tr_i, , drop = FALSE],
       w_p = w_p[tr_i, , drop = FALSE ], time = time[tr_i], y = y[tr_i],
-      delta = delta[tr_i]
+      delta = delta[tr_i], y = y[tr_i]
     )
     te_data <- list(
       x_p = x_p[te_i, , drop = FALSE],
       w_p = w_p[te_i, , drop = FALSE], time = time[te_i], y = y[te_i],
-      delta = delta[te_i]
+      delta = delta[te_i], y = y[te_i]
     )
     training <- data.frame(
       Time = tr_data$time, Censor = tr_data$delta,
       tr_data$x_p
     )
+    training_y <- te_data$y
     testing <- data.frame(
       Time = te_data$time, Censor = te_data$delta,
       te_data$x_p
     )
+    testing_y <- te_data$y
     parameters <- list(
       nonzero_b = nonzero_b, nonzero_beta = nonzero_beta,
       b_p_nz = b_p[nonzero_b],
       beta_p_nz = beta_p[nonzero_beta], itct = itct
     )
   }
-  return(list(training = training, testing = testing, parameters = parameters))
+  return(list(training = training, training_y = training_y, testing = testing,
+              testing_y = testing_y, parameters = parameters))
 }

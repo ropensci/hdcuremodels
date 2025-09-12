@@ -31,6 +31,7 @@ Suggests:
     Rdsdp,
     rmarkdown,
     roxygen2,
+    srr,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 LazyData: true

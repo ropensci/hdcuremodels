@@ -78,13 +78,20 @@ indicates penalized covariates and is equal to the value passed to
 \code{j}.
 }
 
-\item{testing}{testing data.frame which includes Time, Censor, and
+\item{training_y}{the true status for the training set: uncured = 1;
+cured = 0}
+
+\item{testing}{testing data.frame which includes Time, Censor,  Y
+(the true uncured = 1; cured = 0 status), and
 covariates. Variables prefixed with \code{"U"} indicates unpenalized
 covariates and is equal to the value
 passed to \code{nonp} (default is 2). Variables prefixed with \code{"X"}
 indicates penalized covariates and is equal to the value passed to
 \code{j}.
 }
+
+\item{testing_y}{the true status for the testing set: uncured = 1;
+cured = 0}
 
 \item{parameters}{a list including: the indices of true incidence
 signals (\code{nonzero_b}), indices of true latency signals

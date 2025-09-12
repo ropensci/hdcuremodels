@@ -47,9 +47,10 @@ data <- generate_cure_data(n = 200, j = 10, n_true = 5, a = 1.8, rho = 0.2)
 training <- data$training
 testing <- data$testing
 head(training)
+head(data$training_y)
 ```
 
-The training and testing data.frames have the same structure which includes Time, Censor, and covariates. Covariates prefixed with "U" are the unpenalized covariates and is equal to the value passed to `nonp` (default is 2). Variables prefixed with "X" are the penalized covariates and is equal to the value passed to `j`. To identify which penalized covariates are truly related to the incidence and latency portions of the model, the user can inspect the indices returned by `nonzero_b` and `nonzero_beta` in the `parameters` component of the list.
+The training and testing data.frames have the same structure which includes Time, Censor, and covariates. Covariates prefixed with "U" are the unpenalized covariates and is equal to the value passed to `nonp` (default is 2). Variables prefixed with "X" are the penalized covariates and is equal to the value passed to `j`. The `training_y` and `testing_y` vectors return represent the true cure status of the subject (1 = uncured; 0 = cured). To identify which penalized covariates are truly related to the incidence and latency portions of the model, the user can inspect the indices returned by `nonzero_b` and `nonzero_beta` in the `parameters` component of the list.
 
 ```{r}
 data$parameters
