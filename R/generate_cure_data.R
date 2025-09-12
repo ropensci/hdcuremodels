@@ -267,7 +267,7 @@ generate_cure_data <- function(n = 400, j = 500, nonp = 2, train_prop = 0.75,
       Time = tr_data$time, Censor = tr_data$delta,
       tr_data$x_p
     )
-    training_y <- te_data$y
+    training_y <- tr_data$y
     testing <- data.frame(
       Time = te_data$time, Censor = te_data$delta,
       te_data$x_p
