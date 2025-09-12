@@ -24,8 +24,10 @@ Imports: doParallel,
          methods,
          survival,
          withr
-Roxygen: list(markdown = TRUE, roclets = c ("namespace", "rd", "srr::srr_stats_roclet"))
+Roxygen: list(markdown = TRUE, roclets = c ("namespace", "rd"))
 RoxygenNote: 7.3.2
+Remotes:
+    ropensci-review-tools/srr
 Suggests: 
     knitr,
     Rdsdp,
