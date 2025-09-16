@@ -27,6 +27,7 @@ Authors:
 Other contributors:
 \itemize{
   \item Tung Lam Nguyen \email{nguyenlamtung10@gmail.com} (Reviewed the package for ROpenSci) [reviewer]
+  \item Panagiotis Papastamoulis \email{papapast@yahoo.gr} (Reviewed the package for ROpenSci) [reviewer]
 }
 
 }
