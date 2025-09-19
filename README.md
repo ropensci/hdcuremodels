@@ -7,7 +7,7 @@
 
 \[![Status at rOpenSci Software Peer
 Review](https://badges.ropensci.org/692_status.svg)\]
-[![R-CMD-check](https://github.com/kelliejarcher/hdcuremodels/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kelliejarcher/hdcuremodels/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/ropensci/hdcuremodels/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci/hdcuremodels/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of hdcuremodels is to allow one to fit a penalized mixture cure
@@ -23,7 +23,7 @@ event.
 You can install the development version of hdcuremodels like so:
 
 ``` r
-remotes::install_github("https://github.com/kelliejarcher/hdcuremodels")
+remotes::install_github("https://github.com/ropensci/hdcuremodels")
 ```
 
 ## Example
