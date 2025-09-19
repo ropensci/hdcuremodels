@@ -8,7 +8,6 @@
 \[![Status at rOpenSci Software Peer
 Review](https://badges.ropensci.org/692_status.svg)\]
 [![R-CMD-check](https://github.com/ropensci/hdcuremodels/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci/hdcuremodels/actions/workflows/R-CMD-check.yaml)
-Badge grade: <!--statsgrade-->silver<!--end-statsgrade-->
 <!-- badges: end -->
 
 The goal of hdcuremodels is to allow one to fit a penalized mixture cure
