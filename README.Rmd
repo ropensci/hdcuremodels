@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # hdcuremodels
 
 <!-- badges: start -->
-[![Status at rOpenSci Software Peer Review](https://badges.ropensci.org/692_status.svg)]
+[![Status at rOpenSci Software Peer Review](https://badges.ropensci.org/692_status.svg)](https://github.com/ropensci/software-review/issues/692)
 [![R-CMD-check](https://github.com/ropensci/hdcuremodels/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci/hdcuremodels/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
