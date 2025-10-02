@@ -8,7 +8,7 @@ test_that("logLik function works correctly", {
                    model = "weibull", thresh = 1e-4, maxit = 2000,
                    epsilon = 0.01, verbose = FALSE
   )
-  expect(round(logLik(fit), 5), -9.22893)
-  expect(length(logLik(fit)), 1)
+  expect_equal(round(logLik(fit), 5), structure(-9.22893, df = 26))
+  expect_equal(length(logLik(fit)), 1)
   expect_type(logLik(fit), "double")
 })

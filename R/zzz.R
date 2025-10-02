@@ -2474,7 +2474,7 @@ select_model <- function(object, model_select) {
   EBIC <- log(length(object$y)) * df + 2 * (1 - .5) * log(choose(p, df)) -
     2 * logLik
   if (object$model != "cox") {
-    if (object$mode == "weibull") {
+    if (object$model == "weibull") {
       if (!exists("alpha_path", object)) {
         object$alpha_path <- object$alpha
       }
