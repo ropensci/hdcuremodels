@@ -8,5 +8,5 @@ test_that("nobs function works correctly", {
                 model = "cox", penalty = "lasso", lambda_inc = 0.1,
                 lambda_lat = 0.1, gamma_inc = 6, gamma_lat = 10
   )
-  expect(nobs(fit), 60)
+  expect_equal(nobs(fit), 60)
 })
