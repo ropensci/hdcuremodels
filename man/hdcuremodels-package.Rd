@@ -11,8 +11,8 @@ Provides functions for fitting various penalized parametric and semi-parametric 
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/kelliejarcher/hdcuremodels}
-  \item Report bugs at \url{https://github.com/kelliejarcher/hdcuremodels/issues}
+  \item \url{https://github.com/ropensci/hdcuremodels}
+  \item Report bugs at \url{https://github.com/ropensci/hdcuremodels/issues}
 }
 
 }
