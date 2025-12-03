@@ -224,23 +224,25 @@
 #' @keywords regression
 #'
 #' @examples
+#' \dontrun{
 #' library(survival)
 #' withr::local_seed(1234)
-#' temp <- generate_cure_data(n = 200, j = 25, n_true = 5, a = 1.8)
+#' temp <- generate_cure_data(n = 200, j = 25, n_true = 5, a = 1.8, rho = 0.2)
 #' training <- temp$training
-# Fit a penalized Cox MCM selecting parameters using 2-fold CV
+#' # Fit a penalized Cox MCM selecting parameters using 2-fold CV
 #' fit.cv <- cv_cureem(Surv(Time, Censor) ~ .,
 #'   data = training,
 #'   x_latency = training, fdr_control = FALSE,
 #'   grid_tuning = FALSE, nlambda_inc = 10, nlambda_lat = 10,
-#'   n_folds = 2, seed = 23, verbose = TRUE
+#'   n_folds = 2, seed = 23, verbose = FALSE
 #' )
-# Select variables from a penalized Weibull MCM with FDR control and CV
 #' fit.cv.fdr <- cv_cureem(Surv(Time, Censor) ~ .,
-#'   data = training,
-#'   x_latency = training, model = "weibull", penalty = "lasso",
-#'   fdr_control = TRUE, grid_tuning = FALSE, nlambda_inc = 10,
-#'   nlambda_lat = 10, n_folds = 2, seed = 23, verbose = TRUE)
+#'    data = training,
+#'    x_latency = training, model = "weibull", penalty = "lasso",
+#'    fdr_control = TRUE, grid_tuning = FALSE, nlambda_inc = 10,
+#'    nlambda_lat = 10, n_folds = 2, seed = 23, verbose = TRUE
+#'    )
+#' }
 cv_cureem <- function(formula, data, subset, x_latency = NULL,
                       model = c("cox", "weibull", "exponential"),
                       penalty = c("lasso", "MCP", "SCAD"),

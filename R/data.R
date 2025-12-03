@@ -330,7 +330,7 @@
 #'   \item{ENSG00000271646}{normalized expression for indicated transcript}
 #'   \item{ENSG00000273018}{normalized expression for indicated transcript}
 #'   \item{ENSG00000273033}{normalized expression for indicated transcript}
-#' }
+#'}
 #' @source <doi:10.1186/s13045-024-01553-6>
 "amltrain"
 #' AML test data
@@ -665,10 +665,227 @@
 #'   \item{ENSG00000271646}{normalized expression for indicated transcript}
 #'   \item{ENSG00000273018}{normalized expression for indicated transcript}
 #'   \item{ENSG00000273033}{normalized expression for indicated transcript}
-#' }
+#'}
 #' @source <doi:10.1186/s13045-024-01553-6>
 #' @srrstats {G1.0} *Statistical Software should list at least one primary reference from published academic literature.*
 #' @srrstats {G1.4} *Software should use [`roxygen2`](https://roxygen2.r-lib.org/) to document all functions.*
 #' @srrstats {G5.1} *Data sets created within, and used to test, a package should be exported (or otherwise made generally available) so that users can confirm tests and run examples.*
 
 "amltest"
+
+#' Pediatric acute myeloid leukemia patients with FLT3-ITD rearrangement data
+#'
+#' Event-free survival for 246 pediatric acute myeloid leukemia patients having
+#' a FLT3-ITD rearrangement along with expression of 200 transcripts from
+#' RNA-sequencing.
+#'
+#'
+#' @format
+#' A data frame with 246 rows (subjects) and 202 columns:
+#' \describe{
+#'   \item{efs}{event-free survival}
+#'   \item{status}{censoring indicator: 1 = event; 0 = censored}
+#'   \item{ENSG00000229807.12}{normalized expression for indicated transcript}
+#'   \item{ENSG00000211459.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000264063.1}{normalized expression for indicated transcript}
+#'   \item{ENSG00000264462.1}{normalized expression for indicated transcript}
+#'   \item{ENSG00000227195.11}{normalized expression for indicated transcript}
+#'   \item{ENSG00000198795.11}{normalized expression for indicated transcript}
+#'   \item{ENSG00000177133.11}{normalized expression for indicated transcript}
+#'   \item{ENSG00000257883.1}{normalized expression for indicated transcript}
+#'   \item{ENSG00000189223.15}{normalized expression for indicated transcript}
+#'   \item{ENSG00000210082.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000142611.17}{normalized expression for indicated transcript}
+#'   \item{ENSG00000054598.9}{normalized expression for indicated transcript}
+#'   \item{ENSG00000147180.17}{normalized expression for indicated transcript}
+#'   \item{ENSG00000275708.1}{normalized expression for indicated transcript}
+#'   \item{ENSG00000227063.5}{normalized expression for indicated transcript}
+#'   \item{ENSG00000179455.10}{normalized expression for indicated transcript}
+#'   \item{ENSG00000243478.9}{normalized expression for indicated transcript}
+#'   \item{ENSG00000239839.7}{normalized expression for indicated transcript}
+#'   \item{ENSG00000274253.5}{normalized expression for indicated transcript}
+#'   \item{ENSG00000198840.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000186407.7}{normalized expression for indicated transcript}
+#'   \item{ENSG00000198763.3}{normalized expression for indicated transcript}
+#'   \item{ENSG00000107562.16}{normalized expression for indicated transcript}
+#'   \item{ENSG00000188536.13}{normalized expression for indicated transcript}
+#'   \item{ENSG00000164821.5}{normalized expression for indicated transcript}
+#'   \item{ENSG00000255833.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000107447.8}{normalized expression for indicated transcript}
+#'   \item{ENSG00000237541.4}{normalized expression for indicated transcript}
+#'   \item{ENSG00000274618.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000206172.8}{normalized expression for indicated transcript}
+#'   \item{ENSG00000198886.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000122592.8}{normalized expression for indicated transcript}
+#'   \item{ENSG00000038427.16}{normalized expression for indicated transcript}
+#'   \item{ENSG00000134755.17}{normalized expression for indicated transcript}
+#'   \item{ENSG00000248527.1}{normalized expression for indicated transcript}
+#'   \item{ENSG00000273018.7}{normalized expression for indicated transcript}
+#'   \item{ENSG00000261377.5}{normalized expression for indicated transcript}
+#'   \item{ENSG00000074964.17}{normalized expression for indicated transcript}
+#'   \item{ENSG00000118113.12}{normalized expression for indicated transcript}
+#'   \item{ENSG00000086548.9}{normalized expression for indicated transcript}
+#'   \item{ENSG00000172037.14}{normalized expression for indicated transcript}
+#'   \item{ENSG00000198744.5}{normalized expression for indicated transcript}
+#'   \item{ENSG00000198899.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000186818.12}{normalized expression for indicated transcript}
+#'   \item{ENSG00000154864.13}{normalized expression for indicated transcript}
+#'   \item{ENSG00000227081.5}{normalized expression for indicated transcript}
+#'   \item{ENSG00000101425.14}{normalized expression for indicated transcript}
+#'   \item{ENSG00000158473.8}{normalized expression for indicated transcript}
+#'   \item{ENSG00000102362.15}{normalized expression for indicated transcript}
+#'   \item{ENSG00000212907.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000121807.6}{normalized expression for indicated transcript}
+#'   \item{ENSG00000138829.12}{normalized expression for indicated transcript}
+#'   \item{ENSG00000185052.12}{normalized expression for indicated transcript}
+#'   \item{ENSG00000111057.11}{normalized expression for indicated transcript}
+#'   \item{ENSG00000228253.1}{normalized expression for indicated transcript}
+#'   \item{ENSG00000188153.14}{normalized expression for indicated transcript}
+#'   \item{ENSG00000166681.14}{normalized expression for indicated transcript}
+#'   \item{ENSG00000198888.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000276141.4}{normalized expression for indicated transcript}
+#'   \item{ENSG00000230076.1}{normalized expression for indicated transcript}
+#'   \item{ENSG00000260314.3}{normalized expression for indicated transcript}
+#'   \item{ENSG00000187164.20}{normalized expression for indicated transcript}
+#'   \item{ENSG00000212443.1}{normalized expression for indicated transcript}
+#'   \item{ENSG00000251692.8}{normalized expression for indicated transcript}
+#'   \item{ENSG00000198727.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000131401.11}{normalized expression for indicated transcript}
+#'   \item{ENSG00000225345.3}{normalized expression for indicated transcript}
+#'   \item{ENSG00000197253.13}{normalized expression for indicated transcript}
+#'   \item{ENSG00000163737.4}{normalized expression for indicated transcript}
+#'   \item{ENSG00000204010.3}{normalized expression for indicated transcript}
+#'   \item{ENSG00000174403.16}{normalized expression for indicated transcript}
+#'   \item{ENSG00000249790.3}{normalized expression for indicated transcript}
+#'   \item{ENSG00000239559.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000142192.21}{normalized expression for indicated transcript}
+#'   \item{ENSG00000151650.8}{normalized expression for indicated transcript}
+#'   \item{ENSG00000198712.1}{normalized expression for indicated transcript}
+#'   \item{ENSG00000124469.12}{normalized expression for indicated transcript}
+#'   \item{ENSG00000105854.13}{normalized expression for indicated transcript}
+#'   \item{ENSG00000197629.6}{normalized expression for indicated transcript}
+#'   \item{ENSG00000278588.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000196565.15}{normalized expression for indicated transcript}
+#'   \item{ENSG00000241743.4}{normalized expression for indicated transcript}
+#'   \item{ENSG00000174059.17}{normalized expression for indicated transcript}
+#'   \item{ENSG00000150760.13}{normalized expression for indicated transcript}
+#'   \item{ENSG00000133742.14}{normalized expression for indicated transcript}
+#'   \item{ENSG00000210196.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000204860.5}{normalized expression for indicated transcript}
+#'   \item{ENSG00000131398.15}{normalized expression for indicated transcript}
+#'   \item{ENSG00000106080.11}{normalized expression for indicated transcript}
+#'   \item{ENSG00000198786.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000248334.6}{normalized expression for indicated transcript}
+#'   \item{ENSG00000169908.12}{normalized expression for indicated transcript}
+#'   \item{ENSG00000171509.16}{normalized expression for indicated transcript}
+#'   \item{ENSG00000008438.5}{normalized expression for indicated transcript}
+#'   \item{ENSG00000130147.16}{normalized expression for indicated transcript}
+#'   \item{ENSG00000180071.20}{normalized expression for indicated transcript}
+#'   \item{ENSG00000168329.14}{normalized expression for indicated transcript}
+#'   \item{ENSG00000147689.16}{normalized expression for indicated transcript}
+#'   \item{ENSG00000136193.17}{normalized expression for indicated transcript}
+#'   \item{ENSG00000170180.22}{normalized expression for indicated transcript}
+#'   \item{ENSG00000146373.16}{normalized expression for indicated transcript}
+#'   \item{ENSG00000172236.18}{normalized expression for indicated transcript}
+#'   \item{ENSG00000244734.4}{normalized expression for indicated transcript}
+#'   \item{ENSG00000239552.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000125618.17}{normalized expression for indicated transcript}
+#'   \item{ENSG00000273983.1}{normalized expression for indicated transcript}
+#'   \item{ENSG00000250361.9}{normalized expression for indicated transcript}
+#'   \item{ENSG00000277775.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000138119.17}{normalized expression for indicated transcript}
+#'   \item{ENSG00000128422.17}{normalized expression for indicated transcript}
+#'   \item{ENSG00000160883.11}{normalized expression for indicated transcript}
+#'   \item{ENSG00000275895.7}{normalized expression for indicated transcript}
+#'   \item{ENSG00000169877.10}{normalized expression for indicated transcript}
+#'   \item{ENSG00000163736.4}{normalized expression for indicated transcript}
+#'   \item{ENSG00000161944.16}{normalized expression for indicated transcript}
+#'   \item{ENSG00000095917.14}{normalized expression for indicated transcript}
+#'   \item{ENSG00000022556.16}{normalized expression for indicated transcript}
+#'   \item{ENSG00000152078.10}{normalized expression for indicated transcript}
+#'   \item{ENSG00000165092.13}{normalized expression for indicated transcript}
+#'   \item{ENSG00000170458.14}{normalized expression for indicated transcript}
+#'   \item{ENSG00000070182.21}{normalized expression for indicated transcript}
+#'   \item{ENSG00000157445.15}{normalized expression for indicated transcript}
+#'   \item{ENSG00000206737.1}{normalized expression for indicated transcript}
+#'   \item{ENSG00000225217.1}{normalized expression for indicated transcript}
+#'   \item{ENSG00000198336.9}{normalized expression for indicated transcript}
+#'   \item{ENSG00000177469.13}{normalized expression for indicated transcript}
+#'   \item{ENSG00000198695.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000113763.12}{normalized expression for indicated transcript}
+#'   \item{ENSG00000223609.11}{normalized expression for indicated transcript}
+#'   \item{ENSG00000206177.7}{normalized expression for indicated transcript}
+#'   \item{ENSG00000164684.13}{normalized expression for indicated transcript}
+#'   \item{ENSG00000197632.9}{normalized expression for indicated transcript}
+#'   \item{ENSG00000177575.13}{normalized expression for indicated transcript}
+#'   \item{ENSG00000004939.15}{normalized expression for indicated transcript}
+#'   \item{ENSG00000121053.6}{normalized expression for indicated transcript}
+#'   \item{ENSG00000259207.9}{normalized expression for indicated transcript}
+#'   \item{ENSG00000158352.16}{normalized expression for indicated transcript}
+#'   \item{ENSG00000198046.12}{normalized expression for indicated transcript}
+#'   \item{ENSG00000225630.1}{normalized expression for indicated transcript}
+#'   \item{ENSG00000070808.16}{normalized expression for indicated transcript}
+#'   \item{ENSG00000012223.13}{normalized expression for indicated transcript}
+#'   \item{ENSG00000085265.11}{normalized expression for indicated transcript}
+#'   \item{ENSG00000158578.21}{normalized expression for indicated transcript}
+#'   \item{ENSG00000112077.17}{normalized expression for indicated transcript}
+#'   \item{ENSG00000272398.6}{normalized expression for indicated transcript}
+#'   \item{ENSG00000116667.15}{normalized expression for indicated transcript}
+#'   \item{ENSG00000101916.12}{normalized expression for indicated transcript}
+#'   \item{ENSG00000184293.7}{normalized expression for indicated transcript}
+#'   \item{ENSG00000244040.7}{normalized expression for indicated transcript}
+#'   \item{ENSG00000229344.1}{normalized expression for indicated transcript}
+#'   \item{ENSG00000142405.22}{normalized expression for indicated transcript}
+#'   \item{ENSG00000171051.9}{normalized expression for indicated transcript}
+#'   \item{ENSG00000183023.18}{normalized expression for indicated transcript}
+#'   \item{ENSG00000257178.5}{normalized expression for indicated transcript}
+#'   \item{ENSG00000244682.7}{normalized expression for indicated transcript}
+#'   \item{ENSG00000166025.18}{normalized expression for indicated transcript}
+#'   \item{ENSG00000204613.11}{normalized expression for indicated transcript}
+#'   \item{ENSG00000214188.9}{normalized expression for indicated transcript}
+#'   \item{ENSG00000179869.15}{normalized expression for indicated transcript}
+#'   \item{ENSG00000136315.4}{normalized expression for indicated transcript}
+#'   \item{ENSG00000119919.11}{normalized expression for indicated transcript}
+#'   \item{ENSG00000123384.14}{normalized expression for indicated transcript}
+#'  \item{ENSG00000104918.8}{normalized expression for indicated transcript}
+#'   \item{ENSG00000287431.1}{normalized expression for indicated transcript}
+#'   \item{ENSG00000227827.3}{normalized expression for indicated transcript}
+#'   \item{ENSG00000164047.6}{normalized expression for indicated transcript}
+#'   \item{ENSG00000137571.11}{normalized expression for indicated transcript}
+#'   \item{ENSG00000143416.21}{normalized expression for indicated transcript}
+#'   \item{ENSG00000253578.1}{normalized expression for indicated transcript}
+#'   \item{ENSG00000120708.17}{normalized expression for indicated transcript}
+#'   \item{ENSG00000220842.6}{normalized expression for indicated transcript}
+#'   \item{ENSG00000110077.14}{normalized expression for indicated transcript}
+#'   \item{ENSG00000198722.14}{normalized expression for indicated transcript}
+#'   \item{ENSG00000121316.11}{normalized expression for indicated transcript}
+#'   \item{ENSG00000123689.6}{normalized expression for indicated transcript}
+#'   \item{ENSG00000198938.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000163430.12}{normalized expression for indicated transcript}
+#'   \item{ENSG00000258227.7}{normalized expression for indicated transcript}
+#'   \item{ENSG00000233101.10}{normalized expression for indicated transcript}
+#'   \item{ENSG00000163220.11}{normalized expression for indicated transcript}
+#'   \item{ENSG00000100985.7}{normalized expression for indicated transcript}
+#'   \item{ENSG00000166947.15}{normalized expression for indicated transcript}
+#'   \item{ENSG00000275713.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000143546.10}{normalized expression for indicated transcript}
+#'   \item{ENSG00000136929.13}{normalized expression for indicated transcript}
+#'   \item{ENSG00000103313.13}{normalized expression for indicated transcript}
+#'   \item{ENSG00000186529.16}{normalized expression for indicated transcript}
+#'   \item{ENSG00000109321.11}{normalized expression for indicated transcript}
+#'   \item{ENSG00000104177.18}{normalized expression for indicated transcript}
+#'   \item{ENSG00000257335.8}{normalized expression for indicated transcript}
+#'   \item{ENSG00000197993.9}{normalized expression for indicated transcript}
+#'   \item{ENSG00000134460.18}{normalized expression for indicated transcript}
+#'   \item{ENSG00000211892.4}{normalized expression for indicated transcript}
+#'   \item{ENSG00000180044.5}{normalized expression for indicated transcript}
+#'   \item{ENSG00000268555.2}{normalized expression for indicated transcript}
+#'   \item{ENSG00000266402.3}{normalized expression for indicated transcript}
+#'   \item{ENSG00000163221.9}{normalized expression for indicated transcript}
+#'   \item{ENSG00000225101.6}{normalized expression for indicated transcript}
+#'   \item{ENSG00000197249.14}{normalized expression for indicated transcript}
+#'   \item{ENSG00000093134.15}{normalized expression for indicated transcript}
+#'   }
+#' @source <https://www.cancer.gov/ccg/research/genome-sequencing/target/studied-cancers/acute-myeloid-leukemia#targets-aml-project>
+
+"pediatric_flt3"
