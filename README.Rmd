@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # hdcuremodels
 
 <!-- badges: start -->
-[![Status at rOpenSci Software Peer Review](https://badges.ropensci.org/692_status.svg)]
+[![Status at rOpenSci Software Peer Review](https://badges.ropensci.org/692_status.svg)](https://github.com/ropensci/software-review/issues/692)
 [![R-CMD-check](https://github.com/ropensci/hdcuremodels/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci/hdcuremodels/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
@@ -24,10 +24,10 @@ The goal of hdcuremodels is to allow one to fit a penalized mixture cure model (
 
 ## Installation
 
-You can install the development version of hdcuremodels like so:
+You can install this version of hdcuremodels using:
 
 ``` r
-remotes::install_github("https://github.com/ropensci/hdcuremodels")
+install.packages("hdcuremodels")
 ```
 
 ## Example
@@ -120,6 +120,12 @@ Of course, we expect our model to perform well on our training data. We can also
 ```{r testpred}
 test_predict <- predict(fitem, newdata = amltest, model_select = "cAIC")
 ```
+
+## Acknowledgements
+
+This package was reviewed as part of rOpenSci’s software review process.
+
+
 
 
 

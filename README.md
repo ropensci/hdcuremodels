@@ -5,8 +5,8 @@
 
 <!-- badges: start -->
 
-\[![Status at rOpenSci Software Peer
-Review](https://badges.ropensci.org/692_status.svg)\]
+[![Status at rOpenSci Software Peer
+Review](https://badges.ropensci.org/692_status.svg)](https://github.com/ropensci/software-review/issues/692)
 [![R-CMD-check](https://github.com/ropensci/hdcuremodels/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci/hdcuremodels/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
@@ -20,10 +20,10 @@ event.
 
 ## Installation
 
-You can install the development version of hdcuremodels like so:
+You can install this version of hdcuremodels using:
 
 ``` r
-remotes::install_github("https://github.com/ropensci/hdcuremodels")
+install.packages("hdcuremodels")
 ```
 
 ## Example
@@ -72,7 +72,7 @@ nonzerocure_test(km_train)
 #> [1] 0.2853081
 #> 
 #> $p_value
-#> [1] 0.001
+#> [1] 0.002
 #> 
 #> $time_95_percent_of_events
 #> [1] 5.553847
@@ -156,3 +156,7 @@ test set `amltest`. In this case we use the `predict` function with
 ``` r
 test_predict <- predict(fitem, newdata = amltest, model_select = "cAIC")
 ```
+
+## Acknowledgements
+
+This package was reviewed as part of rOpenSci’s software review process.
